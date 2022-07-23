@@ -1,7 +1,7 @@
 # Simple Shulker Preview
 Simple Shulker Preview is a small is a basic fabric mod that displays the icon of the first item in a shulker. This icon appears on top of the shulker icon in inventory slots. Especially useful for bulk storage!
 
-For downloads, details, and images, see https://minecraft.curseforge.com/projects/simple-shulker-preview
+For downloads, details, and images, see https://www.curseforge.com/minecraft/mc-mods/simple-shulker-preview
 
 ## Compiling
 1. Clone the repository and open it in a terminal or IDE
