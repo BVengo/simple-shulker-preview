@@ -28,4 +28,4 @@ run/
 bin/
 
 # project
-assets/
+/assets/
