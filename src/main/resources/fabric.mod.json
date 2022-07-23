@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "simpleshulkerpreview",
-  "version": "1.0.0",
+  "version": "1.1.0",
 
   "name": "Simple Shulker Preview",
   "description": "Display the icon of the first item in a shulker. Very useful for bulk storage!",
@@ -28,7 +28,6 @@
 
   "depends": {
     "fabricloader": ">=0.14.6",
-    "fabric": "*",
     "minecraft": "~1.19",
     "java": ">=17"
   },
