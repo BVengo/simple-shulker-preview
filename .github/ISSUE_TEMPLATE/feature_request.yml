@@ -1,0 +1,36 @@
+name: Feature Request
+description: Suggest new ideas for Simple Shulker Preview
+title: "[Feature]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please report any bugs in the bug report issue template!
+  - type: textarea
+    id: description
+    attributes:
+      label: Request Description
+      description: Which feature would you like added, and why?
+    validations:
+      required: true
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Images
+      description: Please add any screenshots or images that you think may help explain your feature.
+    validations:
+      required: false
+  - type: input
+    id: fabric-version
+    attributes:
+      label: Fabric Version
+      description: Which version of Fabric are you using?
+    validations:
+      required: false
+  - type: textarea
+    id: other
+    attributes:
+      label: Additional Context
+      description: Please add any other important information here.
+    validations:
+      required: false
