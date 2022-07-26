@@ -23,7 +23,7 @@
     ]
   },
   "mixins": [
-    "modid.mixins.json"
+    "simpleshulkerpreview.mixins.json"
   ],
 
   "depends": {
