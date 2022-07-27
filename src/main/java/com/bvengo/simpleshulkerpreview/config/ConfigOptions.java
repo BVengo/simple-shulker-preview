@@ -20,6 +20,7 @@ public class ConfigOptions implements ConfigData {
      * Which slot of the shulker box should be displayed.
      * Added for compatability with mods that can place items directly from the last slot of a shulker.
      */
+    @ConfigEntry.Gui.Tooltip()
     @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
     public DisplayItem displayItem = DisplayItem.FIRST;
 
