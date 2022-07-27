@@ -1,35 +1,36 @@
 package com.bvengo.simpleshulkerpreview.config;
 
-import net.minecraft.text.Text;
+import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
+import me.shedaniel.autoconfig.ConfigData;
+import me.shedaniel.autoconfig.annotation.Config;
+import me.shedaniel.autoconfig.annotation.ConfigEntry;
 import net.minecraft.util.Language;
 
-import java.util.HashMap;
+@Config(name = SimpleShulkerPreviewMod.MOD_ID)
+public class ConfigOptions implements ConfigData {
+    /** Disables the mod. */
+    @ConfigEntry.Gui.Tooltip()
+    public boolean disableMod = false;
 
-public final class ConfigOptions {
-
-    /**
-     * Disables the mod.
-     */
-    public static boolean disableMod = false;
-
-    /**
-     * Only displays the icon if the shulker box holds one item type.
-     */
-    public static boolean displayUnique = false;
-
-    /**
-     * Shulker box slots that can be displayed
-     */
-    public static HashMap<String, String> displayItemOptions = new HashMap<>() {{
-        put("first", Language.getInstance().get("config.simpleshulkerpreview.display_item.first"));
-        put("last",  Language.getInstance().get("config.simpleshulkerpreview.display_item.last"));
-    }};
+    /** Only displays the icon if the shulker box holds one item type. */
+    @ConfigEntry.Gui.Tooltip()
+    public boolean displayUnique = false;
 
     /**
      * Which slot of the shulker box should be displayed.
      * Added for compatability with mods that can place items directly from the last slot of a shulker.
      */
-    public static String displayItem = "first";
+    @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
+    public DisplayItem displayItem = DisplayItem.FIRST;
 
-    private ConfigOptions() {}
+    /** Shulker box slots that can be displayed */
+    public enum DisplayItem {
+        FIRST,
+        LAST;
+
+        @Override
+        public String toString() {
+            return Language.getInstance().get("config.simpleshulkerpreview.display_item." + this.name().toLowerCase());
+        }
+    }
 }

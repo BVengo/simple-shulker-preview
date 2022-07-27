@@ -2,17 +2,11 @@ package com.bvengo.simpleshulkerpreview.mixin;
 
 import com.bvengo.simpleshulkerpreview.Utils;
 import com.bvengo.simpleshulkerpreview.config.ConfigOptions;
+import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.item.ItemRenderer;
-import net.minecraft.client.render.model.BakedModel;
-import net.minecraft.client.render.model.json.ModelTransformation;
-import net.minecraft.client.texture.TextureManager;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -34,7 +28,9 @@ public abstract class ItemRendererMixin {
 			method = "renderGuiItemOverlay(Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/item/ItemStack;IILjava/lang/String;)V")
 	private void renderShulkerItemOverlay(TextRenderer renderer, ItemStack stack, int x, int y, @Nullable String countLabel, CallbackInfo info) {
 
-		if (ConfigOptions.disableMod || stack.getCount() != 1) {
+		ConfigOptions config = AutoConfig.getConfigHolder(ConfigOptions.class).getConfig();
+
+		if (config.disableMod || stack.getCount() != 1) {
 			return;
 		}
 
@@ -43,7 +39,7 @@ public abstract class ItemRendererMixin {
 			return;
 		}
 
-		ItemStack displayItem = Utils.getDisplayItem(compound.getCompound("BlockEntityTag"), 27, ConfigOptions.displayUnique);
+		ItemStack displayItem = Utils.getDisplayItem(compound.getCompound("BlockEntityTag"), 27, config.displayItem, config.displayUnique);
 		if(displayItem == null) {
 			return;
 		}

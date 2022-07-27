@@ -1,8 +1,9 @@
 package com.bvengo.simpleshulkerpreview;
 
-import com.bvengo.simpleshulkerpreview.config.ModConfigScreen;
+import com.bvengo.simpleshulkerpreview.config.ConfigOptions;
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
+import me.shedaniel.autoconfig.AutoConfig;
 
 /**
  * Set up Mod Menu.
@@ -10,6 +11,6 @@ import com.terraformersmc.modmenu.api.ModMenuApi;
 public class ModMenuIntegration implements ModMenuApi {
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        return ModConfigScreen::new;
+        return parent -> AutoConfig.getConfigScreen(ConfigOptions.class, parent).get();
     }
 }

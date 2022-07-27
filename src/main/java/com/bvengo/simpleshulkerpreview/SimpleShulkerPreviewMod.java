@@ -1,11 +1,11 @@
 package com.bvengo.simpleshulkerpreview;
 
-import com.bvengo.simpleshulkerpreview.config.ModConfigFile;
+import com.bvengo.simpleshulkerpreview.config.ConfigOptions;
+import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.text.Text;
-import net.minecraft.util.Language;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,17 +14,14 @@ import org.slf4j.LoggerFactory;
  */
 @Environment(EnvType.CLIENT)
 public class SimpleShulkerPreviewMod implements ClientModInitializer {
-	// This logger is used to write text to the console and the log file.
-	// It is considered best practice to use your mod id as the logger's name.
-	// That way, it's clear which mod wrote info, warnings, and errors.
-	public static final Logger LOGGER = LoggerFactory.getLogger("simpleshulkerpreview");
+	public static final String MOD_ID = "simpleshulkerpreview";
+	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
 	@Override
 	public void onInitializeClient() {
 		LOGGER.info(LOGGER.getName() + " loading...");
 
-		// Setup config with JSON file type
-		ModConfigFile.load();
+		AutoConfig.register(ConfigOptions.class, GsonConfigSerializer::new);
 
 		LOGGER.info(LOGGER.getName() + " loaded.");
 	}
