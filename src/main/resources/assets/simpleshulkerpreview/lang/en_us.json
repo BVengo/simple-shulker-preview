@@ -1,0 +1,13 @@
+{
+  "config.simpleshulkerpreview.title": "Simple Shulker Preview",
+  "config.simpleshulkerpreview.title.config": "Config",
+  "config.simpleshulkerpreview.title.general": "General",
+  "config.simpleshulkerpreview.disable": "Disable Mod",
+  "config.simpleshulkerpreview.disable.tooltip": "Disables the mod so that overlay icons are not displayed.",
+  "config.simpleshulkerpreview.unique": "Unique Items Only",
+  "config.simpleshulkerpreview.unique.tooltip": "Only displays icons on shulker boxes holds one item type.",
+  "config.simpleshulkerpreview.display_item": "Display item",
+  "config.simpleshulkerpreview.display_item.first": "First",
+  "config.simpleshulkerpreview.display_item.last": "Last",
+  "config.simpleshulkerpreview.display_item.tooltip": "Set which item in the shulker should be displayed."
+}
