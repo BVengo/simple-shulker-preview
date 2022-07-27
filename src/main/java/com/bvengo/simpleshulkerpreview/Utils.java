@@ -1,5 +1,6 @@
 package com.bvengo.simpleshulkerpreview;
 
+import com.bvengo.simpleshulkerpreview.config.ConfigOptions.DisplayItem;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -26,24 +27,34 @@ public class Utils {
      * @param unique If the item to be displayed must be the only item type in the container
      * @return An ItemStack for the display item, or null if there is none available
      */
-    public static ItemStack getDisplayItem(NbtCompound compound, int containerSize, boolean unique) {
+    public static ItemStack getDisplayItem(NbtCompound compound, int containerSize,
+                                           DisplayItem position, boolean unique) {
         ItemStack displayItem = null;
 
         DefaultedList<ItemStack> itemList = DefaultedList.ofSize(containerSize, ItemStack.EMPTY);
         Inventories.readNbt(compound, itemList);
 
         for (ItemStack itemStack : itemList) {
+
             if (itemStack.isEmpty()) {
                 continue;
-            } else if (!unique) {
-                return itemStack;
             }
-            if (displayItem == null) {
+
+            if(displayItem == null) {
                 displayItem = itemStack;
                 continue;
             }
-            if (!itemStack.isOf(displayItem.getItem())) {
+
+            if(position == DisplayItem.FIRST && !unique) {
+                break;
+            }
+
+            if (unique && !itemStack.isOf(displayItem.getItem())) {
                 return null;
+            }
+
+            if(position == DisplayItem.LAST) {
+                displayItem = itemStack;
             }
         }
 

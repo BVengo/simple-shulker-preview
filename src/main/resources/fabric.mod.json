@@ -1,7 +1,8 @@
 {
   "schemaVersion": 1,
   "id": "simpleshulkerpreview",
-  "version": "1.1.0",
+  "version": "1.3",
+  "icon": "assets/simpleshulkerpreview/icon.png",
 
   "name": "Simple Shulker Preview",
   "description": "Display the icon of the first item in a shulker. Very useful for bulk storage!",
@@ -9,26 +10,29 @@
     "BVengo"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/BVengo/simple-shulker-preview"
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/simple-shulker-preview/",
+    "sources": "https://github.com/BVengo/simple-shulker-preview",
+    "issues": "https://github.com/BVengo/simple-shulker-preview/issues"
   },
-
   "license": "LGPL-3.0",
-  "icon": "assets/simpleshulkerpreview/icon.png",
 
   "environment": "client",
   "entrypoints": {
-    "main": [
+    "client": [
       "com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod"
+    ],
+    "modmenu": [
+      "com.bvengo.simpleshulkerpreview.ModMenuIntegration"
     ]
   },
   "mixins": [
     "simpleshulkerpreview.mixins.json"
   ],
-
   "depends": {
     "fabricloader": ">=0.14.6",
-    "minecraft": ">=1.17",
-    "java": ">=17"
+    "minecraft": "~1.19"
+  },
+  "recommends": {
+    "modmenu": ">=3.0.0"
   }
 }
