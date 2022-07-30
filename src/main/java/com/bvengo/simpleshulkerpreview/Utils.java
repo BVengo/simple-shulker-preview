@@ -1,10 +1,13 @@
 package com.bvengo.simpleshulkerpreview;
 
-import com.bvengo.simpleshulkerpreview.config.ConfigOptions.DisplayItem;
-import net.minecraft.inventory.Inventories;
+import com.bvengo.simpleshulkerpreview.config.ConfigOptions.DisplayOption;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.nbt.NbtList;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Utils {
     public static boolean isShulkerBox(NbtCompound compound) {
@@ -22,42 +25,44 @@ public class Utils {
 
     /**
      * Returns an item to display on a shulker box icon.
-     * @param compound An NBTCompound containing container data
-     * @param containerSize The size of the container being queried
-     * @param unique If the item to be displayed must be the only item type in the container
+     *
+     * @param compound  An NBTCompound containing container data
+     * @param selection Which item to display
      * @return An ItemStack for the display item, or null if there is none available
      */
-    public static ItemStack getDisplayItem(NbtCompound compound, int containerSize,
-                                           DisplayItem position, boolean unique) {
-        ItemStack displayItem = null;
+    public static ItemStack getDisplayItem(NbtCompound compound, DisplayOption selection) {
+        Map<Item, Integer> storedItems = new HashMap<>();
+        Item displayItem = null;
 
-        DefaultedList<ItemStack> itemList = DefaultedList.ofSize(containerSize, ItemStack.EMPTY);
-        Inventories.readNbt(compound, itemList);
+        NbtList nbtList = compound.getList("Items", 10);
 
-        for (ItemStack itemStack : itemList) {
+        for (int i = 0; i < nbtList.size(); ++i) {
+            NbtCompound nbtCompound = nbtList.getCompound(i);
 
-            if (itemStack.isEmpty()) {
+            ItemStack itemStack = ItemStack.fromNbt(nbtCompound);
+            Item item = itemStack.getItem();
+
+            int itemCount = itemStack.getCount();
+            storedItems.merge(item, itemCount, Integer::sum);
+
+            if (selection == DisplayOption.FIRST) {
+                return itemStack;
+            }
+
+            if ((displayItem == null) ||
+                    (selection == DisplayOption.LAST) ||
+                    (selection == DisplayOption.MOST && storedItems.get(item) > storedItems.get(displayItem)) ||
+                    (selection == DisplayOption.LEAST && storedItems.get(item) < storedItems.get(displayItem))) {
+
+                displayItem = item;
                 continue;
             }
 
-            if(displayItem == null) {
-                displayItem = itemStack;
-                continue;
-            }
-
-            if(position == DisplayItem.FIRST && !unique) {
-                break;
-            }
-
-            if (unique && !itemStack.isOf(displayItem.getItem())) {
+            if (selection == DisplayOption.UNIQUE && item != displayItem) {
                 return null;
-            }
-
-            if(position == DisplayItem.LAST) {
-                displayItem = itemStack;
             }
         }
 
-        return displayItem;
+        return new ItemStack(displayItem);
     }
 }

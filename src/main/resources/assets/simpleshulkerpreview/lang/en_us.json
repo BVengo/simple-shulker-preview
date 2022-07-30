@@ -2,10 +2,20 @@
   "text.autoconfig.simpleshulkerpreview.title": "Simple Shulker Preview",
   "text.autoconfig.simpleshulkerpreview.option.disableMod": "Disable Mod",
   "text.autoconfig.simpleshulkerpreview.option.disableMod.@Tooltip": "Disables the mod so that overlay icons are not displayed.",
-  "text.autoconfig.simpleshulkerpreview.option.displayUnique": "Unique Items Only",
-  "text.autoconfig.simpleshulkerpreview.option.displayUnique.@Tooltip": "Only displays icons on shulker boxes holding one item type.",
   "text.autoconfig.simpleshulkerpreview.option.displayItem": "Display Item",
   "text.autoconfig.simpleshulkerpreview.option.displayItem.@Tooltip": "Set which item in the shulker should be displayed.",
+  "text.autoconfig.simpleshulkerpreview.option.translateX": "X Offset",
+  "text.autoconfig.simpleshulkerpreview.option.translateX.@Tooltip": "The horizontal offset of the icon, from left to right.",
+  "text.autoconfig.simpleshulkerpreview.option.translateY": "Y Offset",
+  "text.autoconfig.simpleshulkerpreview.option.translateY.@Tooltip": "The vertical offset of the icon, from top to bottom.",
+  "text.autoconfig.simpleshulkerpreview.option.translateZ": "Z Offset",
+  "text.autoconfig.simpleshulkerpreview.option.translateZ.@Tooltip": "In/out offset. Use when other mods cover / are covered by this.",
+  "text.autoconfig.simpleshulkerpreview.option.scale": "Scale",
+  "text.autoconfig.simpleshulkerpreview.option.scale.@Tooltip": "Size of the icon",
   "config.simpleshulkerpreview.display_item.first": "First",
-  "config.simpleshulkerpreview.display_item.last": "Last"
+  "config.simpleshulkerpreview.display_item.last": "Last",
+  "config.simpleshulkerpreview.display_item.unique": "Unique",
+  "config.simpleshulkerpreview.display_item.most": "Most",
+  "config.simpleshulkerpreview.display_item.least": "Least"
+
 }

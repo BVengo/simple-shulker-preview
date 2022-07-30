@@ -18,9 +18,10 @@ import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 public abstract class ItemRendererMixin {
 	@Shadow public abstract void renderGuiItemIcon(ItemStack stack, int x, int y);
 
-	private float smallScale = 10F;
-	private double smallTranslateX = 12.0;
-	private double smallTranslateY = 12.0;
+	private float smallScale;
+	private double smallTranslateX;
+	private double smallTranslateY;
+	private double smallTranslateZ;
 
 	boolean isSmall = false;
 
@@ -39,10 +40,15 @@ public abstract class ItemRendererMixin {
 			return;
 		}
 
-		ItemStack displayItem = Utils.getDisplayItem(compound.getCompound("BlockEntityTag"), 27, config.displayItem, config.displayUnique);
+		ItemStack displayItem = Utils.getDisplayItem(compound.getCompound("BlockEntityTag"), config.displayItem);
 		if(displayItem == null) {
 			return;
 		}
+
+		smallScale = config.scale;
+		smallTranslateX = config.translateX;
+		smallTranslateY = config.translateY;
+		smallTranslateZ = config.translateZ;
 
 		isSmall = true;
 		renderGuiItemIcon(displayItem, x, y);
@@ -53,7 +59,7 @@ public abstract class ItemRendererMixin {
 		at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;translate(DDD)V", ordinal = 0),
 		index = 2)
 	private double injectedTranslateZ(double z) {
-		return isSmall ? (z + 100.0) : z;
+		return isSmall ? (z + smallTranslateZ) : z;
 	}
 
 	@ModifyArgs(method = "renderGuiItemModel",
