@@ -1,5 +1,6 @@
 package com.bvengo.simpleshulkerpreview.mixin;
 
+import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
 import com.bvengo.simpleshulkerpreview.Utils;
 import com.bvengo.simpleshulkerpreview.config.ConfigOptions;
 import me.shedaniel.autoconfig.AutoConfig;
@@ -7,6 +8,7 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -30,21 +32,16 @@ public abstract class ItemRendererMixin {
 	private void renderShulkerItemOverlay(TextRenderer renderer, ItemStack stack, int x, int y, @Nullable String countLabel, CallbackInfo info) {
 
 		ConfigOptions config = AutoConfig.getConfigHolder(ConfigOptions.class).getConfig();
-
-		if (config.disableMod || stack.getCount() != 1) {
-			return;
-		}
+		if (config.disableMod || stack.getCount() != 1) return;
 
 		NbtCompound compound = stack.getNbt();
-		if(!Utils.isShulkerBox(compound)) {
-			return;
-		}
+		if(!Utils.isShulkerBox(compound)) return;
 
+		// Get the ItemStack from the shulker, based on player configs
 		ItemStack displayItem = Utils.getDisplayItem(compound.getCompound("BlockEntityTag"), config.displayItem);
-		if(displayItem == null) {
-			return;
-		}
+		if(displayItem == null) return;
 
+		// Render returned ItemStack
 		smallScale = config.scale;
 		smallTranslateX = config.translateX;
 		smallTranslateY = config.translateY;

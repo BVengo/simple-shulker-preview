@@ -11,7 +11,7 @@
   "text.autoconfig.simpleshulkerpreview.option.translateZ": "Z Offset",
   "text.autoconfig.simpleshulkerpreview.option.translateZ.@Tooltip": "In/out offset. Use when other mods cover / are covered by this.",
   "text.autoconfig.simpleshulkerpreview.option.scale": "Scale",
-  "text.autoconfig.simpleshulkerpreview.option.scale.@Tooltip": "Size of the icon",
+  "text.autoconfig.simpleshulkerpreview.option.scale.@Tooltip": "Size of the icon.",
   "config.simpleshulkerpreview.display_item.first": "First",
   "config.simpleshulkerpreview.display_item.last": "Last",
   "config.simpleshulkerpreview.display_item.unique": "Unique",
