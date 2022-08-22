@@ -26,25 +26,75 @@ public class ConfigOptions implements ConfigData {
     /** x offset */
     @ConfigEntry.Gui.Tooltip()
     @ConfigEntry.BoundedDiscrete(min = 0, max = 16)
-    public double translateX = 12.0;
+    public int translateX = 12;
 
     /** y offset */
     @ConfigEntry.Gui.Tooltip()
     @ConfigEntry.BoundedDiscrete(min = 0, max = 16)
-    public double translateY = 12.0;
+    public int translateY = 12;
 
     /** z offset - for if it appears above or below other mod overlays */
     @ConfigEntry.Gui.Tooltip()
-    public double translateZ = 100.0;
+    @ConfigEntry.BoundedDiscrete(min = 0, max = 16)
+    public int translateZ = 10;
 
     /** scale value */
     @ConfigEntry.Gui.Tooltip()
     @ConfigEntry.BoundedDiscrete(min = 0, max = 16)
-    public float scale = 10.0f;
+    public int scale = 10;
 
     /** Disables the mod. */
     @ConfigEntry.Gui.Tooltip()
     public boolean disableMod = false;
+
+    /**
+     * Custom head datapacks and mods, all use the same method. Tested with:
+     * - MicroCutting
+     * - HeadIndex
+     * - JustMobHeads
+     * - MoreMobHeads
+     * - Player Head Drops
+     * - All Mob Heads
+     */
+    @ConfigEntry.Category("compatibility")
+    @ConfigEntry.Gui.Tooltip()
+    public boolean supportCustomHeads = false;
+
+    /**
+     * Recursive and stacking shulkers. Tested with:
+     * -  Carpet - EssentialAddons
+     */
+    @ConfigEntry.Category("compatibility")
+    @ConfigEntry.Gui.Tooltip()
+    public boolean supportRecursiveShulkers = false;
+
+    @ConfigEntry.Category("compatibility")
+    @ConfigEntry.Gui.Tooltip()
+    public boolean supportStackedShulkers = false;
+
+    /** x offset - default location overlaps with stacked shulkers count indicator */
+    @ConfigEntry.Category("compatibility")
+    @ConfigEntry.Gui.Tooltip()
+    @ConfigEntry.BoundedDiscrete(min = 0, max = 16)
+    public int stackedTranslateX = 4;
+
+    /** y offset - default location overlaps with stacked shulkers count indicator */
+    @ConfigEntry.Category("compatibility")
+    @ConfigEntry.Gui.Tooltip()
+    @ConfigEntry.BoundedDiscrete(min = 0, max = 16)
+    public int stackedTranslateY = 12;
+
+    /** z offset - default location overlaps with stacked shulkers count indicator */
+    @ConfigEntry.Category("compatibility")
+    @ConfigEntry.Gui.Tooltip()
+    @ConfigEntry.BoundedDiscrete(min = 0, max = 16)
+    public int stackedTranslateZ = 9;
+
+    /** scale value - default location overlaps with stacked shulkers count indicator*/
+    @ConfigEntry.Category("compatibility")
+    @ConfigEntry.Gui.Tooltip()
+    @ConfigEntry.BoundedDiscrete(min = 0, max = 16)
+    public int stackedScale = 10;
 
     /** Shulker box slots that can be displayed */
     public enum DisplayOption {
