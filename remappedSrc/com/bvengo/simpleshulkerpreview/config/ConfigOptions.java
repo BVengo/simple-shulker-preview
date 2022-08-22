@@ -19,10 +19,6 @@ public class ConfigOptions implements ConfigData {
     @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
     public DisplayOption displayItem = DisplayOption.FIRST;
 
-    /** Treat enchanted items separately from un-enchanted items */
-    @ConfigEntry.Gui.Tooltip()
-    public boolean groupEnchantment = false;
-
     /** x offset */
     @ConfigEntry.Gui.Tooltip()
     @ConfigEntry.BoundedDiscrete(min = 0, max = 16)

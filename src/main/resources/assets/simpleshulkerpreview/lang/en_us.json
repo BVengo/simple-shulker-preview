@@ -4,6 +4,8 @@
   "text.autoconfig.simpleshulkerpreview.option.disableMod.@Tooltip": "Disables the mod so that overlay icons are not displayed.",
   "text.autoconfig.simpleshulkerpreview.option.displayItem": "Display Item",
   "text.autoconfig.simpleshulkerpreview.option.displayItem.@Tooltip": "Set which item in the shulker should be displayed.",
+  "text.autoconfig.simpleshulkerpreview.option.groupEnchantment": "Group Enchantments",
+  "text.autoconfig.simpleshulkerpreview.option.groupEnchantment.@Tooltip": "Group enchanted items separately from un-enchanted items.",
   "text.autoconfig.simpleshulkerpreview.option.translateX": "X Offset",
   "text.autoconfig.simpleshulkerpreview.option.translateX.@Tooltip": "The horizontal offset of the icon, from left to right.",
   "text.autoconfig.simpleshulkerpreview.option.translateY": "Y Offset",

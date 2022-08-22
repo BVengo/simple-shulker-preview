@@ -1,8 +1,6 @@
 package com.bvengo.simpleshulkerpreview;
 
-import com.bvengo.simpleshulkerpreview.config.ConfigOptions;
 import com.bvengo.simpleshulkerpreview.config.ConfigOptions.DisplayOption;
-import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -36,8 +34,6 @@ public class Utils {
      * @return An ItemStack for the display item, or null if there is none available
      */
     public static ItemStack getDisplayItem(NbtCompound compound, DisplayOption selection) {
-        ConfigOptions config = AutoConfig.getConfigHolder(ConfigOptions.class).getConfig();
-
         Map<String, Integer> storedItems = new HashMap<>();
 
         // Track both stack and item name. The name can be used in the map to count values,
@@ -55,11 +51,7 @@ public class Utils {
 
             // Change skulls to be ID dependent instead of all being called "player_head"
             if (itemStack.isOf(Items.PLAYER_HEAD)) {
-                itemName += "." + getSkullName(itemStack);
-            }
-
-            if (config.groupEnchantment && itemStack.hasEnchantments()) {
-                itemName += ".enchanted";
+                itemName = getSkullName(itemStack);
             }
 
             int itemCount = itemStack.getCount();
@@ -90,7 +82,7 @@ public class Utils {
      * @return A String indicating with the head ID. If missing, returns a default "minecraft.player_head".
      */
     public static String getSkullName(ItemStack itemStack) {
-        String name = "";
+        String name = itemStack.getItem().getTranslationKey();
 
         if (!itemStack.hasNbt()) return name;
 
@@ -100,7 +92,7 @@ public class Utils {
         NbtElement skullIdElement = skullCompound.get("Id");
         if(skullIdElement == null) return name;
 
-        name = skullIdElement.toString();
+        name += skullIdElement.toString();
 
         return name;
     }
