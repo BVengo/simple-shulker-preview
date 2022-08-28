@@ -10,12 +10,13 @@ For other download pages, please see [CurseForge](https://www.curseforge.com/min
 ## Configs
 | **Option**          | **Description**                                                               | **Default** |
 |---------------------|-------------------------------------------------------------------------------|-------------|
-| `Disable Mod`       | Disables the mod so that overlay icons are not displayed.                     | _False_     |
 | `Display Item`      | Sets which item in the shulker should be displayed.                           | _First_     |
+| `Group Enchantments`| Group enchantments to treat enchanted / un-enchanted items separately         | _False_     |
 | `X Offset`          | The horizontal offset of the icon, from left to right.                        | 12.0        |
 | `Y Offset`          | The vertical offset of the icon, from top to bottom.                          | 12.0        |
 | `Z Offset`          | In/out offset. Use when other mods cover / are covered by this.               | 100.0       |
 | `Scale`             | Size of the icon.                                                             | 10.0        |
+| `Disable Mod`       | Disables the mod so that overlay icons are not displayed.                     | _False_     |
 
 **Display Item Options:**
 - First - the first item in the shulker box
