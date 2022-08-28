@@ -24,10 +24,13 @@ For other download pages, please see [CurseForge](https://www.curseforge.com/min
 - Most - the item type with the most items. This is based on stack size, not stack count. e.g. 64 stone (stacked) and 2 diamond swords (unstacked) will show the stone.
 - Least - the item type with the least items. This is based on stack size, not stack count. e.g. 64 stone (stacked) and 2 diamond swords (unstacked) will show the swords.
 
-**Compatibility Settings** (all default false)
-- Support Custom Heads - Displays the textures of custom player heads and treats them as individual items
-- Support Recursive Shulkers - If shulkers are stored in shulkers, counts the items in them too.
-- Support Stacked Shulkers - Displays the preview even for shulkers that are stacked. Adds additional x, y, z offsets, and scale to prevent overlapping with the shulker count.
+## Mod Compatibility Configs
+Settings for compatibility with other mod functionalities. All default false.
+| **Option**                   | **Description**                                                                  |
+|------------------------------|----------------------------------------------------------------------------------|
+| `Support Custom Heads`       | Displays the textures of custom player heads and treats them as individual items |
+| `Support Recursive Shulkers` | Sets which item in the shulker should be displayed.                              |
+| `Support Stacked Shulkers`   | The horizontal offset of the icon, from left to right.                           |
 
 This mod comes with the [Cloth Config API](https://www.curseforge.com/minecraft/mc-mods/cloth-config) built in to 
 implement configs (there should be no need to download it yourself). I would recommend installing [ModMenu](https://www.curseforge.com/minecraft/mc-mods/modmenu) alongside it if you actually want to use them though, because I didn't want to create yet another config mapping for such a simple mod.
