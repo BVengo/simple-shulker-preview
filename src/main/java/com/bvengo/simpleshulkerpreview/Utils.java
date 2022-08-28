@@ -2,14 +2,11 @@ package com.bvengo.simpleshulkerpreview;
 
 import com.bvengo.simpleshulkerpreview.config.ConfigOptions;
 import com.bvengo.simpleshulkerpreview.config.ConfigOptions.DisplayOption;
-import me.shedaniel.autoconfig.AutoConfig;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
-import net.minecraft.text.Text;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,13 +29,13 @@ public class Utils {
      * Returns an item to display on a shulker box icon.
      *
      * @param compound  An NBTCompound containing container data
-     * @param selection Which item to display
+     * @param config The current config options for SimpleShulkerPreview
      * @return An ItemStack for the display item, or null if there is none available
      */
-    public static ItemStack getDisplayItem(NbtCompound compound, DisplayOption selection) {
-        ConfigOptions config = AutoConfig.getConfigHolder(ConfigOptions.class).getConfig();
-
+    public static ItemStack getDisplayItem(NbtCompound compound, ConfigOptions config) {
         Map<String, Integer> storedItems = new HashMap<>();
+
+        compound = compound.getCompound("BlockEntityTag");
 
         // Track both stack and item name. The name can be used in the map to count values,
         // but the item stack itself is required for rendering the proper information (e.g. skull textures)
@@ -51,8 +48,19 @@ public class Utils {
             NbtCompound nbtCompound = nbtList.getCompound(i);
 
             ItemStack itemStack = ItemStack.fromNbt(nbtCompound);
+
+            // Recursive Shulkers
+            if(config.supportRecursiveShulkers && isShulkerBox(itemStack.getNbt())) {
+                ItemStack internalItemStack = getDisplayItem(itemStack.getNbt(), config);
+
+                if(internalItemStack != null) {
+                    itemStack = internalItemStack;
+                }
+            }
+
             String itemName = itemStack.getItem().getTranslationKey();
 
+            // Player heads
             if (itemStack.isOf(Items.PLAYER_HEAD)) {
                 // Change skulls to be ID dependent instead of all being called "player_head"
                 if (config.supportCustomHeads) {
@@ -62,26 +70,28 @@ public class Utils {
                 }
             }
 
+            // Group enchantments
             if (config.groupEnchantment && itemStack.hasEnchantments()) {
                 itemName += ".enchanted";
             }
 
+            // Select item
             int itemCount = itemStack.getCount();
             storedItems.merge(itemName, itemCount, Integer::sum);
 
-            if (selection == DisplayOption.FIRST) return itemStack;
+            if (config.displayItem == DisplayOption.FIRST) return itemStack;
 
             if ((displayItemName == null) ||
-                    (selection == DisplayOption.LAST) ||
-                    (selection == DisplayOption.MOST && storedItems.get(itemName) > storedItems.get(displayItemName)) ||
-                    (selection == DisplayOption.LEAST && storedItems.get(itemName) < storedItems.get(displayItemName))) {
+                    (config.displayItem == DisplayOption.LAST) ||
+                    (config.displayItem == DisplayOption.MOST && storedItems.get(itemName) > storedItems.get(displayItemName)) ||
+                    (config.displayItem == DisplayOption.LEAST && storedItems.get(itemName) < storedItems.get(displayItemName))) {
 
                 displayItemStack = itemStack;
                 displayItemName = itemName;
                 continue;
             }
 
-            if (selection == DisplayOption.UNIQUE && !itemName.equals(displayItemName)) return null;
+            if (config.displayItem == DisplayOption.UNIQUE && !itemName.equals(displayItemName)) return null;
         }
 
         return displayItemStack;
@@ -93,9 +103,8 @@ public class Utils {
      * @param itemStack  An ItemStack containing a minecraft player head
      * @return A String indicating with the head ID. If missing, returns a default "minecraft.player_head".
      */
-    public static String getSkullName(ItemStack itemStack) {
+    private static String getSkullName(ItemStack itemStack) {
         String name = itemStack.getItem().getTranslationKey();
-
         if (!itemStack.hasNbt()) return name;
 
         NbtCompound skullCompound = itemStack.getNbt().getCompound("SkullOwner");

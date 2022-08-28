@@ -38,7 +38,7 @@ public abstract class ItemRendererMixin {
 		if(!Utils.isShulkerBox(compound)) return;
 
 		// Get the ItemStack from the shulker, based on player configs
-		ItemStack displayItem = Utils.getDisplayItem(compound.getCompound("BlockEntityTag"), config.displayItem);
+		ItemStack displayItem = Utils.getDisplayItem(compound, config);
 		if(displayItem == null) return;
 
 		if(stack.getCount() == 1) {
