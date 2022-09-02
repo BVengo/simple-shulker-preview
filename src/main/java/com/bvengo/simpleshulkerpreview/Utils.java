@@ -10,19 +10,21 @@ import net.minecraft.nbt.NbtList;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Utils {
-    public static boolean isShulkerBox(NbtCompound compound) {
+    public static boolean isObject(ItemStack stack, RegexGroup group) {
 
-        // BlockEntityTag 10 -> item has Block Entity Tag
-        if (compound != null && compound.contains("BlockEntityTag", 10)) {
-            NbtCompound blockEntityTag = compound.getCompound("BlockEntityTag");
-
-            // Items 9 -> object holds shulker items inventory
-            return blockEntityTag != null && blockEntityTag.contains("Items", 9);
+        if(stack == null) {
+            SimpleShulkerPreviewMod.LOGGER.info("Null stack");
+            return false;
         }
 
-        return false;
+        Pattern pattern = Pattern.compile(group.regex);
+        Matcher matcher = pattern.matcher(stack.getTranslationKey());
+
+        return matcher.find();
     }
 
     /**
@@ -36,6 +38,7 @@ public class Utils {
         Map<String, Integer> storedItems = new HashMap<>();
 
         compound = compound.getCompound("BlockEntityTag");
+        if(compound == null) return null; // Triggers on containers in the creative menu
 
         // Track both stack and item name. The name can be used in the map to count values,
         // but the item stack itself is required for rendering the proper information (e.g. skull textures)
@@ -50,7 +53,7 @@ public class Utils {
             ItemStack itemStack = ItemStack.fromNbt(nbtCompound);
 
             // Recursive Shulkers
-            if(config.supportRecursiveShulkers && isShulkerBox(itemStack.getNbt())) {
+            if(config.supportRecursiveShulkers && isObject(itemStack, RegexGroup.MINECRAFT_SHULKER)) {
                 ItemStack internalItemStack = getDisplayItem(itemStack.getNbt(), config);
 
                 if(internalItemStack != null) {
@@ -61,7 +64,7 @@ public class Utils {
             String itemName = itemStack.getItem().getTranslationKey();
 
             // Player heads
-            if (itemStack.isOf(Items.PLAYER_HEAD)) {
+            if (isObject(itemStack, RegexGroup.MINECRAFT_PLAYER_HEAD)) {
                 // Change skulls to be ID dependent instead of all being called "player_head"
                 if (config.supportCustomHeads) {
                     itemName = getSkullName(itemStack);

@@ -1,5 +1,7 @@
 package com.bvengo.simpleshulkerpreview.mixin;
 
+import com.bvengo.simpleshulkerpreview.RegexGroup;
+import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
 import com.bvengo.simpleshulkerpreview.Utils;
 import com.bvengo.simpleshulkerpreview.config.ConfigOptions;
 import me.shedaniel.autoconfig.AutoConfig;
@@ -31,15 +33,14 @@ public abstract class ItemRendererMixin {
 
 		ConfigOptions config = AutoConfig.getConfigHolder(ConfigOptions.class).getConfig();
 		if (config.disableMod) return;
-
 		if(!config.supportStackedShulkers && stack.getCount() != 1) return;
+		if(!Utils.isObject(stack, RegexGroup.MINECRAFT_SHULKER)) return;
 
 		NbtCompound compound = stack.getNbt();
-		if(!Utils.isShulkerBox(compound)) return;
+		if(compound == null) return; // Triggers on containers in the creative menu
 
-		// Get the ItemStack from the shulker, based on player configs
 		ItemStack displayItem = Utils.getDisplayItem(compound, config);
-		if(displayItem == null) return;
+		if(displayItem == null) return; // Triggers if configs don't allow displaying the items, or if it's empty
 
 		if(stack.getCount() == 1) {
 			// Normal icon location
