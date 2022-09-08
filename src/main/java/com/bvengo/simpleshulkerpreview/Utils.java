@@ -8,18 +8,16 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Utils {
     public static boolean isObject(ItemStack stack, RegexGroup group) {
-
-        if(stack == null) {
-            SimpleShulkerPreviewMod.LOGGER.info("Null stack");
-            return false;
-        }
+        if(stack == null) return false;
 
         Pattern pattern = Pattern.compile(group.regex);
         Matcher matcher = pattern.matcher(stack.getTranslationKey());
@@ -40,27 +38,14 @@ public class Utils {
         compound = compound.getCompound("BlockEntityTag");
         if(compound == null) return null; // Triggers on containers in the creative menu
 
+        List<ItemStack> itemStackList = flattenStackList(compound, config);
+
         // Track both stack and item name. The name can be used in the map to count values,
         // but the item stack itself is required for rendering the proper information (e.g. skull textures)
         ItemStack displayItemStack = null;
         String displayItemName = null;
 
-        NbtList nbtList = compound.getList("Items", 10);
-
-        for (int i = 0; i < nbtList.size(); ++i) {
-            NbtCompound nbtCompound = nbtList.getCompound(i);
-
-            ItemStack itemStack = ItemStack.fromNbt(nbtCompound);
-
-            // Recursive Shulkers
-            if(config.supportRecursiveShulkers && isObject(itemStack, RegexGroup.MINECRAFT_SHULKER)) {
-                ItemStack internalItemStack = getDisplayItem(itemStack.getNbt(), config);
-
-                if(internalItemStack != null) {
-                    itemStack = internalItemStack;
-                }
-            }
-
+        for (ItemStack itemStack : itemStackList) {
             String itemName = itemStack.getItem().getTranslationKey();
 
             // Player heads
@@ -101,6 +86,41 @@ public class Utils {
     }
 
     /**
+     * Flattens container NBT data into a single ArrayList. This is for recursive shulker compatibility.
+     * @param compound A container's NbtCompound
+     * @param config The current config options for SimpleShulkerPreview
+     * @return A list of ItemStacks extracted from a container NbtCompound
+     */
+     public static List<ItemStack> flattenStackList(NbtCompound compound, ConfigOptions config) {
+         List<ItemStack> itemStackList = new ArrayList<>();
+
+         NbtList nbtList = compound.getList("Items", 10);
+         if (nbtList == null) return itemStackList;
+
+         for (int i = 0; i < nbtList.size(); ++i) {
+             NbtCompound nbtCompound = nbtList.getCompound(i);
+             ItemStack itemStack = ItemStack.fromNbt(nbtCompound);
+
+             itemStackList.add(itemStack);
+
+             if (config.supportRecursiveShulkers && isObject(itemStack, RegexGroup.MINECRAFT_SHULKER)) {
+                 NbtCompound stackCompound = itemStack.getNbt();
+                 if (stackCompound == null) continue;
+
+                 stackCompound = stackCompound.getCompound("BlockEntityTag");
+                 if(stackCompound == null) continue; // Triggers on containers in the creative menu
+
+                 int multiplier = config.supportStackedShulkers ? itemStack.getCount() : 1;
+                 for (int j = 0; j < multiplier; j++) {
+                     itemStackList.addAll(flattenStackList(stackCompound, config));
+                 }
+             }
+         }
+
+         return itemStackList;
+     }
+
+    /**
      * Returns an item to display on a shulker box icon.
      *
      * @param itemStack  An ItemStack containing a minecraft player head
@@ -110,11 +130,14 @@ public class Utils {
         String name = itemStack.getItem().getTranslationKey();
         if (!itemStack.hasNbt()) return name;
 
-        NbtCompound skullCompound = itemStack.getNbt().getCompound("SkullOwner");
-        if(skullCompound == null) return name;
+        NbtCompound skullCompound = itemStack.getNbt();
+        if (skullCompound == null) return name;
+
+        skullCompound = itemStack.getNbt().getCompound("SkullOwner");
+        if (skullCompound == null) return name;
 
         NbtElement skullIdElement = skullCompound.get("Id");
-        if(skullIdElement == null) return name;
+        if (skullIdElement == null) return name;
 
         name += skullIdElement.toString();
 
