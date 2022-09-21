@@ -1,38 +1,38 @@
 {
-  "schemaVersion": 1,
-  "id": "simpleshulkerpreview",
-  "version": "2.0",
-  "icon": "assets/simpleshulkerpreview/icon.png",
+    "schemaVersion": 1,
+    "id": "simpleshulkerpreview",
+    "version": "2.1",
+    "icon": "assets/simpleshulkerpreview/icon.png",
 
-  "name": "Simple Shulker Preview",
-  "description": "Display the icon of the first item in a shulker. Very useful for bulk storage!",
-  "authors": [
-    "BVengo"
-  ],
-  "contact": {
-    "homepage": "https://www.curseforge.com/minecraft/mc-mods/simple-shulker-preview/",
-    "sources": "https://github.com/BVengo/simple-shulker-preview",
-    "issues": "https://github.com/BVengo/simple-shulker-preview/issues"
-  },
-  "license": "LGPL-3.0",
-
-  "environment": "client",
-  "entrypoints": {
-    "client": [
-      "com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod"
+    "name": "Simple Shulker Preview",
+    "description": "Display the icon of the first item in a shulker. Very useful for bulk storage!",
+    "authors": [
+        "BVengo"
     ],
-    "modmenu": [
-      "com.bvengo.simpleshulkerpreview.ModMenuIntegration"
-    ]
-  },
-  "mixins": [
-    "simpleshulkerpreview.mixins.json"
-  ],
-  "depends": {
-    "fabricloader": ">=0.14.6",
-    "minecraft": "~1.19"
-  },
-  "recommends": {
-    "modmenu": ">=4.0.0"
-  }
+    "contact": {
+        "homepage": "https://www.curseforge.com/minecraft/mc-mods/simple-shulker-preview/",
+        "sources": "https://github.com/BVengo/simple-shulker-preview",
+        "issues": "https://github.com/BVengo/simple-shulker-preview/issues"
+    },
+    "license": "LGPL-3.0",
+
+    "environment": "client",
+    "entrypoints": {
+        "client": [
+            "com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod"
+        ],
+        "modmenu": [
+            "com.bvengo.simpleshulkerpreview.ModMenuIntegration"
+        ]
+    },
+    "mixins": [
+        "simpleshulkerpreview.mixins.json"
+    ],
+    "depends": {
+        "fabricloader": ">=0.14.9",
+        "minecraft": "~1.19"
+    },
+    "recommends": {
+        "modmenu": ">=4.0.0"
+    }
 }
