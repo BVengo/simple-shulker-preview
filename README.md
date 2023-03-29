@@ -38,12 +38,5 @@ implement configs (there should be no need to download it yourself). I would rec
 
 Please keep in mind that, although Simple Shulker Preview may be available for certain versions, that doesn't always mean that ModMenu will be too. If you are desperate to edit the configs, they are stored in configs/simpleshulkerpreview.json.
 
-## Compiling
-1. Clone the repository and open it in a terminal or IDE
-2. Run `./gradlew build`
-3. Find the built jar file in build/libs/
-
-## Installing
-1. Make sure fabric is installed and setup. Download and installation instructions can be found at https://fabricmc.net/
-2. Compile or download the mod jar file for Simple Shulker Preview
-3. Move the jar file into your minecraft mods folder (generated the first time you run the fabric version of minecraft)
+## Contributing
+Contributions (especially when updating) are welcome! I'm quite busy and so can't always update the mod within a reasonable timeframe of the latest minecraft updates.
