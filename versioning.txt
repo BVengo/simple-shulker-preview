@@ -1,4 +1,26 @@
-1.19.x
+1.19.4
+------
+gradle.properties:
+    cloth_version=10.0.96
+    modmenu_version=6.1.0-rc.4
+
+    minecraft_version=1.19.4
+    yarn_mappings=1.19.4+build.2
+    loader_version=0.14.19
+
+    #Fabric api
+    fabric_version=0.78.0+1.19.4
+
+fabric.mod.json:
+    "depends": {
+        "fabricloader": ">=0.14.9",
+        "minecraft": ">=1.19.4"
+    },
+    "recommends": {
+        "modmenu": "6.1.0-rc.4"
+    }
+
+1.19 - 1.19.3
 -------
 gradle.properties:
     cloth_version=8.0.75
