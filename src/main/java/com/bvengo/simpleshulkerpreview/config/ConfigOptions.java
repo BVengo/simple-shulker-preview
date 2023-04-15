@@ -114,11 +114,11 @@ public class ConfigOptions implements ConfigData {
     public enum DisplayOption {
         FIRST,
         LAST,
+        CYCLE_STACK,
         UNIQUE,
         MOST,
         LEAST,
-
-        RANDOM;
+        CYCLE_TYPE;
 
         @Override
         public String toString() {

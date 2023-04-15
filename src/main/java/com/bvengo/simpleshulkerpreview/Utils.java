@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 
+import javax.annotation.Nonnegative;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.BiPredicate;
@@ -63,6 +64,7 @@ public class Utils {
         switch (config.displayItem){
             case FIRST -> {return storedItems.getFirst();}
             case LAST -> {return storedItems.getLast();}
+            case CYCLE_STACK -> {return storedItems.get(getTime(config)%storedItems.size());}
             default -> {}
         }
 
@@ -92,13 +94,14 @@ public class Utils {
             case MOST  -> {return (storedItems.stream().reduce((a,b)->a.getCount()>b.getCount()?a:b)).get();}
             case LEAST -> {return (storedItems.stream().reduce((a,b)->a.getCount()<b.getCount()?a:b)).get();}
             case UNIQUE -> {return storedItems.size() == 1 ? storedItems.getFirst() : null;}
-            case RANDOM -> {
-                int time = config.changePreview ? (int) ((System.currentTimeMillis() >> 9) & 0x7fffffff) : 0; // changing every 512ms
-                return storedItems.get(time%storedItems.size());
-            }
+            case CYCLE_TYPE -> {return storedItems.get(getTime(config)%storedItems.size());}
         }
 
         return null;
+    }
+
+    private static @Nonnegative int getTime(ConfigOptions config){
+        return config.changePreview ? (int) ((System.currentTimeMillis() >> 9) & 0x7fffffff) : 0; // changing every 512ms
     }
 
     /**

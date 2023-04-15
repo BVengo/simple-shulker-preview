@@ -38,8 +38,9 @@
   "text.autoconfig.simpleshulkerpreview.option.selfHeld": "Also in first person hand",
   "config.simpleshulkerpreview.display_item.first": "First",
   "config.simpleshulkerpreview.display_item.last": "Last",
+  "config.simpleshulkerpreview.display_item.cycle_stack": "Cycle slots",
   "config.simpleshulkerpreview.display_item.unique": "Unique",
   "config.simpleshulkerpreview.display_item.most": "Most",
   "config.simpleshulkerpreview.display_item.least": "Least",
-  "config.simpleshulkerpreview.display_item.random": "Random"
+  "config.simpleshulkerpreview.display_item.cycle_type": "Cycle types"
 }
