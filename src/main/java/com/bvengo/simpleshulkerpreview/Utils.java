@@ -1,146 +1,139 @@
 package com.bvengo.simpleshulkerpreview;
 
 import com.bvengo.simpleshulkerpreview.config.ConfigOptions;
-import com.bvengo.simpleshulkerpreview.config.ConfigOptions.DisplayOption;
+import net.minecraft.block.ShulkerBoxBlock;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import javax.annotation.Nullable;
+import java.util.*;
+import java.util.function.BiPredicate;
 
 public class Utils {
-    public static boolean isObject(ItemStack stack, RegexGroup group) {
-        if(stack == null) return false;
-
-        Pattern pattern = Pattern.compile(group.regex);
-        Matcher matcher = pattern.matcher(stack.getTranslationKey());
-
-        return matcher.find();
-    }
 
     /**
      * Returns an item to display on a shulker box icon.
      *
-     * @param compound  An NBTCompound containing container data
-     * @param config The current config options for SimpleShulkerPreview
-     * @return An ItemStack for the display item, or null if there is none available
+     * @param compound An NBTCompound containing container data
+     * @param config   The current config options for SimpleShulkerPreview
+     * @return An ItemStack for the display item, or null if there is none matching the config or available
      */
-    public static ItemStack getDisplayItem(NbtCompound compound, ConfigOptions config) {
-        Map<String, Integer> storedItems = new HashMap<>();
-
-        compound = compound.getCompound("BlockEntityTag");
-        if(compound == null) return null; // Triggers on containers in the creative menu
-
-        List<ItemStack> itemStackList = flattenStackList(compound, config);
-
-        // Track both stack and item name. The name can be used in the map to count values,
-        // but the item stack itself is required for rendering the proper information (e.g. skull textures)
-        ItemStack displayItemStack = null;
-        String displayItemName = null;
-
-        for (ItemStack itemStack : itemStackList) {
-            String itemName = itemStack.getItem().getTranslationKey();
-
-            // Player heads
-            if (isObject(itemStack, RegexGroup.MINECRAFT_PLAYER_HEAD)) {
-                // Change skulls to be ID dependent instead of all being called "player_head"
-                if (config.supportCustomHeads) {
-                    itemName = getSkullName(itemStack);
-                } else {
-                    itemStack = new ItemStack(itemStack.getItem());
-                }
-            }
-
-            // Group enchantments
-            if (config.groupEnchantment && itemStack.hasEnchantments()) {
-                itemName += ".enchanted";
-            }
-
-            // Select item
-            int itemCount = itemStack.getCount();
-            storedItems.merge(itemName, itemCount, Integer::sum);
-
-            if (config.displayItem == DisplayOption.FIRST) return itemStack;
-
-            if ((displayItemName == null) ||
-                    (config.displayItem == DisplayOption.LAST) ||
-                    (config.displayItem == DisplayOption.MOST && storedItems.get(itemName) > storedItems.get(displayItemName)) ||
-                    (config.displayItem == DisplayOption.LEAST && storedItems.get(itemName) < storedItems.get(displayItemName))) {
-
-                displayItemStack = itemStack;
-                displayItemName = itemName;
-                continue;
-            }
-
-            if (config.displayItem == DisplayOption.UNIQUE && !itemName.equals(displayItemName)) return null;
+    public static @Nullable ItemStack getDisplayItem(NbtCompound compound, ConfigOptions config) {
+        // If enabled, enable adding items recursively from nested shulkers
+        LinkedList<ItemStack> storedItems = config.supportRecursiveShulkers ?
+                new LinkedList<>() {//region ...}
+                    public @Override boolean add(ItemStack itemStack) {
+                        // Add the nested shulker anyway
+                        super.add(itemStack);
+                        // If it's a shulker
+                        if (isNotAShulker(itemStack)) return true;
+                        // And it has items
+                        NbtCompound compound;
+                        NbtList nbtList;
+                        if ((compound = itemStack.getNbt()) == null
+                                || (compound = compound.getCompound("BlockEntityTag")) == null
+                                || (nbtList = compound.getList("Items", 10)) == null
+                        ) return true;
+                        // Get the amount of shulkers stacked in that stack
+                        int multiplier = config.supportStackedShulkers ? itemStack.getCount() : 1;
+                        // And add each item it contains, multiplied by the amount of shulkers in the stack
+                        for (int i = 0; i < nbtList.size(); ++i) {
+                            ItemStack containedItemStack = ItemStack.fromNbt(nbtList.getCompound(i));
+                            containedItemStack.setCount(containedItemStack.getCount() * multiplier);
+                            add(containedItemStack);
+                        }
+                        // Say that the list was modified
+                        return true;
+                    }
+                } //endregion
+                : new LinkedList<>();
+        // Start here
+        // If the shulker has items
+        NbtList nbtList;
+        if (       (compound = compound.getCompound("BlockEntityTag")) == null
+                || (nbtList = compound.getList("Items", 10)) == null
+        ) return null;
+        // Add each item it contains
+        for (int i = 0; i < nbtList.size(); ++i) storedItems.add(ItemStack.fromNbt(nbtList.getCompound(i)));
+        // If none, no overlay
+        if (storedItems.isEmpty()) return null;
+        // Check whether further work is required
+        switch (config.displayItem){
+            case FIRST -> {return storedItems.getFirst();}
+            case LAST -> {return storedItems.getLast();}
+            default -> {}
         }
 
-        return displayItemStack;
+        // Set up merging
+        final BiPredicate<ItemStack, ItemStack> shouldMerge = (a,b)-> {
+            // Define cases two stacks should merge in
+            if (config.groupEnchantment && a.hasEnchantments() && b.hasEnchantments()) return true;
+            //noinspection RedundantIfStatement
+            if (ItemStack.areItemsEqual(a, b) && (!config.compareNBT || ItemStack.areNbtEqual(a, b))) return true;
+            return false;
+        };
+        // Merge the counts of the stored items
+        for (var backIterator = storedItems.descendingIterator(); backIterator.hasNext();) {
+            ItemStack base = backIterator.next();
+            for (ItemStack dest : storedItems) {
+                if (dest == base) continue;
+                if (shouldMerge.test(base, dest)) {
+                    dest.setCount(dest.getCount() + base.getCount());
+                    backIterator.remove();
+                    break;
+                }
+            }
+        }
+        // Complete the options
+        if (storedItems.isEmpty())return null;
+        switch (config.displayItem){
+            case MOST  -> {return (storedItems.stream().reduce((a,b)->a.getCount()>b.getCount()?a:b)).get();}
+            case LEAST -> {return (storedItems.stream().reduce((a,b)->a.getCount()<b.getCount()?a:b)).get();}
+            case UNIQUE -> {return storedItems.size() == 1 ? storedItems.getFirst() : null;}
+            case RANDOM -> {
+                int time = config.changePreview ? (int) ((System.currentTimeMillis() >> 9) & 0x7fffffff) : 0; // changing every 512ms
+                return storedItems.get(time%storedItems.size());
+            }
+        }
+
+        return null;
     }
 
     /**
-     * Flattens container NBT data into a single ArrayList. This is for recursive shulker compatibility.
-     * @param compound A container's NbtCompound
-     * @param config The current config options for SimpleShulkerPreview
-     * @return A list of ItemStacks extracted from a container NbtCompound
+     * Returns whether a stack is not a shulker box.
+     *
+     * @param stack ItemStack being checked
+     * @return Whether the stack is not a shulker
      */
-     public static List<ItemStack> flattenStackList(NbtCompound compound, ConfigOptions config) {
-         List<ItemStack> itemStackList = new ArrayList<>();
-
-         NbtList nbtList = compound.getList("Items", 10);
-         if (nbtList == null) return itemStackList;
-
-         for (int i = 0; i < nbtList.size(); ++i) {
-             NbtCompound nbtCompound = nbtList.getCompound(i);
-             ItemStack itemStack = ItemStack.fromNbt(nbtCompound);
-
-             itemStackList.add(itemStack);
-
-             if (config.supportRecursiveShulkers && isObject(itemStack, RegexGroup.MINECRAFT_SHULKER)) {
-                 NbtCompound stackCompound = itemStack.getNbt();
-                 if (stackCompound == null) continue;
-
-                 stackCompound = stackCompound.getCompound("BlockEntityTag");
-                 if(stackCompound == null) continue; // Triggers on containers in the creative menu
-
-                 int multiplier = config.supportStackedShulkers ? itemStack.getCount() : 1;
-                 for (int j = 0; j < multiplier; j++) {
-                     itemStackList.addAll(flattenStackList(stackCompound, config));
-                 }
-             }
-         }
-
-         return itemStackList;
-     }
+    public static boolean isNotAShulker(ItemStack stack){
+        return !(stack.getItem() instanceof BlockItem item) || !(item.getBlock() instanceof ShulkerBoxBlock);
+    }
 
     /**
-     * Returns an item to display on a shulker box icon.
+     * Returns whether a shulker is completely filled with the same item.
      *
-     * @param itemStack  An ItemStack containing a minecraft player head
-     * @return A String indicating with the head ID. If missing, returns a default "minecraft.player_head".
+     * @param compound An NBTCompound containing container data
+     * @return Whether the shulker is considered full and not mixed by TMC
      */
-    private static String getSkullName(ItemStack itemStack) {
-        String name = itemStack.getItem().getTranslationKey();
-        if (!itemStack.hasNbt()) return name;
-
-        NbtCompound skullCompound = itemStack.getNbt();
-        if (skullCompound == null) return name;
-
-        skullCompound = itemStack.getNbt().getCompound("SkullOwner");
-        if (skullCompound == null) return name;
-
-        NbtElement skullIdElement = skullCompound.get("Id");
-        if (skullIdElement == null) return name;
-
-        name += skullIdElement.toString();
-
-        return name;
+    public static boolean isShulkerFull(NbtCompound compound){
+        // If the shulker has items
+        NbtList nbtList;
+        if (       (compound = compound.getCompound("BlockEntityTag")) == null
+                || (nbtList = compound.getList("Items", 10)) == null
+        ) return false;
+        // Chack that there are 27 stacks
+        if (nbtList.size() != 27) return false;
+        // Check that the first stack is full
+        ItemStack firstItemStack = ItemStack.fromNbt(nbtList.getCompound(0));
+        if (firstItemStack.getCount() != firstItemStack.getMaxCount()) return false;
+        // Check that all other stacks are the same as the first
+        // NbtCompound stackCompound = nbtList.getCompound(0);
+        for (int i = 1; i < nbtList.size(); ++i) {
+            // if (!stackCompound.equals(nbtList.getCompound(i))) return false; TODO faster check
+            if (!ItemStack.areEqual(firstItemStack, ItemStack.fromNbt(nbtList.getCompound(i)))) return false;
+        }
+        return true;
     }
 }

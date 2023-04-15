@@ -19,6 +19,12 @@ public class ConfigOptions implements ConfigData {
     @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
     public DisplayOption displayItem = DisplayOption.FIRST;
 
+    /**
+     * Whether to separate items with different NBT:
+     */
+    @ConfigEntry.Gui.Tooltip()
+    public boolean compareNBT = true;
+
     /** Treat enchanted items separately from un-enchanted items */
     @ConfigEntry.Gui.Tooltip()
     public boolean groupEnchantment = false;
@@ -43,22 +49,30 @@ public class ConfigOptions implements ConfigData {
     @ConfigEntry.BoundedDiscrete(min = 0, max = 16)
     public int scale = 10;
 
+    /** Randomize preview item if there are multiple options. */
+    @ConfigEntry.Gui.Tooltip()
+    public boolean changePreview = true;
+
+    /** Show shulker as count instead if full of one resource. */
+    @ConfigEntry.Gui.Tooltip()
+    public boolean shulkerCount = true;
+
+
+    /** Show items on shulkers in item frames */
+    //@ConfigEntry.Gui.Tooltip()
+    public boolean itemFrame = true;
+
+    /** Show items above shulkers on entities */
+    //@ConfigEntry.Gui.Tooltip()
+    public boolean entityHeld = true;
+
+    /** Show items above shulkers in your hands */
+    //@ConfigEntry.Gui.Tooltip()
+    public boolean selfHeld = false;
+
     /** Disables the mod. */
     @ConfigEntry.Gui.Tooltip()
     public boolean disableMod = false;
-
-    /**
-     * Custom head datapacks and mods, all use the same method. Tested with:
-     * - MicroCutting
-     * - HeadIndex
-     * - JustMobHeads
-     * - MoreMobHeads
-     * - Player Head Drops
-     * - All Mob Heads
-     */
-    @ConfigEntry.Category("compatibility")
-    @ConfigEntry.Gui.Tooltip()
-    public boolean supportCustomHeads = false;
 
     /**
      * Recursive and stacking shulkers. Tested with:
@@ -102,7 +116,9 @@ public class ConfigOptions implements ConfigData {
         LAST,
         UNIQUE,
         MOST,
-        LEAST;
+        LEAST,
+
+        RANDOM;
 
         @Override
         public String toString() {
