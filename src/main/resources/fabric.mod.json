@@ -1,7 +1,7 @@
 {
     "schemaVersion": 1,
     "id": "simpleshulkerpreview",
-    "version": "2.3.1",
+    "version": "2.4.0",
     "icon": "assets/simpleshulkerpreview/icon.png",
 
     "name": "Simple Shulker Preview",
@@ -33,6 +33,6 @@
         "minecraft": ">=1.19.4"
     },
     "recommends": {
-        "modmenu": "6.1.0-rc.4"
+        "modmenu": "6.2.2"
     }
 }

@@ -3,6 +3,7 @@ package com.bvengo.simpleshulkerpreview.mixin;
 import com.bvengo.simpleshulkerpreview.RegexGroup;
 import com.bvengo.simpleshulkerpreview.Utils;
 import com.bvengo.simpleshulkerpreview.config.ConfigOptions;
+import com.bvengo.simpleshulkerpreview.config.PositionOptions;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.render.item.ItemRenderer;
@@ -32,29 +33,29 @@ public abstract class ItemRendererMixin {
 	private void renderShulkerItemOverlay(MatrixStack matrices, TextRenderer renderer, ItemStack stack, int x, int y, @Nullable String countLabel, CallbackInfo info) {
 
 		ConfigOptions config = AutoConfig.getConfigHolder(ConfigOptions.class).getConfig();
-		if (config.disableMod) return;
-		if(!config.supportStackedShulkers && stack.getCount() != 1) return;
-		if(!Utils.isObject(stack, RegexGroup.MINECRAFT_SHULKER)) return;
 
-		NbtCompound compound = stack.getNbt();
-		if(compound == null) return; // Triggers on containers in the creative menu
+		if(!Utils.checkStackAllowed(stack)) return;
 
-		ItemStack displayItem = Utils.getDisplayItem(compound, config);
+		ItemStack displayItem = Utils.getDisplayItem(stack, config);
 		if(displayItem == null) return; // Triggers if configs don't allow displaying the items, or if it's empty
 
-		if(stack.getCount() == 1) {
-			// Normal icon location
-			smallScale = config.scale;
-			smallTranslateX = config.translateX;
-			smallTranslateY = config.translateY;
-			smallTranslateZ = config.translateZ * 10;
-		} else {
-			// Stackable shulkers are enabled, so change icon location to avoid item counter
-			smallScale = config.stackedScale;
-			smallTranslateX = config.stackedTranslateX;
-			smallTranslateY = config.stackedTranslateY;
-			smallTranslateZ = config.stackedTranslateZ * 10;
+		PositionOptions positionOptions;
+		// TODO: Turn position into a class, chuck all this into another function
+		if(Utils.isObject(stack, RegexGroup.MINECRAFT_BUNDLE)) {
+			positionOptions = config.positionOptionsBundle;
 		}
+		else if(Utils.isObject(stack, RegexGroup.MINECRAFT_SHULKER) && stack.getCount() > 1) {
+			positionOptions = config.positionOptionsStacked;
+		}
+		 else {
+			positionOptions = config.positionOptionsGeneral;
+		}
+
+		// Normal icon location
+		smallScale = positionOptions.scale;
+		smallTranslateX = positionOptions.translateX;
+		smallTranslateY = positionOptions.translateY;
+		smallTranslateZ = positionOptions.translateZ * 10;
 		
 		adjustSize = true;
 		renderGuiItemIcon(matrices, displayItem, x, y);
@@ -87,4 +88,3 @@ public abstract class ItemRendererMixin {
 		}
 	}
 }
-

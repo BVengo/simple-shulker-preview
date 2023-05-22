@@ -1,7 +1,8 @@
 package com.bvengo.simpleshulkerpreview;
 
 import com.bvengo.simpleshulkerpreview.config.ConfigOptions;
-import com.bvengo.simpleshulkerpreview.config.ConfigOptions.DisplayOption;
+import com.bvengo.simpleshulkerpreview.config.DisplayOption;
+import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
@@ -26,19 +27,55 @@ public class Utils {
     }
 
     /**
+     * Checks if an item meets the requirements for rendering the overlay, based on the selected configs.
+     *
+     * @param stack The inventory stack to render over (e.g. a shulkerbox)
+     * @return A boolean indicating if the overlay should be rendered.
+     */
+    public static boolean checkStackAllowed(ItemStack stack) {
+        ConfigOptions config = AutoConfig.getConfigHolder(ConfigOptions.class).getConfig();
+
+        if(config.disableMod) return false;
+        if(stack.getCount() > 1 && Utils.isObject(stack, RegexGroup.MINECRAFT_SHULKER)) return config.supportStackedShulkers;
+        if(Utils.isObject(stack, RegexGroup.MINECRAFT_BUNDLE)) return config.supportBundles;
+
+        return Utils.isObject(stack, RegexGroup.MINECRAFT_SHULKER);
+    }
+
+    /**
      * Returns an item to display on a shulker box icon.
      *
      * @param compound  An NBTCompound containing container data
      * @param config The current config options for SimpleShulkerPreview
      * @return An ItemStack for the display item, or null if there is none available
      */
-    public static ItemStack getDisplayItem(NbtCompound compound, ConfigOptions config) {
+    public static ItemStack getDisplayItem(ItemStack stack, ConfigOptions config) {
         Map<String, Integer> storedItems = new HashMap<>();
+        List<ItemStack> itemStackList = new ArrayList<>();
 
-        compound = compound.getCompound("BlockEntityTag");
+        NbtCompound compound = stack.getNbt();
         if(compound == null) return null; // Triggers on containers in the creative menu
 
-        List<ItemStack> itemStackList = flattenStackList(compound, config);
+        if(Utils.isObject(stack, RegexGroup.MINECRAFT_SHULKER)) {
+            compound = compound.getCompound("BlockEntityTag");
+            if(compound == null) return null; // Triggers on containers in the creative menu
+
+            itemStackList = flattenStackList(compound, config);
+        }
+        else if(Utils.isObject(stack, RegexGroup.MINECRAFT_BUNDLE)) {
+            // Bundles aren't a block. Get the items from the bundle's inventory and add them to the list.
+            NbtList bundleItems = compound.getList("Items", 10);
+            if(bundleItems == null) return null;
+
+            for(int i = 0; i < bundleItems.size(); i++) {
+                NbtCompound bundleItem = bundleItems.getCompound(i);
+                ItemStack itemStack = ItemStack.fromNbt(bundleItem);
+                itemStackList.add(itemStack);
+            }
+        }
+        else {
+            return null;
+        }
 
         // Track both stack and item name. The name can be used in the map to count values,
         // but the item stack itself is required for rendering the proper information (e.g. skull textures)
@@ -68,7 +105,7 @@ public class Utils {
             storedItems.merge(itemName, itemCount, Integer::sum);
 
             if (config.displayItem == DisplayOption.FIRST) return itemStack;
-
+                
             if ((displayItemName == null) ||
                     (config.displayItem == DisplayOption.LAST) ||
                     (config.displayItem == DisplayOption.MOST && storedItems.get(itemName) > storedItems.get(displayItemName)) ||
