@@ -29,8 +29,6 @@ dependencies {
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	modApi "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-//	implementation 'com.electronwill.night-config:json:3.6.5' // Night Config
-
 	// Tells Gradle to use cloth config
 	modImplementation "me.shedaniel.cloth:cloth-config-fabric:${project.cloth_version}", {
 		exclude module: 'fabric-api'
