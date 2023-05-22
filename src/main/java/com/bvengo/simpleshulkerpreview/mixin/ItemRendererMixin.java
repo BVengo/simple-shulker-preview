@@ -1,7 +1,6 @@
 package com.bvengo.simpleshulkerpreview.mixin;
 
 import com.bvengo.simpleshulkerpreview.RegexGroup;
-import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
 import com.bvengo.simpleshulkerpreview.Utils;
 import com.bvengo.simpleshulkerpreview.config.ConfigOptions;
 import me.shedaniel.autoconfig.AutoConfig;
