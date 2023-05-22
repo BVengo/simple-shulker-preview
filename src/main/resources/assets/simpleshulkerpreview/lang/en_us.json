@@ -38,7 +38,7 @@
 	"text.autoconfig.simpleshulkerpreview.option.positionOptionsStacked.translateZ.@Tooltip": "In/out offset. Use when other mods cover / are covered by this.",
 	"text.autoconfig.simpleshulkerpreview.option.positionOptionsStacked.scale": "Scale",
 	"text.autoconfig.simpleshulkerpreview.option.positionOptionsStacked.scale.@Tooltip": "Scale of the icon.",
-	"text.autoconfig.simpleshulkerpreview.option.supportBundles": "Support Pouches",
+	"text.autoconfig.simpleshulkerpreview.option.supportBundles": "Support Bundles",
 	"text.autoconfig.simpleshulkerpreview.option.supportBundles.@Tooltip": "Displays items inside bundles",
 	"text.autoconfig.simpleshulkerpreview.option.supportCustomHeads": "Support Custom Heads",
 	"text.autoconfig.simpleshulkerpreview.option.supportCustomHeads.@Tooltip": "Treats custom heads separately from the minecraft:player_head",
