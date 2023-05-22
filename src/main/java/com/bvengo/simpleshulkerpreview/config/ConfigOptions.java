@@ -21,14 +21,19 @@ public class ConfigOptions implements ConfigData {
     @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
     public DisplayOption displayItem = DisplayOption.FIRST;
 
-    /** Treat enchanted items separately from un-enchanted items */
-    @ConfigEntry.Gui.Tooltip()
-    public boolean groupEnchantment = false;
-
     /** x, y, z offsets and scale */
     @ConfigEntry.Gui.CollapsibleObject()
     @ConfigEntry.Gui.Tooltip()
     public PositionOptions positionOptionsGeneral = new PositionOptions(12, 12, 10, 10);
+
+    /** Stack size bounds */
+    @ConfigEntry.Gui.CollapsibleObject()
+    @ConfigEntry.Gui.Tooltip()
+    public StackSizeOptions stackSizeOptions = new StackSizeOptions();
+    
+    /** Treat enchanted items separately from un-enchanted items */
+    @ConfigEntry.Gui.Tooltip()
+    public boolean groupEnchantment = false;
 
     /** Disables the mod. */
     @ConfigEntry.Gui.Tooltip()

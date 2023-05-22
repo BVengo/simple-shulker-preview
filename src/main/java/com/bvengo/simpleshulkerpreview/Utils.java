@@ -76,11 +76,13 @@ public class Utils {
         else {
             return null;
         }
-
+        
         // Track both stack and item name. The name can be used in the map to count values,
         // but the item stack itself is required for rendering the proper information (e.g. skull textures)
         ItemStack displayItemStack = null;
         String displayItemName = null;
+
+        int itemThreshold = config.stackSizeOptions.minStackSize * config.stackSizeOptions.minStackCount;
 
         for (ItemStack itemStack : itemStackList) {
             String itemName = itemStack.getItem().getTranslationKey();
@@ -101,16 +103,20 @@ public class Utils {
             }
 
             // Select item
-            int itemCount = itemStack.getCount();
-            storedItems.merge(itemName, itemCount, Integer::sum);
+            storedItems.merge(itemName, itemStack.getCount(), Integer::sum);
+            int itemCount = storedItems.get(itemName);
 
-            if (config.displayItem == DisplayOption.FIRST) return itemStack;
-                
-            if ((displayItemName == null) ||
-                    (config.displayItem == DisplayOption.LAST) ||
-                    (config.displayItem == DisplayOption.MOST && storedItems.get(itemName) > storedItems.get(displayItemName)) ||
-                    (config.displayItem == DisplayOption.LEAST && storedItems.get(itemName) < storedItems.get(displayItemName))) {
-
+            if (config.displayItem == DisplayOption.FIRST) {
+                if(itemCount >= itemThreshold) {
+                    return itemStack;
+                }
+                continue;
+            }
+            
+            if (((displayItemName == null) || (config.displayItem == DisplayOption.LAST) || 
+                (config.displayItem == DisplayOption.MOST && storedItems.get(itemName) > storedItems.get(displayItemName)) ||
+                (config.displayItem == DisplayOption.LEAST && storedItems.get(itemName) < storedItems.get(displayItemName))) && 
+                (itemCount >= itemThreshold)) {
                 displayItemStack = itemStack;
                 displayItemName = itemName;
                 continue;
