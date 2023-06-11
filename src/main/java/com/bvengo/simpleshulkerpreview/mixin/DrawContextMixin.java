@@ -74,7 +74,7 @@ public abstract class DrawContextMixin {
 
     @ModifyArgs(method = "drawItem(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/world/World;Lnet/minecraft/item/ItemStack;IIII)V",
             at = @At(value = "INVOKE", target = "net/minecraft/client/util/math/MatrixStack.translate(FFF)V"))
-    private void injectedTranslateXY(Args args) {
+    private void injectedTranslateXYZ(Args args) {
         if(adjustSize) {
             args.set(0, (float)args.get(0) - 8.0F + smallTranslateX);
             args.set(1, (float)args.get(1) - 8.0F + smallTranslateY);
