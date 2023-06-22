@@ -4,10 +4,11 @@ import com.bvengo.simpleshulkerpreview.config.ConfigOptions;
 import com.bvengo.simpleshulkerpreview.config.DisplayOption;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.item.BundleItem;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.util.math.MathHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,6 +18,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Utils {
+    public static final int ITEM_BAR_COLOR = MathHelper.packRgb(0.4F, 0.4F, 1.0F);
+
     public static boolean isObject(ItemStack stack, RegexGroup group) {
         if(stack == null) return false;
 
@@ -45,7 +48,7 @@ public class Utils {
     /**
      * Returns an item to display on a shulker box icon.
      *
-     * @param compound  An NBTCompound containing container data
+     * @param stack  An ItemStack containing container data
      * @param config The current config options for SimpleShulkerPreview
      * @return An ItemStack for the display item, or null if there is none available
      */
@@ -185,5 +188,45 @@ public class Utils {
         name += skullIdElement.toString();
 
         return name;
+    }
+
+    /**
+     * Returns the ratio full that a container is.
+     * @param stack A container's NbtCompound
+     * @param config The current config options for SimpleShulkerPreview
+     * @return A float between 0 and 1 indicating how full the container is
+     */
+    public static float getFullness(ItemStack stack, ConfigOptions config) {
+        NbtCompound compound = stack.getNbt();
+        if(compound == null) return 0; // Triggers on containers in the creative menu
+
+        compound = compound.getCompound("BlockEntityTag");
+        if(compound == null) return 0; // Triggers on containers in the creative menu
+
+        NbtList nbtList = compound.getList("Items", 10);
+        if (nbtList == null) return 0; // No items in container
+
+        float sumFullness = 0; // Sum of 'fullness' level for each slot
+
+        for (int i = 0; i < nbtList.size(); ++i) {
+            NbtCompound nbtCompound = nbtList.getCompound(i);
+            ItemStack itemStack = ItemStack.fromNbt(nbtCompound);
+
+            // Reduce the maxItemCount if items can't stack to 64
+            int maxStackSize = itemStack.getItem().getMaxCount();
+            sumFullness += (float) itemStack.getCount() / (float) maxStackSize;
+
+            // Calculate the ratio of items in stacked containers
+            if (config.supportRecursiveShulkers && isObject(itemStack, RegexGroup.MINECRAFT_SHULKER)) {
+                // Can ignore stacked shulkers since their ratio multiplier gets cancelled out
+                sumFullness += getFullness(itemStack, config);
+            }
+
+            if (config.supportBundles && isObject(itemStack, RegexGroup.MINECRAFT_BUNDLE)) {
+                sumFullness += BundleItem.getAmountFilled(itemStack);
+            }
+        }
+
+        return sumFullness / 27f; // Total divided by number of shulker slots
     }
 }

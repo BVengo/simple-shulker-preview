@@ -7,6 +7,7 @@ import com.bvengo.simpleshulkerpreview.config.PositionOptions;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -18,6 +19,7 @@ import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 @Mixin(DrawContext.class)
 public abstract class DrawContextMixin {
 	@Shadow public abstract void drawItemWithoutEntity(ItemStack stack, int x, int y);
+	@Shadow public abstract void fill(RenderLayer layer, int x1, int x2, int y1, int y2, int color);
 
 	private int smallScale = 10;
 	private int smallTranslateX = 12;
@@ -35,29 +37,44 @@ public abstract class DrawContextMixin {
 		if(!Utils.checkStackAllowed(stack)) return;
 
 		ItemStack displayItem = Utils.getDisplayItem(stack, config);
-		if(displayItem == null) return; // Triggers if configs don't allow displaying the items, or if it's empty
+		if(displayItem != null) {
+			PositionOptions positionOptions;
+			// TODO: Turn position into a class, chuck all this into another function
+			if(Utils.isObject(stack, RegexGroup.MINECRAFT_BUNDLE)) {
+				positionOptions = config.positionOptionsBundle;
+			}
+			else if(Utils.isObject(stack, RegexGroup.MINECRAFT_SHULKER) && stack.getCount() > 1) {
+				positionOptions = config.positionOptionsStacked;
+			}
+			else {
+				positionOptions = config.positionOptionsGeneral;
+			}
 
-		PositionOptions positionOptions;
-		// TODO: Turn position into a class, chuck all this into another function
-		if(Utils.isObject(stack, RegexGroup.MINECRAFT_BUNDLE)) {
-			positionOptions = config.positionOptionsBundle;
-		}
-		else if(Utils.isObject(stack, RegexGroup.MINECRAFT_SHULKER) && stack.getCount() > 1) {
-			positionOptions = config.positionOptionsStacked;
-		}
-		 else {
-			positionOptions = config.positionOptionsGeneral;
+			// Normal icon location
+			smallScale = positionOptions.scale;
+			smallTranslateX = positionOptions.translateX;
+			smallTranslateY = positionOptions.translateY;
+			smallTranslateZ = positionOptions.translateZ * 10;
+
+			adjustSize = true;
+			this.drawItemWithoutEntity(displayItem, x, y);
+			adjustSize = false;
 		}
 
-		// Normal icon location
-		smallScale = positionOptions.scale;
-		smallTranslateX = positionOptions.translateX;
-		smallTranslateY = positionOptions.translateY;
-		smallTranslateZ = positionOptions.translateZ * 10;
-		
-		adjustSize = true;
-		drawItemWithoutEntity(displayItem, x, y);
-		adjustSize = false;
+		// Display itemBar for shulkers (bundles already have a very similar feature)
+		if(config.showFullness && Utils.isObject(stack, RegexGroup.MINECRAFT_SHULKER)) {
+			float fullness = Utils.getFullness(stack, config);
+
+			if(fullness > 0.0f) {
+				int step = (int)(13f * fullness);
+				int xPos = x + 2;
+				int yPos = y + 13;
+
+				// Display empty bar, then fill in the capacity on top
+				this.fill(RenderLayer.getGuiOverlay(), xPos, yPos, xPos + 13, yPos + 2, -16777216);
+				this.fill(RenderLayer.getGuiOverlay(), xPos, yPos, xPos + step, yPos + 1, Utils.ITEM_BAR_COLOR | -16777216);
+			}
+		}
 	}
 
 	@ModifyArgs(method = "drawItem(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/world/World;Lnet/minecraft/item/ItemStack;IIII)V",

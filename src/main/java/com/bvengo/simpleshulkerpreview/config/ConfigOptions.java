@@ -21,10 +21,14 @@ public class ConfigOptions implements ConfigData {
     @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
     public DisplayOption displayItem = DisplayOption.FIRST;
 
+    /** Show the fullness of the shulker box using a fullness bar. */
+    @ConfigEntry.Gui.Tooltip()
+    public boolean showFullness = true;
+
     /** x, y, z offsets and scale */
     @ConfigEntry.Gui.CollapsibleObject()
     @ConfigEntry.Gui.Tooltip()
-    public PositionOptions positionOptionsGeneral = new PositionOptions(12, 12, 10, 10);
+    public PositionOptions positionOptionsGeneral = new PositionOptions(12, 4, 10, 10);
 
     /** Stack size bounds */
     @ConfigEntry.Gui.CollapsibleObject()
