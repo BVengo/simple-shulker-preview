@@ -32,6 +32,7 @@ Settings for compatibility with other mod functionalities. All default false.
 | `Support Custom Heads`       | Displays the textures of custom player heads and treats them as individual items |
 | `Support Recursive Shulkers` | If shulkers are stored in shulkers, counts the items in them too. |
 | `Support Stacked Shulkers`   | Displays the preview even for shulkers that are stacked. Adds additional x, y, z offsets, and scale to prevent overlapping with the shulker count.                          |
+| `Support Bundles`            | Technically not a mod, but bundles are supported! |
 
 This mod comes with the [Cloth Config API](https://www.curseforge.com/minecraft/mc-mods/cloth-config) built in to 
 implement configs (there should be no need to download it yourself). I would recommend installing [ModMenu](https://www.curseforge.com/minecraft/mc-mods/modmenu) alongside it if you actually want to use them though, because I didn't want to create yet another config mapping for such a simple mod.
