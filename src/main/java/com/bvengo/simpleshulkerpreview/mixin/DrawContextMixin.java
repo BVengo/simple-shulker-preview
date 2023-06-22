@@ -6,10 +6,8 @@ import com.bvengo.simpleshulkerpreview.config.ConfigOptions;
 import com.bvengo.simpleshulkerpreview.config.PositionOptions;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.render.item.ItemRenderer;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -17,9 +15,9 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
-@Mixin(ItemRenderer.class)
-public abstract class ItemRendererMixin {
-	@Shadow public abstract void renderGuiItemIcon(ItemStack stack, int x, int y);
+@Mixin(DrawContext.class)
+public abstract class DrawContextMixin {
+	@Shadow public abstract void drawItemWithoutEntity(ItemStack stack, int x, int y);
 
 	private int smallScale = 10;
 	private int smallTranslateX = 12;
@@ -29,7 +27,7 @@ public abstract class ItemRendererMixin {
 	boolean adjustSize = false;
 
 	@Inject(at = @At(value = "INVOKE", target = "net/minecraft/item/ItemStack.isItemBarVisible()Z"),
-			method = "renderGuiItemOverlay(Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/item/ItemStack;IILjava/lang/String;)V")
+			method = "drawItemInSlot(Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/item/ItemStack;IILjava/lang/String;)V")
 	private void renderShulkerItemOverlay(TextRenderer renderer, ItemStack stack, int x, int y, @Nullable String countLabel, CallbackInfo info) {
 
 		ConfigOptions config = AutoConfig.getConfigHolder(ConfigOptions.class).getConfig();
@@ -58,28 +56,22 @@ public abstract class ItemRendererMixin {
 		smallTranslateZ = positionOptions.translateZ * 10;
 		
 		adjustSize = true;
-		renderGuiItemIcon(displayItem, x, y);
+		drawItemWithoutEntity(displayItem, x, y);
 		adjustSize = false;
 	}
 
-	@ModifyArg(method = "renderGuiItemModel(Lnet/minecraft/item/ItemStack;IILnet/minecraft/client/render/model/BakedModel;)V",
-		at = @At(value = "INVOKE", target = "net/minecraft/client/util/math/MatrixStack.translate(DDD)V", ordinal = 0),
-		index = 2)
-	private double injectedTranslateZ(double z) {
-		return adjustSize ? (z + smallTranslateZ) : z;
-	}
-
-	@ModifyArgs(method = "renderGuiItemModel(Lnet/minecraft/item/ItemStack;IILnet/minecraft/client/render/model/BakedModel;)V",
-		at = @At(value = "INVOKE", target = "net/minecraft/client/util/math/MatrixStack.translate(DDD)V", ordinal = 1))
-	private void injectedTranslateXY(Args args) {
+	@ModifyArgs(method = "drawItem(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/world/World;Lnet/minecraft/item/ItemStack;IIII)V",
+				at = @At(value = "INVOKE", target = "net/minecraft/client/util/math/MatrixStack.translate(FFF)V"))
+	private void injectedTranslateXYZ(Args args) {
 		if(adjustSize) {
-			args.set(0, (double)smallTranslateX);
-			args.set(1, (double)smallTranslateY);
+			args.set(0, (float)args.get(0) + (float)smallTranslateX - 8.0f);
+			args.set(1, (float)args.get(1) + (float)smallTranslateY - 8.0f);
+			args.set(2, 100.0f + (float)smallTranslateZ);
 		}
 	}
 
-	@ModifyArgs(method = "renderGuiItemModel(Lnet/minecraft/item/ItemStack;IILnet/minecraft/client/render/model/BakedModel;)V",
-		at = @At(value = "INVOKE", target = "net/minecraft/client/util/math/MatrixStack.scale(FFF)V", ordinal=1))
+	@ModifyArgs(method = "drawItem(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/world/World;Lnet/minecraft/item/ItemStack;IIII)V",
+			at = @At(value = "INVOKE", target = "net/minecraft/client/util/math/MatrixStack.scale(FFF)V"))
 	private void injectedScale(Args args) {
 		if(adjustSize) {
 			args.set(0, (float)smallScale);
