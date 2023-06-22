@@ -19,18 +19,18 @@ import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 @Mixin(ItemRenderer.class)
 public abstract class ItemRendererMixin {
-	@Shadow public abstract void renderGuiItemIcon(MatrixStack matrices, ItemStack stack, int x, int y);
+	@Shadow public abstract void renderGuiItemIcon(ItemStack stack, int x, int y);
 
-	private float smallScale = 10f;
-	private float smallTranslateX = 12f;
-	private float smallTranslateY = 12f;
-	private float smallTranslateZ = 10f;
+	private int smallScale = 10;
+	private int smallTranslateX = 12;
+	private int smallTranslateY = 12;
+	private int smallTranslateZ = 10;
 
 	boolean adjustSize = false;
 
 	@Inject(at = @At(value = "INVOKE", target = "net/minecraft/item/ItemStack.isItemBarVisible()Z"),
-			method = "renderGuiItemOverlay(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/item/ItemStack;IILjava/lang/String;)V")
-	private void renderShulkerItemOverlay(MatrixStack matrices, TextRenderer renderer, ItemStack stack, int x, int y, @Nullable String countLabel, CallbackInfo info) {
+			method = "renderGuiItemOverlay(Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/item/ItemStack;IILjava/lang/String;)V")
+	private void renderShulkerItemOverlay(TextRenderer renderer, ItemStack stack, int x, int y, @Nullable String countLabel, CallbackInfo info) {
 
 		ConfigOptions config = AutoConfig.getConfigHolder(ConfigOptions.class).getConfig();
 
@@ -58,33 +58,33 @@ public abstract class ItemRendererMixin {
 		smallTranslateZ = positionOptions.translateZ * 10;
 		
 		adjustSize = true;
-		renderGuiItemIcon(matrices, displayItem, x, y);
+		renderGuiItemIcon(displayItem, x, y);
 		adjustSize = false;
 	}
 
-	@ModifyArg(method = "renderGuiItemModel(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/item/ItemStack;IILnet/minecraft/client/render/model/BakedModel;)V",
-		at = @At(value = "INVOKE", target = "net/minecraft/client/util/math/MatrixStack.translate(FFF)V", ordinal = 0),
+	@ModifyArg(method = "renderGuiItemModel(Lnet/minecraft/item/ItemStack;IILnet/minecraft/client/render/model/BakedModel;)V",
+		at = @At(value = "INVOKE", target = "net/minecraft/client/util/math/MatrixStack.translate(DDD)V", ordinal = 0),
 		index = 2)
-	private float injectedTranslateZ(float z) {
+	private double injectedTranslateZ(double z) {
 		return adjustSize ? (z + smallTranslateZ) : z;
 	}
 
-	@ModifyArgs(method = "renderGuiItemModel(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/item/ItemStack;IILnet/minecraft/client/render/model/BakedModel;)V",
-		at = @At(value = "INVOKE", target = "net/minecraft/client/util/math/MatrixStack.translate(FFF)V", ordinal = 1))
+	@ModifyArgs(method = "renderGuiItemModel(Lnet/minecraft/item/ItemStack;IILnet/minecraft/client/render/model/BakedModel;)V",
+		at = @At(value = "INVOKE", target = "net/minecraft/client/util/math/MatrixStack.translate(DDD)V", ordinal = 1))
 	private void injectedTranslateXY(Args args) {
 		if(adjustSize) {
-			args.set(0, smallTranslateX);
-			args.set(1, smallTranslateY);
+			args.set(0, (double)smallTranslateX);
+			args.set(1, (double)smallTranslateY);
 		}
 	}
 
-	@ModifyArgs(method = "renderGuiItemModel(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/item/ItemStack;IILnet/minecraft/client/render/model/BakedModel;)V",
-		at = @At(value = "INVOKE", target = "net/minecraft/client/util/math/MatrixStack.scale(FFF)V"))
+	@ModifyArgs(method = "renderGuiItemModel(Lnet/minecraft/item/ItemStack;IILnet/minecraft/client/render/model/BakedModel;)V",
+		at = @At(value = "INVOKE", target = "net/minecraft/client/util/math/MatrixStack.scale(FFF)V", ordinal=1))
 	private void injectedScale(Args args) {
 		if(adjustSize) {
-			args.set(0, smallScale);
-			args.set(1, smallScale);
-			args.set(2, smallScale);
+			args.set(0, (float)smallScale);
+			args.set(1, (float)smallScale);
+			args.set(2, (float)smallScale);
 		}
 	}
 }
