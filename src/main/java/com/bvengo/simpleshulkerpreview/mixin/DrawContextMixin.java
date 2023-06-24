@@ -1,9 +1,10 @@
 package com.bvengo.simpleshulkerpreview.mixin;
 
 import com.bvengo.simpleshulkerpreview.RegexGroup;
+import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
 import com.bvengo.simpleshulkerpreview.Utils;
 import com.bvengo.simpleshulkerpreview.config.ConfigOptions;
-import com.bvengo.simpleshulkerpreview.config.PositionOptions;
+import com.bvengo.simpleshulkerpreview.config.IconPositionOptions;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -38,23 +39,23 @@ public abstract class DrawContextMixin {
 
 		ItemStack displayItem = Utils.getDisplayItem(stack, config);
 		if(displayItem != null) {
-			PositionOptions positionOptions;
+			IconPositionOptions iconPositionOptions;
 			// TODO: Turn position into a class, chuck all this into another function
 			if(Utils.isObject(stack, RegexGroup.MINECRAFT_BUNDLE)) {
-				positionOptions = config.positionOptionsBundle;
+				iconPositionOptions = config.iconPositionOptionsBundle;
 			}
 			else if(Utils.isObject(stack, RegexGroup.MINECRAFT_SHULKER) && stack.getCount() > 1) {
-				positionOptions = config.positionOptionsStacked;
+				iconPositionOptions = config.iconPositionOptionsStacked;
 			}
 			else {
-				positionOptions = config.positionOptionsGeneral;
+				iconPositionOptions = config.iconPositionOptionsGeneral;
 			}
 
 			// Normal icon location
-			smallScale = positionOptions.scale;
-			smallTranslateX = positionOptions.translateX;
-			smallTranslateY = positionOptions.translateY;
-			smallTranslateZ = positionOptions.translateZ * 10;
+			smallScale = iconPositionOptions.scale;
+			smallTranslateX = iconPositionOptions.translateX;
+			smallTranslateY = iconPositionOptions.translateY;
+			smallTranslateZ = iconPositionOptions.translateZ * 10;
 
 			adjustSize = true;
 			this.drawItemWithoutEntity(displayItem, x, y);
@@ -62,17 +63,66 @@ public abstract class DrawContextMixin {
 		}
 
 		// Display itemBar for shulkers (bundles already have a very similar feature)
-		if(config.showFullness && Utils.isObject(stack, RegexGroup.MINECRAFT_SHULKER)) {
-			float fullness = Utils.getFullness(stack, config);
+		if(config.showCapacity && Utils.isObject(stack, RegexGroup.MINECRAFT_SHULKER)) {
+			float capacity = Utils.getCapacity(stack, config);
 
-			if(fullness > 0.0f) {
-				int step = (int)(13f * fullness);
-				int xPos = x + 2;
-				int yPos = y + 13;
+			if(capacity > 0.0f && (!config.capacityBarOptions.hideWhenFull || capacity < 1.0f)) {
+				int step = (int)(config.capacityBarOptions.length * capacity);
+				int shadowHeight = config.capacityBarOptions.displayShadow ? 1 : 0;
+
+				int xBackgroundStart = x + config.capacityBarOptions.translateX;
+				int yBackgroundStart = y + config.capacityBarOptions.translateY;
+				int xBackgroundEnd;
+				int yBackgroundEnd;
+				int xCapacityStart;
+				int yCapacityStart;
+				int xCapacityEnd;
+				int yCapacityEnd;
+
+				switch(config.capacityBarOptions.direction) {
+					case LEFT_TO_RIGHT -> {
+						xBackgroundEnd = xBackgroundStart + config.capacityBarOptions.length;
+						yBackgroundEnd = yBackgroundStart + config.capacityBarOptions.width + shadowHeight;
+						xCapacityStart = xBackgroundStart;
+						yCapacityStart = yBackgroundStart;
+						xCapacityEnd = xBackgroundStart + step;
+						yCapacityEnd = yCapacityStart + config.capacityBarOptions.width;
+					}
+					case RIGHT_TO_LEFT -> {
+						xBackgroundEnd = xBackgroundStart + config.capacityBarOptions.length;
+						yBackgroundEnd = yBackgroundStart + config.capacityBarOptions.width  + shadowHeight;
+						xCapacityStart = xBackgroundEnd - step;
+						yCapacityStart = yBackgroundStart;
+						xCapacityEnd = xBackgroundEnd;
+						yCapacityEnd = yCapacityStart + config.capacityBarOptions.width;
+					}
+					case TOP_TO_BOTTOM -> {
+						xBackgroundEnd = xBackgroundStart + config.capacityBarOptions.width;
+						yBackgroundEnd = yBackgroundStart + config.capacityBarOptions.length;
+						xCapacityStart = xBackgroundStart;
+						yCapacityStart = yBackgroundStart;
+						xCapacityEnd = xBackgroundEnd;
+						yCapacityEnd = yCapacityStart + step;
+					}
+					case BOTTOM_TO_TOP -> {
+						xBackgroundEnd = xBackgroundStart + config.capacityBarOptions.width;
+						yBackgroundEnd = yBackgroundStart + config.capacityBarOptions.length;
+						xCapacityStart = xBackgroundStart;
+						yCapacityStart = yBackgroundEnd - step;
+						xCapacityEnd = xBackgroundEnd;
+						yCapacityEnd = yBackgroundEnd;
+					}
+					default -> {
+						String err = "Unexpected value for capacity direction: " + config.capacityBarOptions.direction;
+
+						SimpleShulkerPreviewMod.LOGGER.error(err);
+						throw new IllegalStateException(err);
+					}
+				}
 
 				// Display empty bar, then fill in the capacity on top
-				this.fill(RenderLayer.getGuiOverlay(), xPos, yPos, xPos + 13, yPos + 2, -16777216);
-				this.fill(RenderLayer.getGuiOverlay(), xPos, yPos, xPos + step, yPos + 1, Utils.ITEM_BAR_COLOR | -16777216);
+				this.fill(RenderLayer.getGuiOverlay(), xBackgroundStart, yBackgroundStart, xBackgroundEnd, yBackgroundEnd, -16777216);
+				this.fill(RenderLayer.getGuiOverlay(), xCapacityStart, yCapacityStart, xCapacityEnd, yCapacityEnd, Utils.ITEM_BAR_COLOR | -16777216);
 			}
 		}
 	}
