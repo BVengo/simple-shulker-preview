@@ -1,5 +1,6 @@
 package com.bvengo.simpleshulkerpreview.mixin;
 
+import com.bvengo.simpleshulkerpreview.CapacityBarPositioner;
 import com.bvengo.simpleshulkerpreview.RegexGroup;
 import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
 import com.bvengo.simpleshulkerpreview.Utils;
@@ -66,68 +67,29 @@ public abstract class DrawContextMixin {
 		if(config.showCapacity && Utils.isObject(stack, RegexGroup.MINECRAFT_SHULKER)) {
 			float capacity = Utils.getCapacity(stack, config);
 
-			boolean shouldDisplayCapacity = (
-				(!config.capacityBarOptions.hideWhenEmpty || capacity > 0.0f) &&
-				(!config.capacityBarOptions.hideWhenFull || capacity < 1.0f)
-			);
+			CapacityBarPositioner positioner = new CapacityBarPositioner(config, capacity);
 
-			if(shouldDisplayCapacity) {
-				int step = (int)(config.capacityBarOptions.length * capacity);
-				int shadowHeight = config.capacityBarOptions.displayShadow ? 1 : 0;
-
-				int xBackgroundStart = x + config.capacityBarOptions.translateX;
-				int yBackgroundStart = y + config.capacityBarOptions.translateY;
-				int xBackgroundEnd;
-				int yBackgroundEnd;
-				int xCapacityStart;
-				int yCapacityStart;
-				int xCapacityEnd;
-				int yCapacityEnd;
-
-				switch(config.capacityBarOptions.direction) {
-					case LEFT_TO_RIGHT -> {
-						xBackgroundEnd = xBackgroundStart + config.capacityBarOptions.length;
-						yBackgroundEnd = yBackgroundStart + config.capacityBarOptions.width + shadowHeight;
-						xCapacityStart = xBackgroundStart;
-						yCapacityStart = yBackgroundStart;
-						xCapacityEnd = xBackgroundStart + step;
-						yCapacityEnd = yCapacityStart + config.capacityBarOptions.width;
-					}
-					case RIGHT_TO_LEFT -> {
-						xBackgroundEnd = xBackgroundStart + config.capacityBarOptions.length;
-						yBackgroundEnd = yBackgroundStart + config.capacityBarOptions.width  + shadowHeight;
-						xCapacityStart = xBackgroundEnd - step;
-						yCapacityStart = yBackgroundStart;
-						xCapacityEnd = xBackgroundEnd;
-						yCapacityEnd = yCapacityStart + config.capacityBarOptions.width;
-					}
-					case TOP_TO_BOTTOM -> {
-						xBackgroundEnd = xBackgroundStart + config.capacityBarOptions.width;
-						yBackgroundEnd = yBackgroundStart + config.capacityBarOptions.length;
-						xCapacityStart = xBackgroundStart;
-						yCapacityStart = yBackgroundStart;
-						xCapacityEnd = xBackgroundEnd;
-						yCapacityEnd = yCapacityStart + step;
-					}
-					case BOTTOM_TO_TOP -> {
-						xBackgroundEnd = xBackgroundStart + config.capacityBarOptions.width;
-						yBackgroundEnd = yBackgroundStart + config.capacityBarOptions.length;
-						xCapacityStart = xBackgroundStart;
-						yCapacityStart = yBackgroundEnd - step;
-						xCapacityEnd = xBackgroundEnd;
-						yCapacityEnd = yBackgroundEnd;
-					}
-					default -> {
-						String err = "Unexpected value for capacity direction: " + config.capacityBarOptions.direction;
-
-						SimpleShulkerPreviewMod.LOGGER.error(err);
-						throw new IllegalStateException(err);
-					}
-				}
+			if(positioner.canDisplay()) {
+				positioner.calculatePositions(x, y);
 
 				// Display empty bar, then fill in the capacity on top
-				this.fill(RenderLayer.getGuiOverlay(), xBackgroundStart, yBackgroundStart, xBackgroundEnd, yBackgroundEnd, -16777216);
-				this.fill(RenderLayer.getGuiOverlay(), xCapacityStart, yCapacityStart, xCapacityEnd, yCapacityEnd, Utils.ITEM_BAR_COLOR | -16777216);
+				this.fill(
+					RenderLayer.getGuiOverlay(),
+					positioner.xBackgroundStart,
+					positioner.yBackgroundStart,
+					positioner.xBackgroundEnd,
+					positioner.yBackgroundEnd,
+					-16777216
+				);
+
+				this.fill(
+					RenderLayer.getGuiOverlay(),
+					positioner.xCapacityStart,
+					positioner.yCapacityStart,
+					positioner.xCapacityEnd,
+					positioner.yCapacityEnd,
+					Utils.ITEM_BAR_COLOR | -16777216
+				);
 			}
 		}
 	}
