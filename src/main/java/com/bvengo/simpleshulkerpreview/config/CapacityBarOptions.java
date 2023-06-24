@@ -27,5 +27,8 @@ public class CapacityBarOptions {
     public boolean displayShadow = true;
 
     @ConfigEntry.Gui.Tooltip()
+    public boolean hideWhenEmpty = true;
+
+    @ConfigEntry.Gui.Tooltip()
     public boolean hideWhenFull = false;
 }

@@ -66,7 +66,12 @@ public abstract class DrawContextMixin {
 		if(config.showCapacity && Utils.isObject(stack, RegexGroup.MINECRAFT_SHULKER)) {
 			float capacity = Utils.getCapacity(stack, config);
 
-			if(capacity > 0.0f && (!config.capacityBarOptions.hideWhenFull || capacity < 1.0f)) {
+			boolean shouldDisplayCapacity = (
+				(!config.capacityBarOptions.hideWhenEmpty || capacity > 0.0f) &&
+				(!config.capacityBarOptions.hideWhenFull || capacity < 1.0f)
+			);
+
+			if(shouldDisplayCapacity) {
 				int step = (int)(config.capacityBarOptions.length * capacity);
 				int shadowHeight = config.capacityBarOptions.displayShadow ? 1 : 0;
 

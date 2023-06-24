@@ -30,6 +30,8 @@
 	"text.autoconfig.simpleshulkerpreview.option.capacityBarOptions.width.@Tooltip": "Width of the capacity bar, perpendicular to the direction it will fill up.",
 	"text.autoconfig.simpleshulkerpreview.option.capacityBarOptions.displayShadow": "Display Shadow",
 	"text.autoconfig.simpleshulkerpreview.option.capacityBarOptions.displayShadow.@Tooltip": "Display a shadow below the capacity bar when laying horizontally.",
+	"text.autoconfig.simpleshulkerpreview.option.capacityBarOptions.hideWhenEmpty": "Hide When Empty",
+	"text.autoconfig.simpleshulkerpreview.option.capacityBarOptions.hideWhenEmpty.@Tooltip": "Hide the capacity bar when the shulker is empty.",
 	"text.autoconfig.simpleshulkerpreview.option.capacityBarOptions.hideWhenFull": "Hide When Full",
 	"text.autoconfig.simpleshulkerpreview.option.capacityBarOptions.hideWhenFull.@Tooltip": "Hide the capacity bar when the shulker is full.",
 	"text.autoconfig.simpleshulkerpreview.option.iconPositionOptionsGeneral": "Icon Position",
