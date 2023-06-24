@@ -60,12 +60,12 @@ public class CapacityBarRenderer extends OverlayRenderer {
             sumCapacity += (float) itemStack.getCount() / (float) maxStackSize;
 
             // Calculate the ratio of items in stacked containers
-            if (config.supportRecursiveShulkers && isObject(itemStack, RegexGroup.MINECRAFT_SHULKER)) {
+            if (config.supportRecursiveShulkers && Utils.isObject(itemStack, RegexGroup.MINECRAFT_SHULKER)) {
                 // Can ignore stacked shulkers since their ratio multiplier gets cancelled out
                 sumCapacity += getCapacity(itemStack, config);
             }
 
-            if (config.supportBundles && isObject(itemStack, RegexGroup.MINECRAFT_BUNDLE)) {
+            if (config.supportBundles && Utils.isObject(itemStack, RegexGroup.MINECRAFT_BUNDLE)) {
                 sumCapacity += BundleItem.getAmountFilled(itemStack);
             }
         }
