@@ -7,37 +7,42 @@ Simple Shulker Preview is a small fabric mod that displays an icon indicating th
 
 For other download pages, please see [CurseForge](https://www.curseforge.com/minecraft/mc-mods/simple-shulker-preview) or [Modrinth](https://modrinth.com/mod/simple-shulker-preview).
 
+## Dependencies
+This mod requires [ModMenu](https://www.curseforge.com/minecraft/mc-mods/modmenu) to adjust the configs. The [Cloth Config API](https://www.curseforge.com/minecraft/mc-mods/cloth-config) mod is embedded - you don't need to download it yourself. 
+
 ## Configs
-| **Option**          | **Description**                                                               | **Default** |
-|---------------------|-------------------------------------------------------------------------------|-------------|
-| `Display Item`      | Sets which item in the shulker should be displayed.                           | _First_     |
-| `Group Enchantments`| Group enchantments to treat enchanted / un-enchanted items separately         | _False_     |
-| `X Offset`          | The horizontal offset of the icon, from left to right.                        | 12.0        |
-| `Y Offset`          | The vertical offset of the icon, from top to bottom.                          | 12.0        |
-| `Z Offset`          | In/out offset. Use when other mods cover / are covered by this.               | 100.0       |
-| `Scale`             | Size of the icon.                                                             | 10.0        |
-| `Disable Mod`       | Disables the mod so that overlay icons are not displayed.                     | _False_     |
+I won't go through all the configs, since they've increased over time. A brief overview is as follows:
 
-**Display Item Options:**
-- First - the first item in the shulker box
-- Last - the last item in the shulker box
-- Unique - only displays an icon if there is exactly one type of item in the shulker box. Enchantments / names / durabilities are ignored.
-- Most - the item type with the most items. This is based on stack size, not stack count. e.g. 64 stone (stacked) and 2 diamond swords (unstacked) will show the stone.
-- Least - the item type with the least items. This is based on stack size, not stack count. e.g. 64 stone (stacked) and 2 diamond swords (unstacked) will show the swords.
+| **Option**          | **Description**                                                                      |
+|---------------------|--------------------------------------------------------------------------------------|
+| `Display Item`      | Decides which item in the shulker should be displayed based on position or quantity. |
+| `Icon Positions`    | Modify the x and y offsets of the icon, as well as scale.                            |
+| `Capacity Bar`      | Display a capacity bar, indicating how full the shulker box is                       |
+| `Bar Position`      | Set the position, size, and _direction_ the capacity bar is drawn.                   |
+| `Stack Limits`      | Set minimum limits for the number of items required to display an icon               |
+| `Enable ...`        | Option to enable additional features, such as bundles or recursive shulker support   |
+| `Disable Mod`       | Disables the mod so that overlay icons are not displayed.                            |
 
-## Mod Compatibility Configs
-Settings for compatibility with other mod functionalities. All default false.
-| **Option**                   | **Description**                                                                  |
-|------------------------------|----------------------------------------------------------------------------------|
-| `Support Custom Heads`       | Displays the textures of custom player heads and treats them as individual items |
-| `Support Recursive Shulkers` | If shulkers are stored in shulkers, counts the items in them too. |
-| `Support Stacked Shulkers`   | Displays the preview even for shulkers that are stacked. Adds additional x, y, z offsets, and scale to prevent overlapping with the shulker count.                          |
-| `Support Bundles`            | Technically not a mod, but bundles are supported! |
+## Mod Compatibility
+The following features have been tested for compatibility and work with this mod. Mods with these functionalities should also work, however I can't promise anything.
+- Bundles (can show the icon on bundles too)
+- Custom heads (treats them as individual items rather than a single player head)
+- Recursive shulkers (shulkers stored in shulkers)
+- Stacked shulkers (full / empty shulkers that are stacked together)
+- Variable shulkers sizes
 
-This mod comes with the [Cloth Config API](https://www.curseforge.com/minecraft/mc-mods/cloth-config) built in to 
-implement configs (there should be no need to download it yourself). I would recommend installing [ModMenu](https://www.curseforge.com/minecraft/mc-mods/modmenu) alongside it if you actually want to use them though, because I didn't want to create yet another config mapping for such a simple mod.
-
-Please keep in mind that, although Simple Shulker Preview may be available for certain versions, that doesn't always mean that ModMenu will be too. If you are desperate to edit the configs, they are stored in configs/simpleshulkerpreview.json.
+The following mods were used in testing:
+| **Mod** | **Feature** |
+|---------|-------------|
+| Carpet Essential Addons | Stacked shulkers |
+| Reinforced Shulker Boxes Mod | Variable sized shulkers |
+| MicroCutting | Custom Heads |
+| HeadIndex | Custom Heads |
+| JustMobHeads | Custom Heads |
+| MoreMobHeads | Custom Heads |
+| Player Head Drops | Custom Heads |
+| All Mob Heads | Custom Heads |
+| Forgotten... Need a new mod. | Recursive shulkers |
 
 ## Contributing
-Contributions (especially when updating) are welcome! I'm quite busy and so can't always update the mod within a reasonable timeframe of the latest minecraft updates.
+Contributions and suggestions are always welcome! Please limit all issues to only one feature at a time - feel free to open multiple at once if you have many ideas. Similarly, please limit pull requests to a single feature at a time and try to follow the existing code style.
