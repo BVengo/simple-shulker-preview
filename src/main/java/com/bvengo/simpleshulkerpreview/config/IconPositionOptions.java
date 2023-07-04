@@ -2,7 +2,7 @@ package com.bvengo.simpleshulkerpreview.config;
 
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
 
-public class PositionOptions {
+public class IconPositionOptions {
     @ConfigEntry.Gui.Tooltip()
     @ConfigEntry.BoundedDiscrete(min = 0, max = 16)
     public int translateX;
@@ -19,7 +19,7 @@ public class PositionOptions {
     @ConfigEntry.BoundedDiscrete(min = 0, max = 16)
     public int scale;
 
-    public PositionOptions(int x, int y, int z, int scale) {
+    public IconPositionOptions(int x, int y, int z, int scale) {
         this.translateX = x;
         this.translateY = y;
         this.translateZ = z;
