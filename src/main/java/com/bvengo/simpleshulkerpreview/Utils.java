@@ -1,19 +1,15 @@
 package com.bvengo.simpleshulkerpreview;
 
 import com.bvengo.simpleshulkerpreview.config.ConfigOptions;
-import com.bvengo.simpleshulkerpreview.config.DisplayOption;
+import com.bvengo.simpleshulkerpreview.config.IconDisplayOption;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.item.ItemStack;
-import net.minecraft.block.BlockWithEntity;
 import net.minecraft.block.ShulkerBoxBlock;
 import net.minecraft.item.BlockItem;
-import net.minecraft.item.BundleItem;
+import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +18,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Utils {
-    public static final int ITEM_BAR_COLOR = MathHelper.packRgb(0.4F, 0.4F, 1.0F);
+
 
     public static boolean isObject(ItemStack stack, RegexGroup group) {
         if(stack == null) return false;
@@ -40,7 +36,7 @@ public class Utils {
      * @return A boolean indicating if the stack is a shulkerbox
      */
     public static boolean isShulkerStack(ItemStack stack) {
-        var item = stack.getItem();
+        Item item = stack.getItem();
         return item instanceof BlockItem && ((BlockItem) item).getBlock() instanceof ShulkerBoxBlock;
     }
 
@@ -108,11 +104,7 @@ public class Utils {
             // Player heads
             if (isObject(itemStack, RegexGroup.MINECRAFT_PLAYER_HEAD)) {
                 // Change skulls to be ID dependent instead of all being called "player_head"
-                if (config.supportCustomHeads) {
-                    itemName = getSkullName(itemStack);
-                } else {
-                    itemStack = new ItemStack(itemStack.getItem());
-                }
+                itemName = getSkullName(itemStack);
             }
 
             // Group enchantments
@@ -124,23 +116,23 @@ public class Utils {
             storedItems.merge(itemName, itemStack.getCount(), Integer::sum);
             int itemCount = storedItems.get(itemName);
 
-            if (config.displayItem == DisplayOption.FIRST) {
+            if (config.displayIcon == IconDisplayOption.FIRST) {
                 if(itemCount >= itemThreshold) {
                     return itemStack;
                 }
                 continue;
             }
             
-            if (((displayItemName == null) || (config.displayItem == DisplayOption.LAST) || 
-                (config.displayItem == DisplayOption.MOST && storedItems.get(itemName) > storedItems.get(displayItemName)) ||
-                (config.displayItem == DisplayOption.LEAST && storedItems.get(itemName) < storedItems.get(displayItemName))) && 
+            if (((displayItemName == null) || (config.displayIcon == IconDisplayOption.LAST) ||
+                (config.displayIcon == IconDisplayOption.MOST && storedItems.get(itemName) > storedItems.get(displayItemName)) ||
+                (config.displayIcon == IconDisplayOption.LEAST && storedItems.get(itemName) < storedItems.get(displayItemName))) &&
                 (itemCount >= itemThreshold)) {
                 displayItemStack = itemStack;
                 displayItemName = itemName;
                 continue;
             }
 
-            if (config.displayItem == DisplayOption.UNIQUE && !itemName.equals(displayItemName)) return null;
+            if (config.displayIcon == IconDisplayOption.UNIQUE && !itemName.equals(displayItemName)) return null;
         }
 
         return displayItemStack;
@@ -203,53 +195,5 @@ public class Utils {
         name += skullIdElement.toString();
 
         return name;
-    }
-
-    /**
-     * Returns the ratio full that a container is.
-     * @param stack A container's NbtCompound
-     * @param config The current config options for SimpleShulkerPreview
-     * @return A float between 0 and 1 indicating how full the container is
-     */
-    public static float getFullness(ItemStack stack, ConfigOptions config) {
-        NbtCompound compound = stack.getNbt();
-        if(compound == null) return 0; // Triggers on containers in the creative menu
-
-        compound = compound.getCompound("BlockEntityTag");
-        if(compound == null) return 0; // Triggers on containers in the creative menu
-
-        NbtList nbtList = compound.getList("Items", 10);
-        if (nbtList == null) return 0; // No items in container
-
-        float sumFullness = 0; // Sum of 'fullness' level for each slot
-
-        for (int i = 0; i < nbtList.size(); ++i) {
-            NbtCompound nbtCompound = nbtList.getCompound(i);
-            ItemStack itemStack = ItemStack.fromNbt(nbtCompound);
-
-            // Reduce the maxItemCount if items can't stack to 64
-            int maxStackSize = itemStack.getItem().getMaxCount();
-            sumFullness += (float) itemStack.getCount() / (float) maxStackSize;
-
-            // Calculate the ratio of items in stacked containers
-            if (config.supportRecursiveShulkers && Utils.isShulkerStack(stack)) {
-                // Can ignore stacked shulkers since their ratio multiplier gets cancelled out
-                sumFullness += getFullness(itemStack, config);
-            }
-
-            if (config.supportBundles && isObject(itemStack, RegexGroup.MINECRAFT_BUNDLE)) {
-                sumFullness += BundleItem.getAmountFilled(itemStack);
-            }
-        }
-
-        float total = 27f;
-
-        if (Utils.isShulkerStack(stack)) {
-            BlockWithEntity block = (BlockWithEntity) ((BlockItem) stack.getItem()).getBlock();
-            ShulkerSizeExtension entity = (ShulkerSizeExtension) block.createBlockEntity(BlockPos.ORIGIN, block.getDefaultState());
-            total = entity.getInvSize();
-        }
-
-        return sumFullness / total; // Total divided by number of shulker slots
     }
 }

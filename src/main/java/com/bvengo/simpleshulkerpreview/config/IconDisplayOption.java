@@ -4,7 +4,7 @@ import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
 import net.minecraft.util.Language;
 
 /** Shulker box slots that can be displayed */
-public enum DisplayOption {
+public enum IconDisplayOption {
     FIRST,
     LAST,
     UNIQUE,
@@ -13,6 +13,6 @@ public enum DisplayOption {
 
     @Override
     public String toString() {
-        return Language.getInstance().get("config." + SimpleShulkerPreviewMod.MOD_ID + ".display_item." + this.name().toLowerCase());
+        return Language.getInstance().get("config." + SimpleShulkerPreviewMod.MOD_ID + ".displayIcon." + this.name().toLowerCase());
     }
 }

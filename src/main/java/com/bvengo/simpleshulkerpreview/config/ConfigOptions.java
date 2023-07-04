@@ -1,8 +1,6 @@
 package com.bvengo.simpleshulkerpreview.config;
 
 import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
-import com.bvengo.simpleshulkerpreview.config.PositionOptions;
-import com.bvengo.simpleshulkerpreview.config.DisplayOption;
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
@@ -19,16 +17,12 @@ public class ConfigOptions implements ConfigData {
      */
     @ConfigEntry.Gui.Tooltip()
     @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
-    public DisplayOption displayItem = DisplayOption.FIRST;
-
-    /** Show the fullness of the shulker box using a fullness bar. */
-    @ConfigEntry.Gui.Tooltip()
-    public boolean showFullness = true;
+    public IconDisplayOption displayIcon = IconDisplayOption.FIRST;
 
     /** x, y, z offsets and scale */
     @ConfigEntry.Gui.CollapsibleObject()
     @ConfigEntry.Gui.Tooltip()
-    public PositionOptions positionOptionsGeneral = new PositionOptions(12, 4, 10, 10);
+    public IconPositionOptions iconPositionOptionsGeneral = new IconPositionOptions(12, 4, 10, 10);
 
     /** Stack size bounds */
     @ConfigEntry.Gui.CollapsibleObject()
@@ -38,6 +32,14 @@ public class ConfigOptions implements ConfigData {
     /** Treat enchanted items separately from un-enchanted items */
     @ConfigEntry.Gui.Tooltip()
     public boolean groupEnchantment = false;
+
+    /** Capacity Bar. */
+    @ConfigEntry.Gui.Tooltip()
+    public boolean showCapacity = true;
+
+    @ConfigEntry.Gui.CollapsibleObject()
+    @ConfigEntry.Gui.Tooltip()
+    public CapacityBarOptions capacityBarOptions = new CapacityBarOptions();
 
     /** Disables the mod. */
     @ConfigEntry.Gui.Tooltip()
@@ -61,27 +63,20 @@ public class ConfigOptions implements ConfigData {
     @ConfigEntry.Category("compatibility")
     @ConfigEntry.Gui.CollapsibleObject()
     @ConfigEntry.Gui.Tooltip()
-    public PositionOptions positionOptionsBundle = new PositionOptions(12, 4, 10, 10);
+    public IconPositionOptions iconPositionOptionsBundle = new IconPositionOptions(12, 4, 10, 10);
 
-    @ConfigEntry.Category("compatibility")
-    @ConfigEntry.Gui.Tooltip()
-    public boolean supportCustomHeads = false;
-
-    /**
-     * Recursive and stacking shulkers. Tested with:
-     * -  Carpet - EssentialAddons
-     */
-    @ConfigEntry.Category("compatibility")
-    @ConfigEntry.Gui.Tooltip()
-    public boolean supportRecursiveShulkers = false;
-
+    /** Stacked shulkers - tested with Carpet Essential Addons */
     @ConfigEntry.Category("compatibility")
     @ConfigEntry.Gui.Tooltip()
     public boolean supportStackedShulkers = false;
 
-    /** x, y, z offsets and scale - default location overlaps with bundles count indicator */
+    /** x, y, z offsets and scale - different position to avoid overlap with stack size indicator */
     @ConfigEntry.Category("compatibility")
     @ConfigEntry.Gui.CollapsibleObject()
     @ConfigEntry.Gui.Tooltip()
-    public PositionOptions positionOptionsStacked = new PositionOptions(12, 4, 10, 10);
+    public IconPositionOptions iconPositionOptionsStacked = new IconPositionOptions(12, 4, 10, 10);
+
+    @ConfigEntry.Category("compatibility")
+    @ConfigEntry.Gui.Tooltip()
+    public boolean supportRecursiveShulkers = false;
 }
