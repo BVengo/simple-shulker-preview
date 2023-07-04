@@ -45,7 +45,7 @@ public abstract class DrawContextMixin implements DrawContextAccess {
 		iconRenderer.renderOptional((DrawContext)(Object)this);
 
 		// Display itemBar for shulkers (bundles already have a very similar feature)
-		if(config.showCapacity && Utils.isObject(stack, RegexGroup.MINECRAFT_SHULKER)) {
+		if(config.showCapacity && Utils.isShulkerStack(stack)) {
 			CapacityBarRenderer capacityBarRenderer = new CapacityBarRenderer(config, stack, x, y);
 			capacityBarRenderer.renderOptional((DrawContext)(Object)this);
 		}

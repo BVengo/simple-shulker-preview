@@ -1,15 +1,20 @@
 package com.bvengo.simpleshulkerpreview.positioners;
 
 import com.bvengo.simpleshulkerpreview.RegexGroup;
+import com.bvengo.simpleshulkerpreview.ShulkerSizeExtension;
 import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
 import com.bvengo.simpleshulkerpreview.Utils;
 import com.bvengo.simpleshulkerpreview.config.ConfigOptions;
+
+import net.minecraft.block.BlockWithEntity;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.BundleItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 
 public class CapacityBarRenderer extends OverlayRenderer {
@@ -60,7 +65,7 @@ public class CapacityBarRenderer extends OverlayRenderer {
             sumCapacity += (float) itemStack.getCount() / (float) maxStackSize;
 
             // Calculate the ratio of items in stacked containers
-            if (config.supportRecursiveShulkers && Utils.isObject(itemStack, RegexGroup.MINECRAFT_SHULKER)) {
+            if (config.supportRecursiveShulkers && Utils.isShulkerStack(itemStack)) {
                 // Can ignore stacked shulkers since their ratio multiplier gets cancelled out
                 sumCapacity += getCapacity(itemStack, config);
             }
@@ -70,7 +75,15 @@ public class CapacityBarRenderer extends OverlayRenderer {
             }
         }
 
-        return sumCapacity / 27f; // Total divided by number of shulker slots
+        float total = 27f;
+
+        if (Utils.isShulkerStack(stack)) {
+            BlockWithEntity block = (BlockWithEntity) ((BlockItem) stack.getItem()).getBlock();
+            ShulkerSizeExtension entity = (ShulkerSizeExtension) block.createBlockEntity(BlockPos.ORIGIN, block.getDefaultState());
+            total = entity.getInventorySize();
+        }
+
+        return sumCapacity / total; // Total divided by number of shulker slots
     }
 
     protected boolean canDisplay() {

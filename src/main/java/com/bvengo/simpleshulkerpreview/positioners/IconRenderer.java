@@ -23,7 +23,7 @@ public class IconRenderer extends OverlayRenderer {
         if(Utils.isObject(stack, RegexGroup.MINECRAFT_BUNDLE)) {
             iconPositionOptions = config.iconPositionOptionsBundle;
         }
-        else if(Utils.isObject(stack, RegexGroup.MINECRAFT_SHULKER) && stack.getCount() > 1) {
+        else if(Utils.isShulkerStack(stack) && stack.getCount() > 1) {
             iconPositionOptions = config.iconPositionOptionsStacked;
         }
         else {
