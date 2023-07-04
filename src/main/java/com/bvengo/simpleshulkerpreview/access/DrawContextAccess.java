@@ -1,5 +1,5 @@
 package com.bvengo.simpleshulkerpreview.access;
 
 public interface DrawContextAccess {
-    public void setAdjustSize(boolean newValue);
+    void simple_shulker_preview$setAdjustSize(boolean newValue);
 }

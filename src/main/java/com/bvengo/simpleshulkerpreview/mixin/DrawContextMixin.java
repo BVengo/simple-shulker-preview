@@ -1,6 +1,6 @@
 package com.bvengo.simpleshulkerpreview.mixin;
 
-import com.bvengo.simpleshulkerpreview.*;
+import com.bvengo.simpleshulkerpreview.Utils;
 import com.bvengo.simpleshulkerpreview.access.DrawContextAccess;
 import com.bvengo.simpleshulkerpreview.config.ConfigOptions;
 import com.bvengo.simpleshulkerpreview.positioners.CapacityBarRenderer;
@@ -13,6 +13,7 @@ import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
@@ -22,13 +23,11 @@ public abstract class DrawContextMixin implements DrawContextAccess {
 	@Shadow public abstract void drawItemWithoutEntity(ItemStack stack, int x, int y);
 	@Shadow public abstract void fill(RenderLayer layer, int x1, int x2, int y1, int y2, int color);
 
-	IconRenderer iconRenderer;
-
-
-	boolean adjustSize = false;
+	@Unique IconRenderer iconRenderer;
+	@Unique boolean adjustSize = false;
 
 	@Override
-	public void setAdjustSize(boolean newValue) {
+	public void simple_shulker_preview$setAdjustSize(boolean newValue) {
 		adjustSize = newValue;
 	}
 

@@ -48,9 +48,9 @@ public class IconRenderer extends OverlayRenderer {
     }
 
     protected void render(DrawContext context) {
-        ((DrawContextAccess) context).setAdjustSize(true);
+        ((DrawContextAccess) context).simple_shulker_preview$setAdjustSize(true);
         context.drawItemWithoutEntity(stack, stackX, stackY);
-        ((DrawContextAccess) context).setAdjustSize(false);
+        ((DrawContextAccess) context).simple_shulker_preview$setAdjustSize(false);
     }
 
     public void renderOptional(DrawContext context) {

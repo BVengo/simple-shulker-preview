@@ -1,7 +1,7 @@
 package com.bvengo.simpleshulkerpreview.positioners;
 
 import com.bvengo.simpleshulkerpreview.RegexGroup;
-import com.bvengo.simpleshulkerpreview.ShulkerSizeExtension;
+import com.bvengo.simpleshulkerpreview.access.ShulkerSizeExtension;
 import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
 import com.bvengo.simpleshulkerpreview.Utils;
 import com.bvengo.simpleshulkerpreview.config.ConfigOptions;
@@ -80,7 +80,8 @@ public class CapacityBarRenderer extends OverlayRenderer {
         if (Utils.isShulkerStack(stack)) {
             BlockWithEntity block = (BlockWithEntity) ((BlockItem) stack.getItem()).getBlock();
             ShulkerSizeExtension entity = (ShulkerSizeExtension) block.createBlockEntity(BlockPos.ORIGIN, block.getDefaultState());
-            total = entity.getInventorySize();
+            assert entity != null;
+            total = entity.simple_shulker_preview$getInventorySize();
         }
 
         return sumCapacity / total; // Total divided by number of shulker slots
