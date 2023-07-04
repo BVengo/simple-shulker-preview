@@ -11,9 +11,9 @@ import net.minecraft.util.collection.DefaultedList;
 
 @Mixin(ShulkerBoxBlockEntity.class)
 public class ShulkerBoxBlockEntityMixin implements ShulkerSizeExtension {
-  @Shadow private DefaultedList<ItemStack> inventory;
+    @Shadow private DefaultedList<ItemStack> inventory;
 
-  public int simple_shulker_preview$getInventorySize() {
-    return inventory.size();
-  }
+    public int simple_shulker_preview$getInventorySize() {
+        return inventory.size();
+    }
 }
