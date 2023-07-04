@@ -4,10 +4,14 @@ import com.bvengo.simpleshulkerpreview.config.ConfigOptions;
 import com.bvengo.simpleshulkerpreview.config.DisplayOption;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.item.ItemStack;
+import net.minecraft.block.BlockWithEntity;
+import net.minecraft.block.ShulkerBoxBlock;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.BundleItem;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 
 import java.util.ArrayList;
@@ -30,6 +34,17 @@ public class Utils {
     }
 
     /**
+     * Checks if an itemstack is a shulkerbox item
+     * 
+     * @param stack The inventor ystack to check
+     * @return A boolean indicating if the stack is a shulkerbox
+     */
+    public static boolean isShulkerStack(ItemStack stack) {
+        var item = stack.getItem();
+        return item instanceof BlockItem && ((BlockItem) item).getBlock() instanceof ShulkerBoxBlock;
+    }
+
+    /**
      * Checks if an item meets the requirements for rendering the overlay, based on the selected configs.
      *
      * @param stack The inventory stack to render over (e.g. a shulkerbox)
@@ -39,10 +54,10 @@ public class Utils {
         ConfigOptions config = AutoConfig.getConfigHolder(ConfigOptions.class).getConfig();
 
         if(config.disableMod) return false;
-        if(stack.getCount() > 1 && Utils.isObject(stack, RegexGroup.MINECRAFT_SHULKER)) return config.supportStackedShulkers;
+        if(stack.getCount() > 1 && Utils.isShulkerStack(stack)) return config.supportStackedShulkers;
         if(Utils.isObject(stack, RegexGroup.MINECRAFT_BUNDLE)) return config.supportBundles;
 
-        return Utils.isObject(stack, RegexGroup.MINECRAFT_SHULKER);
+        return Utils.isShulkerStack(stack);
     }
 
     /**
@@ -59,7 +74,7 @@ public class Utils {
         NbtCompound compound = stack.getNbt();
         if(compound == null) return null; // Triggers on containers in the creative menu
 
-        if(Utils.isObject(stack, RegexGroup.MINECRAFT_SHULKER)) {
+        if (Utils.isShulkerStack(stack)) {
             compound = compound.getCompound("BlockEntityTag");
             if(compound == null) return null; // Triggers on containers in the creative menu
 
@@ -149,7 +164,7 @@ public class Utils {
 
              itemStackList.add(itemStack);
 
-             if (config.supportRecursiveShulkers && isObject(itemStack, RegexGroup.MINECRAFT_SHULKER)) {
+             if (config.supportRecursiveShulkers && Utils.isShulkerStack(itemStack)) {
                  NbtCompound stackCompound = itemStack.getNbt();
                  if (stackCompound == null) continue;
 
@@ -217,7 +232,7 @@ public class Utils {
             sumFullness += (float) itemStack.getCount() / (float) maxStackSize;
 
             // Calculate the ratio of items in stacked containers
-            if (config.supportRecursiveShulkers && isObject(itemStack, RegexGroup.MINECRAFT_SHULKER)) {
+            if (config.supportRecursiveShulkers && Utils.isShulkerStack(stack)) {
                 // Can ignore stacked shulkers since their ratio multiplier gets cancelled out
                 sumFullness += getFullness(itemStack, config);
             }
@@ -227,6 +242,14 @@ public class Utils {
             }
         }
 
-        return sumFullness / 27f; // Total divided by number of shulker slots
+        var total = 27f;
+
+        if (Utils.isShulkerStack(stack)) {
+            var block = (BlockWithEntity) ((BlockItem) stack.getItem()).getBlock();
+            var entity = (ShulkerSizeExt) block.createBlockEntity(BlockPos.ORIGIN, block.getDefaultState());
+            total = entity.getInvSize();
+        }
+
+        return sumFullness / total; // Total divided by number of shulker slots
     }
 }

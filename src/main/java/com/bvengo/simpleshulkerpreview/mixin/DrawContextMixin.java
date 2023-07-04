@@ -43,7 +43,7 @@ public abstract class DrawContextMixin {
 			if(Utils.isObject(stack, RegexGroup.MINECRAFT_BUNDLE)) {
 				positionOptions = config.positionOptionsBundle;
 			}
-			else if(Utils.isObject(stack, RegexGroup.MINECRAFT_SHULKER) && stack.getCount() > 1) {
+			else if(Utils.isShulkerStack(stack) && stack.getCount() > 1) {
 				positionOptions = config.positionOptionsStacked;
 			}
 			else {
@@ -62,7 +62,7 @@ public abstract class DrawContextMixin {
 		}
 
 		// Display itemBar for shulkers (bundles already have a very similar feature)
-		if(config.showFullness && Utils.isObject(stack, RegexGroup.MINECRAFT_SHULKER)) {
+		if(config.showFullness && Utils.isShulkerStack(stack)) {
 			float fullness = Utils.getFullness(stack, config);
 
 			if(fullness > 0.0f) {

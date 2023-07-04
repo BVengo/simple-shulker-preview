@@ -6,7 +6,8 @@
   "mixins": [
   ],
   "client": [
-    "DrawContextMixin"
+    "DrawContextMixin",
+    "ShulkerBoxBlockEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1
