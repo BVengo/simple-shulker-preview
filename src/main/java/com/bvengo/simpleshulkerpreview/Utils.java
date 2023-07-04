@@ -242,11 +242,11 @@ public class Utils {
             }
         }
 
-        var total = 27f;
+        float total = 27f;
 
         if (Utils.isShulkerStack(stack)) {
-            var block = (BlockWithEntity) ((BlockItem) stack.getItem()).getBlock();
-            var entity = (ShulkerSizeExt) block.createBlockEntity(BlockPos.ORIGIN, block.getDefaultState());
+            BlockWithEntity block = (BlockWithEntity) ((BlockItem) stack.getItem()).getBlock();
+            ShulkerSizeExtension entity = (ShulkerSizeExtension) block.createBlockEntity(BlockPos.ORIGIN, block.getDefaultState());
             total = entity.getInvSize();
         }
 

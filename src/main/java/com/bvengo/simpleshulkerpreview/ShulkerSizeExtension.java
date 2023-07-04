@@ -1,5 +1,5 @@
 package com.bvengo.simpleshulkerpreview;
 
-public interface ShulkerSizeExt {
+public interface ShulkerSizeExtension {
   public int getInvSize();
 }
