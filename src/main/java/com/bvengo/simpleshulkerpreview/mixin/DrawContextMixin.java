@@ -8,11 +8,9 @@ import com.bvengo.simpleshulkerpreview.positioners.IconRenderer;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -20,9 +18,6 @@ import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 @Mixin(DrawContext.class)
 public abstract class DrawContextMixin implements DrawContextAccess {
-	@Shadow public abstract void drawItemWithoutEntity(ItemStack stack, int x, int y);
-	@Shadow public abstract void fill(RenderLayer layer, int x1, int x2, int y1, int y2, int color);
-
 	@Unique IconRenderer iconRenderer;
 	@Unique boolean adjustSize = false;
 
