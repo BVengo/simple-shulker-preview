@@ -18,8 +18,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Utils {
-
-
     public static boolean isObject(ItemStack stack, RegexGroup group) {
         if(stack == null) return false;
 
