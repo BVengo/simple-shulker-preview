@@ -54,7 +54,20 @@ public class CapacityBarRenderer extends OverlayRenderer {
         NbtList nbtList = compound.getList("Items", 10);
         if (nbtList == null) return 0; // No items in container
 
+        int total = 27; // Default number of slots in a shulker box
         float sumCapacity = 0; // Sum of 'fullness' level for each slot
+
+        if (Utils.isShulkerStack(stack)) {
+            BlockWithEntity block = (BlockWithEntity) ((BlockItem) stack.getItem()).getBlock();
+            ShulkerSizeExtension entity = (ShulkerSizeExtension) block.createBlockEntity(BlockPos.ORIGIN, block.getDefaultState());
+
+            if(entity != null) {
+                total = entity.simple_shulker_preview$getInventorySize();
+            }
+
+        } else if (Utils.isObject(stack, RegexGroup.MINECRAFT_BUNDLE)) {
+            total = 1;
+        }
 
         for (int i = 0; i < nbtList.size(); ++i) {
             NbtCompound nbtCompound = nbtList.getCompound(i);
@@ -75,16 +88,7 @@ public class CapacityBarRenderer extends OverlayRenderer {
             }
         }
 
-        float total = 27f;
-
-        if (Utils.isShulkerStack(stack)) {
-            BlockWithEntity block = (BlockWithEntity) ((BlockItem) stack.getItem()).getBlock();
-            ShulkerSizeExtension entity = (ShulkerSizeExtension) block.createBlockEntity(BlockPos.ORIGIN, block.getDefaultState());
-            assert entity != null;
-            total = entity.simple_shulker_preview$getInventorySize();
-        }
-
-        return sumCapacity / total; // Total divided by number of shulker slots
+        return sumCapacity / (float)total; // Total divided by number of shulker slots
     }
 
     protected boolean canDisplay() {
