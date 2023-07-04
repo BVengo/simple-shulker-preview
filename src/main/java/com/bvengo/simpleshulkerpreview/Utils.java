@@ -50,7 +50,6 @@ public class Utils {
         ConfigOptions config = AutoConfig.getConfigHolder(ConfigOptions.class).getConfig();
 
         if(config.disableMod) return false;
-        if(stack.getCount() > 1 && Utils.isShulkerStack(stack)) return config.supportStackedShulkers;
         if(Utils.isObject(stack, RegexGroup.MINECRAFT_BUNDLE)) return config.supportBundles;
 
         return Utils.isShulkerStack(stack);
@@ -163,7 +162,7 @@ public class Utils {
                  stackCompound = stackCompound.getCompound("BlockEntityTag");
                  if(stackCompound == null) continue; // Triggers on containers in the creative menu
 
-                 int multiplier = config.supportStackedShulkers ? itemStack.getCount() : 1;
+                 int multiplier = itemStack.getCount();
                  for (int j = 0; j < multiplier; j++) {
                      itemStackList.addAll(flattenStackList(stackCompound, config));
                  }

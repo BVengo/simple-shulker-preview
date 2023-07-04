@@ -68,8 +68,6 @@
 	"text.autoconfig.simpleshulkerpreview.option.supportBundles.@Tooltip": "Displays items inside bundles",
 	"text.autoconfig.simpleshulkerpreview.option.supportCustomHeads": "Support Custom Heads",
 	"text.autoconfig.simpleshulkerpreview.option.supportCustomHeads.@Tooltip": "Treats custom heads separately from the minecraft:player_head",
-	"text.autoconfig.simpleshulkerpreview.option.supportStackedShulkers": "Support Stacked Shulkers",
-	"text.autoconfig.simpleshulkerpreview.option.supportStackedShulkers.@Tooltip": "Displays the item inside stacked shulker boxes",
 	"text.autoconfig.simpleshulkerpreview.option.supportRecursiveShulkers": "Support Recursive Shulkers",
 	"text.autoconfig.simpleshulkerpreview.option.supportRecursiveShulkers.@Tooltip": "Displays the item inside recursively stored shulker boxes",
 	"config.simpleshulkerpreview.capacityDirection.left_to_right": "Left to Right",

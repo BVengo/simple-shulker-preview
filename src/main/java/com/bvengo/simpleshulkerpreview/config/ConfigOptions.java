@@ -66,10 +66,6 @@ public class ConfigOptions implements ConfigData {
     public IconPositionOptions iconPositionOptionsBundle = new IconPositionOptions(12, 4, 10, 10);
 
     /** Stacked shulkers - tested with Carpet Essential Addons */
-    @ConfigEntry.Category("compatibility")
-    @ConfigEntry.Gui.Tooltip()
-    public boolean supportStackedShulkers = false;
-
     /** x, y, z offsets and scale - different position to avoid overlap with stack size indicator */
     @ConfigEntry.Category("compatibility")
     @ConfigEntry.Gui.CollapsibleObject()
