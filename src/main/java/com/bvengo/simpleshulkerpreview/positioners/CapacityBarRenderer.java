@@ -1,12 +1,12 @@
 package com.bvengo.simpleshulkerpreview.positioners;
 
 import com.bvengo.simpleshulkerpreview.RegexGroup;
-import com.bvengo.simpleshulkerpreview.access.ShulkerSizeExtension;
 import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
 import com.bvengo.simpleshulkerpreview.Utils;
 import com.bvengo.simpleshulkerpreview.config.ConfigOptions;
 
 import net.minecraft.block.BlockWithEntity;
+import net.minecraft.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.item.BlockItem;
@@ -59,10 +59,10 @@ public class CapacityBarRenderer extends OverlayRenderer {
 
         if (Utils.isShulkerStack(stack)) {
             BlockWithEntity block = (BlockWithEntity) ((BlockItem) stack.getItem()).getBlock();
-            ShulkerSizeExtension entity = (ShulkerSizeExtension) block.createBlockEntity(BlockPos.ORIGIN, block.getDefaultState());
+            ShulkerBoxBlockEntity entity = (ShulkerBoxBlockEntity) block.createBlockEntity(BlockPos.ORIGIN, null);
 
             if(entity != null) {
-                total = entity.simple_shulker_preview$getInventorySize();
+                total = entity.size();
             }
 
         } else if (Utils.isObject(stack, RegexGroup.MINECRAFT_BUNDLE)) {
