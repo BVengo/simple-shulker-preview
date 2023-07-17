@@ -5,7 +5,7 @@
     "icon": "assets/simpleshulkerpreview/icon.png",
 
     "name": "Simple Shulker Preview",
-    "description": "Display the icon of the first item in a shulker. Very useful for bulk storage!",
+    "description": "Display a configurable icon indicating the contents of a shulker box, as well as a capacity bar."
     "authors": [
         "BVengo"
     ],
