@@ -3,10 +3,10 @@
   "minVersion": "0.8",
   "package": "com.bvengo.simpleshulkerpreview.mixin",
   "compatibilityLevel": "JAVA_17",
-  "mixins": [
-  ],
+  "mixins": [],
   "client": [
-    "DrawContextMixin"
+    "DrawContextMixin",
+    "ShulkerBoxBlockEntityRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1
