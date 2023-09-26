@@ -1,13 +1,16 @@
 package com.bvengo.simpleshulkerpreview;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.bvengo.simpleshulkerpreview.config.ConfigOptions;
+
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import red.jackf.chesttracker_adapted.ChestTracker;
 
 /**
  * Simple Shulker Preview Mod
@@ -22,6 +25,7 @@ public class SimpleShulkerPreviewMod implements ClientModInitializer {
 		LOGGER.info(LOGGER.getName() + " loading...");
 
 		AutoConfig.register(ConfigOptions.class, GsonConfigSerializer::new);
+		ChestTracker.onInitializeClient();
 
 		LOGGER.info(LOGGER.getName() + " loaded.");
 	}

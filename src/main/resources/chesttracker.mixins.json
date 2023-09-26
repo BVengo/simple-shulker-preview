@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "red.jackf.chesttracker_adapted.mixins",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [],
+  "client": [
+    "AccessorMinecraftServer",
+    "MixinBlock",
+    "MixinClientConnection",
+    "MixinRealmsMainScreen",
+    "MixinShulkerBoxBlock"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

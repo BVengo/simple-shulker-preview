@@ -1,10 +1,10 @@
 package com.bvengo.simpleshulkerpreview.config;
 
 import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
+
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
-
 
 @Config(name = SimpleShulkerPreviewMod.MOD_ID)
 public class ConfigOptions implements ConfigData {
@@ -28,7 +28,7 @@ public class ConfigOptions implements ConfigData {
     @ConfigEntry.Gui.CollapsibleObject()
     @ConfigEntry.Gui.Tooltip()
     public StackSizeOptions stackSizeOptions = new StackSizeOptions();
-    
+
     /** Treat enchanted items separately from un-enchanted items */
     @ConfigEntry.Gui.Tooltip()
     public boolean groupEnchantment = false;
@@ -59,14 +59,20 @@ public class ConfigOptions implements ConfigData {
     @ConfigEntry.Gui.Tooltip()
     public boolean supportBundles = false;
 
-    /** x, y, z offsets and scale - default location overlaps with bundles count indicator */
+    /**
+     * x, y, z offsets and scale - default location overlaps with bundles count
+     * indicator
+     */
     @ConfigEntry.Category("compatibility")
     @ConfigEntry.Gui.CollapsibleObject()
     @ConfigEntry.Gui.Tooltip()
     public IconPositionOptions iconPositionOptionsBundle = new IconPositionOptions(12, 4, 10, 10);
 
     /** Stacked shulkers - tested with Carpet Essential Addons */
-    /** x, y, z offsets and scale - different position to avoid overlap with stack size indicator */
+    /**
+     * x, y, z offsets and scale - different position to avoid overlap with stack
+     * size indicator
+     */
     @ConfigEntry.Category("compatibility")
     @ConfigEntry.Gui.CollapsibleObject()
     @ConfigEntry.Gui.Tooltip()
@@ -75,4 +81,24 @@ public class ConfigOptions implements ConfigData {
     @ConfigEntry.Category("compatibility")
     @ConfigEntry.Gui.Tooltip()
     public boolean supportRecursiveShulkers = false;
+
+    @ConfigEntry.Category("database_options")
+    @ConfigEntry.Gui.TransitiveObject
+    public ChestTrackerAdaptedOptions databaseOptions = new ChestTrackerAdaptedOptions();
+
+    public static class ChestTrackerAdaptedOptions {
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 60)
+        @ConfigEntry.Gui.PrefixText
+        public int destroyedMemoryCheckInterval = 10;
+        @ConfigEntry.Gui.RequiresRestart
+        @ConfigEntry.Gui.PrefixText
+        public boolean readableFiles = false;
+        @ConfigEntry.Gui.PrefixText
+        public boolean safeFileNames = false;
+        public boolean prefixFilesWithUsername = false;
+        @ConfigEntry.Gui.Excluded
+        public boolean rememberNewChests = true;
+        @ConfigEntry.Gui.Excluded
+        public int searchRange = 81; // 512 blocks
+    }
 }

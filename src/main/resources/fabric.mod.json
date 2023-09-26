@@ -5,7 +5,9 @@
   "icon": "assets/simpleshulkerpreview/icon.png",
   "name": "Simple Shulker Preview",
   "description": "Display a configurable icon indicating the contents of a shulker box, as well as a capacity bar.",
-  "authors": ["BVengo"],
+  "authors": [
+    "BVengo"
+  ],
   "contact": {
     "homepage": "https://www.curseforge.com/minecraft/mc-mods/simple-shulker-preview/",
     "sources": "https://github.com/BVengo/simple-shulker-preview",
@@ -14,10 +16,17 @@
   "license": "LGPL-3.0",
   "environment": "client",
   "entrypoints": {
-    "client": ["com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod"],
-    "modmenu": ["com.bvengo.simpleshulkerpreview.ModMenuIntegration"]
+    "client": [
+      "com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod"
+    ],
+    "modmenu": [
+      "com.bvengo.simpleshulkerpreview.ModMenuIntegration"
+    ]
   },
-  "mixins": ["simpleshulkerpreview.mixins.json"],
+  "mixins": [
+    "simpleshulkerpreview.mixins.json",
+    "chesttracker.mixins.json"
+  ],
   "depends": {
     "fabricloader": ">=0.14.21",
     "minecraft": ">=1.20"
