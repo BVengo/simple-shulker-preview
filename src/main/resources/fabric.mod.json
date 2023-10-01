@@ -24,8 +24,7 @@
     ]
   },
   "mixins": [
-    "simpleshulkerpreview.mixins.json",
-    "chesttracker.mixins.json"
+    "simpleshulkerpreview.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=0.14.21",

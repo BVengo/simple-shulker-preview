@@ -8,23 +8,11 @@ import com.bvengo.simpleshulkerpreview.config.ConfigOptions;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.event.player.UseBlockCallback;
-import net.fabricmc.fabric.api.event.player.UseEntityCallback;
-import net.fabricmc.fabric.api.event.player.UseItemCallback;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.TypedActionResult;
-import red.jackf.chesttracker_adapted.memory.MemoryDatabase;
-import red.jackf.chesttracker_adapted.memory.MemoryUtils;
 
 @Environment(EnvType.CLIENT)
 public class ChestTracker {
@@ -70,46 +58,5 @@ public class ChestTracker {
             return 480 + ((sliderValue - 80) * 32);
         }
         return Integer.MAX_VALUE;
-    }
-
-    public static void onInitializeClient() {
-
-        // Save if someone just decides to X out of craft
-        ClientLifecycleEvents.CLIENT_STOPPING.register(client -> {
-            MemoryDatabase database = MemoryDatabase.getCurrent();
-            if (database != null)
-                database.save();
-        });
-
-        // Checking for memories that are still alive
-        ClientTickEvents.END_WORLD_TICK.register(MemoryUtils::checkValidCycle);
-
-        UseBlockCallback.EVENT.register((playerEntity, world, hand, blockHitResult) -> {
-            if (world.isClient) {
-                Block hit = world.getBlockState(blockHitResult.getBlockPos()).getBlock();
-                if (MemoryUtils.isValidInventoryHolder(hit, world, blockHitResult.getBlockPos())) {
-                    MemoryUtils.setLatestPos(blockHitResult.getBlockPos());
-                    MemoryUtils.setWasEnderchest(hit == Blocks.ENDER_CHEST);
-                } else {
-                    MemoryUtils.setLatestPos(null);
-                    MemoryUtils.setWasEnderchest(false);
-                }
-            }
-            return ActionResult.PASS;
-        });
-
-        UseEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
-            if (world.isClient) {
-                MemoryUtils.setLatestPos(null);
-            }
-            return ActionResult.PASS;
-        });
-
-        UseItemCallback.EVENT.register((player, world, hand) -> {
-            if (world.isClient) {
-                MemoryUtils.setLatestPos(null);
-            }
-            return TypedActionResult.pass(ItemStack.EMPTY);
-        });
     }
 }

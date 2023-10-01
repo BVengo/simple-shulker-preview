@@ -20,6 +20,7 @@ import java.util.concurrent.ConcurrentMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.bvengo.simpleshulkerpreview.mixin.AccessorMinecraftServer;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 
@@ -36,7 +37,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import red.jackf.chesttracker_adapted.ChestTracker;
 import red.jackf.chesttracker_adapted.GsonHandler;
-import red.jackf.chesttracker_adapted.mixins.AccessorMinecraftServer;
 
 @Environment(EnvType.CLIENT)
 public class MemoryDatabase {

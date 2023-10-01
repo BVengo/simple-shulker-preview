@@ -1,4 +1,4 @@
-package red.jackf.chesttracker_adapted.mixins;
+package com.bvengo.simpleshulkerpreview.mixin;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
