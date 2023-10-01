@@ -20,7 +20,6 @@ import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.TypedActionResult;
-import red.jackf.chesttracker_adapted.ChestTracker;
 import red.jackf.chesttracker_adapted.memory.MemoryDatabase;
 import red.jackf.chesttracker_adapted.memory.MemoryUtils;
 
