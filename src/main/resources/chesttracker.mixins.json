@@ -6,7 +6,6 @@
   "mixins": [],
   "client": [
     "AccessorMinecraftServer",
-    "MixinBlock",
     "MixinClientConnection",
     "MixinRealmsMainScreen",
     "MixinShulkerBoxBlock"

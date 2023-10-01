@@ -25,6 +25,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.world.dimension.DimensionTypes;
 import red.jackf.chesttracker_adapted.memory.Memory;
 import red.jackf.chesttracker_adapted.memory.MemoryDatabase;
+import net.minecraft.util.math.RotationAxis;
 
 @Mixin(ShulkerBoxBlockEntityRenderer.class)
 public class ShulkerBoxBlockEntityRendererMixin {
@@ -55,35 +56,51 @@ public class ShulkerBoxBlockEntityRendererMixin {
         MinecraftClient client = MinecraftClient.getInstance();
         ItemRenderer renderer = client.getItemRenderer();
         ItemStack itemToRender = Utils.getDisplayItem(m.getItems(), config);
+
         // Required (I think)
         stack.push();
         stack.translate(0.5f, 0.5f, 0.0f);
         renderer.renderItem(itemToRender, ModelTransformationMode.FIXED, i, j, stack,
             vertexConsumerProvider, client.world, 0);
+        // Doesn't need to be rotated because it is already correct.
         stack.pop();
+
+        // West face (towards negative X)
         stack.push();
         stack.translate(0.0f, 0.5f, 0.5f);
-
+        stack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(90));
         renderer.renderItem(itemToRender, ModelTransformationMode.FIXED, i, j, stack,
             vertexConsumerProvider, client.world, 0);
         stack.pop();
+
+        // South face (towards positive Z)
         stack.push();
         stack.translate(0.5f, 0.5f, 1.0f);
+        stack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180));
         renderer.renderItem(itemToRender, ModelTransformationMode.FIXED, i, j, stack,
             vertexConsumerProvider, client.world, 0);
         stack.pop();
+
+        // East face (towards positive X)
         stack.push();
         stack.translate(1.0f, 0.5f, 0.5f);
+        stack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-90));
         renderer.renderItem(itemToRender, ModelTransformationMode.FIXED, i, j, stack,
             vertexConsumerProvider, client.world, 0);
         stack.pop();
+
+        // Lower face (towards negative Y)
         stack.push();
         stack.translate(0.5f, 0.0f, 0.5f);
+        stack.multiply(RotationAxis.POSITIVE_X.rotationDegrees(-90));
         renderer.renderItem(itemToRender, ModelTransformationMode.FIXED, i, j, stack,
             vertexConsumerProvider, client.world, 0);
         stack.pop();
+
+        // Upper face (towards positive Y)
         stack.push();
         stack.translate(0.5f, 1.0f, 0.5f);
+        stack.multiply(RotationAxis.POSITIVE_X.rotationDegrees(90));
         renderer.renderItem(itemToRender, ModelTransformationMode.FIXED, i, j, stack,
             vertexConsumerProvider, client.world, 0);
         stack.pop();
