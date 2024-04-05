@@ -10,6 +10,8 @@ import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.registry.Registries;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -67,6 +69,20 @@ public class Utils {
         NbtCompound compound = stack.getNbt();
         if(compound == null) return null; // Triggers on containers in the creative menu
 
+        // Check if stack is renamed
+        if (stack.hasCustomName()) {
+            String customName = stack.getName().getString().toUpperCase();
+
+            for (Item item : Registries.ITEM) {
+                String itemName = item.getName().getString().toUpperCase();
+                String endingPattern = "S?(?: SHULKER| BOX| CONTAINER| BUNDLE| SHULKER BOX| SHULKER CONTAINER)?";
+                if (customName.matches(".*\\b" + Pattern.quote(itemName) + endingPattern)) {
+                    return new ItemStack(item);
+                }
+            }
+
+        }
+
         if (Utils.isShulkerStack(stack)) {
             compound = compound.getCompound("BlockEntityTag");
             if(compound == null) return null; // Triggers on containers in the creative menu
@@ -94,6 +110,7 @@ public class Utils {
         String displayItemName = null;
 
         int itemThreshold = config.stackSizeOptions.minStackSize * config.stackSizeOptions.minStackCount;
+
 
         for (ItemStack itemStack : itemStackList) {
             String itemName = itemStack.getItem().getTranslationKey();

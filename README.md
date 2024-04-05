@@ -1,3 +1,6 @@
+> This is a **fork** of [BVengo/simple-shulker-preview](https://github.com/BVengo/simple-shulker-preview)  
+> The reason for this fork is to implement the feature in issue [#28](https://github.com/BVengo/simple-shulker-preview/issues/28)
+
 # Simple Shulker Preview
 ![GitHub license](https://img.shields.io/github/license/BVengo/simple-shulker-preview.svg)
 ![GitHub release](https://img.shields.io/github/release/BVengo/simple-shulker-preview.svg)
