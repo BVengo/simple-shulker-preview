@@ -12,7 +12,6 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.registry.Registries;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +21,7 @@ import java.util.regex.Pattern;
 
 public class Utils {
     public static boolean isObject(ItemStack stack, RegexGroup group) {
-        if (stack == null) return false;
+        if(stack == null) return false;
 
         Pattern pattern = Pattern.compile(group.regex);
         Matcher matcher = pattern.matcher(stack.getTranslationKey());
@@ -50,8 +49,8 @@ public class Utils {
     public static boolean checkStackAllowed(ItemStack stack) {
         ConfigOptions config = AutoConfig.getConfigHolder(ConfigOptions.class).getConfig();
 
-        if (config.disableMod) return false;
-        if (Utils.isObject(stack, RegexGroup.MINECRAFT_BUNDLE)) return config.supportBundles;
+        if(config.disableMod) return false;
+        if(Utils.isObject(stack, RegexGroup.MINECRAFT_BUNDLE)) return config.supportBundles;
 
         return Utils.isShulkerStack(stack);
     }
@@ -100,20 +99,22 @@ public class Utils {
 
         if (Utils.isShulkerStack(stack)) {
             compound = compound.getCompound("BlockEntityTag");
-            if (compound == null) return null; // Triggers on containers in the creative menu
+            if(compound == null) return null; // Triggers on containers in the creative menu
 
             itemStackList = flattenStackList(compound, config);
-        } else if (Utils.isObject(stack, RegexGroup.MINECRAFT_BUNDLE)) {
+        }
+        else if (Utils.isObject(stack, RegexGroup.MINECRAFT_BUNDLE)) {
             // Bundles aren't a block. Get the items from the bundle's inventory and add them to the list.
             NbtList bundleItems = compound.getList("Items", 10);
-            if (bundleItems == null) return null;
+            if(bundleItems == null) return null;
 
-            for (int i = 0; i < bundleItems.size(); i++) {
+            for(int i = 0; i < bundleItems.size(); i++) {
                 NbtCompound bundleItem = bundleItems.getCompound(i);
                 ItemStack itemStack = ItemStack.fromNbt(bundleItem);
                 itemStackList.add(itemStack);
             }
-        } else {
+        }
+        else {
             return null;
         }
 
@@ -123,7 +124,6 @@ public class Utils {
         String displayItemName = null;
 
         int itemThreshold = config.stackSizeOptions.minStackSize * config.stackSizeOptions.minStackCount;
-
 
         for (ItemStack itemStack : itemStackList) {
             String itemName = itemStack.getItem().getTranslationKey();
@@ -144,16 +144,16 @@ public class Utils {
             int itemCount = storedItems.get(itemName);
 
             if (config.displayIcon == IconDisplayOption.FIRST) {
-                if (itemCount >= itemThreshold) {
+                if(itemCount >= itemThreshold) {
                     return itemStack;
                 }
                 continue;
             }
 
             if (((displayItemName == null) || (config.displayIcon == IconDisplayOption.LAST) ||
-                    (config.displayIcon == IconDisplayOption.MOST && storedItems.get(itemName) > storedItems.get(displayItemName)) ||
-                    (config.displayIcon == IconDisplayOption.LEAST && storedItems.get(itemName) < storedItems.get(displayItemName))) &&
-                    (itemCount >= itemThreshold)) {
+                (config.displayIcon == IconDisplayOption.MOST && storedItems.get(itemName) > storedItems.get(displayItemName)) ||
+                (config.displayIcon == IconDisplayOption.LEAST && storedItems.get(itemName) < storedItems.get(displayItemName))) &&
+                (itemCount >= itemThreshold)) {
                 displayItemStack = itemStack;
                 displayItemName = itemName;
                 continue;
@@ -167,9 +167,8 @@ public class Utils {
 
     /**
      * Flattens container NBT data into a single ArrayList. This is for recursive shulker compatibility.
-     *
      * @param compound A container's NbtCompound
-     * @param config   The current config options for SimpleShulkerPreview
+     * @param config The current config options for SimpleShulkerPreview
      * @return A list of ItemStacks extracted from a container NbtCompound
      */
     public static List<ItemStack> flattenStackList(NbtCompound compound, ConfigOptions config) {
