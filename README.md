@@ -1,7 +1,5 @@
 # Simple Shulker Preview
-![GitHub license](https://img.shields.io/github/license/BVengo/simple-shulker-preview.svg)
-![GitHub release](https://img.shields.io/github/release/BVengo/simple-shulker-preview.svg)
-![GitHub issues](https://img.shields.io/github/issues/BVengo/simple-shulker-preview.svg)
+[![License](https://img.shields.io/badge/License-LGPLv3-blue.svg)](https://raw.githubusercontent.com/BVengo/simple-shulker-preview/main/LICENSE.md)
 
 Simple Shulker Preview is a small fabric mod that displays an icon indicating the contents of a shulker. This icon appears on top of the shulker icon in inventory slots.
 
@@ -49,6 +47,3 @@ The following mods were used in testing:
 
 ## Contributing
 Contributions and suggestions are always welcome! Please limit all issues to only one feature at a time - feel free to open multiple at once if you have many ideas. Similarly, please limit pull requests to a single feature at a time and try to follow the existing code style.
-
-
-To further discuss or get notifications of new updates, check out my [Discord](https://discord.com/invite/kUhf3WSSfv). If you like what I do, consider supporting me on Ko-Fi! [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/C0C7DZ3FB)
