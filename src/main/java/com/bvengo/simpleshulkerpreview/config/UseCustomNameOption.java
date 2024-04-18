@@ -5,8 +5,8 @@ import net.minecraft.util.Language;
 
 /** Shulker box slots that can be displayed */
 public enum UseCustomNameOption {
-    PREFER,
     ALWAYS,
+    PREFER,
     NEVER;
 
     @Override

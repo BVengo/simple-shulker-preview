@@ -77,6 +77,7 @@ public class CapacityBarRenderer extends OverlayRenderer {
             int maxStackSize = itemStack.getItem().getMaxCount();
             sumCapacity += (float) itemStack.getCount() / (float) maxStackSize;
 
+            // TODO: Remove recursion support
             // Calculate the ratio of items in stacked containers
             if (config.supportRecursiveShulkers && Utils.isShulkerStack(itemStack)) {
                 // Can ignore stacked shulkers since their ratio multiplier gets cancelled out

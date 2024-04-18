@@ -55,6 +55,7 @@ public class Utils {
         return Utils.isShulkerStack(stack);
     }
 
+
     /**
      * Returns an item to display on a shulker box icon.
      *
@@ -63,12 +64,40 @@ public class Utils {
      * @return An ItemStack for the display item, or null if there is none available
      */
     public static ItemStack getDisplayItem(ItemStack stack, ConfigOptions config) {
+        /**
+         * TODO: Refactor for new update
+         * TODO: Refactor for readability
+         *
+         * Steps:
+         * Validation --
+         * 1. isStackContainer -> bool: Check if the stack is a container
+         * 2. isContainerSupported -> bool: Check if the container display is enabled (e.g. bundles)
+         *
+         * Custom names --
+         * 3. getItemFromCustomName -> item | null: If UseCustomNameOption is not NEVER, get item from name (if possible)
+         *  - If the stack has a custom name, check if the custom name matches an item
+         *  - return item else null
+         * 4. If item != null, return the item
+         * 5. If item == null and UseCustomNameOption is ALWAYS, return the (null) item
+         *
+         * Inventory items  --
+         * 6. getContainerItems -> List<ItemStack>: Get the list of items from within the container
+         *  - Remove support for recursion (i.e. no longer flatten the list). It's very niche and,
+         *    with the support for custom names, is not really necessary.
+         * 7. selectDisplayItem -> ItemStack: Get the display item from the list based on configs
+         * 8. Return the display item
+         */
+
         Map<String, Integer> storedItems = new HashMap<>();
         List<ItemStack> itemStackList = new ArrayList<>();
 
         NbtCompound compound = stack.getNbt();
         if (compound == null) return null; // Triggers on containers in the creative menu
 
+        // TODO: isStackContainer
+        // TODO: isContainerSupported
+
+        // TODO: getItemFromCustomName
         // Check if stack is renamed
         if (stack.hasCustomName() && config.useCustomName != UseCustomNameOption.NEVER) {
             String customName = stack.getName().getString().toUpperCase();
@@ -97,6 +126,7 @@ public class Utils {
             if (config.useCustomName == UseCustomNameOption.ALWAYS) return result;
         }
 
+        // TODO: getContainerItems
         if (Utils.isShulkerStack(stack)) {
             compound = compound.getCompound("BlockEntityTag");
             if(compound == null) return null; // Triggers on containers in the creative menu
@@ -118,6 +148,7 @@ public class Utils {
             return null;
         }
 
+        // TODO: selectDisplayItem
         // Track both stack and item name. The name can be used in the map to count values,
         // but the item stack itself is required for rendering the proper information (e.g. skull textures)
         ItemStack displayItemStack = null;
