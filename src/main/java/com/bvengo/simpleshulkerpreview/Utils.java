@@ -2,6 +2,7 @@ package com.bvengo.simpleshulkerpreview;
 
 import com.bvengo.simpleshulkerpreview.config.ConfigOptions;
 import com.bvengo.simpleshulkerpreview.config.IconDisplayOption;
+import com.bvengo.simpleshulkerpreview.config.UseCustomNameOption;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.item.ItemStack;
 import net.minecraft.block.ShulkerBoxBlock;
@@ -10,6 +11,7 @@ import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.registry.Registries;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +31,7 @@ public class Utils {
 
     /**
      * Checks if an itemstack is a shulkerbox item
-     * 
+     *
      * @param stack The inventor ystack to check
      * @return A boolean indicating if the stack is a shulkerbox
      */
@@ -65,7 +67,35 @@ public class Utils {
         List<ItemStack> itemStackList = new ArrayList<>();
 
         NbtCompound compound = stack.getNbt();
-        if(compound == null) return null; // Triggers on containers in the creative menu
+        if (compound == null) return null; // Triggers on containers in the creative menu
+
+        // Check if stack is renamed
+        if (stack.hasCustomName() && config.useCustomName != UseCustomNameOption.NEVER) {
+            String customName = stack.getName().getString().toUpperCase();
+
+            ItemStack result = null;
+            int mostMatchLength = -1;
+            for (Item item : Registries.ITEM) {
+                String itemName = item.getName().getString().toUpperCase();
+                String itemPattern = "\\b" + Pattern.quote(itemName) + "\\b";
+                if (customName.matches(".*" + itemPattern + ".*?")) {
+                    if (itemName.length() < mostMatchLength) continue;
+
+                    // If the long match is a shulker or bundle, ignore unless there is no other match
+                    if (itemName.contains("SHULKER") || itemName.contains("BUNDLE")) {
+                        if (mostMatchLength > -1) continue;
+                        mostMatchLength = 0;
+                    } else {
+                        mostMatchLength = itemName.length();
+                    }
+
+                    result = item.getDefaultStack();
+                }
+            }
+            if (result != null) return result;
+
+            if (config.useCustomName == UseCustomNameOption.ALWAYS) return result;
+        }
 
         if (Utils.isShulkerStack(stack)) {
             compound = compound.getCompound("BlockEntityTag");
@@ -73,7 +103,7 @@ public class Utils {
 
             itemStackList = flattenStackList(compound, config);
         }
-        else if(Utils.isObject(stack, RegexGroup.MINECRAFT_BUNDLE)) {
+        else if (Utils.isObject(stack, RegexGroup.MINECRAFT_BUNDLE)) {
             // Bundles aren't a block. Get the items from the bundle's inventory and add them to the list.
             NbtList bundleItems = compound.getList("Items", 10);
             if(bundleItems == null) return null;
@@ -87,7 +117,7 @@ public class Utils {
         else {
             return null;
         }
-        
+
         // Track both stack and item name. The name can be used in the map to count values,
         // but the item stack itself is required for rendering the proper information (e.g. skull textures)
         ItemStack displayItemStack = null;
@@ -119,7 +149,7 @@ public class Utils {
                 }
                 continue;
             }
-            
+
             if (((displayItemName == null) || (config.displayIcon == IconDisplayOption.LAST) ||
                 (config.displayIcon == IconDisplayOption.MOST && storedItems.get(itemName) > storedItems.get(displayItemName)) ||
                 (config.displayIcon == IconDisplayOption.LEAST && storedItems.get(itemName) < storedItems.get(displayItemName))) &&
@@ -141,39 +171,39 @@ public class Utils {
      * @param config The current config options for SimpleShulkerPreview
      * @return A list of ItemStacks extracted from a container NbtCompound
      */
-     public static List<ItemStack> flattenStackList(NbtCompound compound, ConfigOptions config) {
-         List<ItemStack> itemStackList = new ArrayList<>();
+    public static List<ItemStack> flattenStackList(NbtCompound compound, ConfigOptions config) {
+        List<ItemStack> itemStackList = new ArrayList<>();
 
-         NbtList nbtList = compound.getList("Items", 10);
-         if (nbtList == null) return itemStackList;
+        NbtList nbtList = compound.getList("Items", 10);
+        if (nbtList == null) return itemStackList;
 
-         for (int i = 0; i < nbtList.size(); ++i) {
-             NbtCompound nbtCompound = nbtList.getCompound(i);
-             ItemStack itemStack = ItemStack.fromNbt(nbtCompound);
+        for (int i = 0; i < nbtList.size(); ++i) {
+            NbtCompound nbtCompound = nbtList.getCompound(i);
+            ItemStack itemStack = ItemStack.fromNbt(nbtCompound);
 
-             itemStackList.add(itemStack);
+            itemStackList.add(itemStack);
 
-             if (config.supportRecursiveShulkers && Utils.isShulkerStack(itemStack)) {
-                 NbtCompound stackCompound = itemStack.getNbt();
-                 if (stackCompound == null) continue;
+            if (config.supportRecursiveShulkers && Utils.isShulkerStack(itemStack)) {
+                NbtCompound stackCompound = itemStack.getNbt();
+                if (stackCompound == null) continue;
 
-                 stackCompound = stackCompound.getCompound("BlockEntityTag");
-                 if(stackCompound == null) continue; // Triggers on containers in the creative menu
+                stackCompound = stackCompound.getCompound("BlockEntityTag");
+                if (stackCompound == null) continue; // Triggers on containers in the creative menu
 
-                 int multiplier = itemStack.getCount();
-                 for (int j = 0; j < multiplier; j++) {
-                     itemStackList.addAll(flattenStackList(stackCompound, config));
-                 }
-             }
-         }
+                int multiplier = itemStack.getCount();
+                for (int j = 0; j < multiplier; j++) {
+                    itemStackList.addAll(flattenStackList(stackCompound, config));
+                }
+            }
+        }
 
-         return itemStackList;
-     }
+        return itemStackList;
+    }
 
     /**
      * Returns an item to display on a shulker box icon.
      *
-     * @param itemStack  An ItemStack containing a minecraft player head
+     * @param itemStack An ItemStack containing a minecraft player head
      * @return A String indicating with the head ID. If missing, returns a default "minecraft.player_head".
      */
     private static String getSkullName(ItemStack itemStack) {

@@ -8,15 +8,25 @@ import me.shedaniel.autoconfig.annotation.ConfigEntry;
 @Config(name = SimpleShulkerPreviewMod.MOD_ID)
 public class ConfigOptions implements ConfigData {
     /**
-     * Which slot of the shulker box should be displayed.
-     * FIRST - the first item available in the box
-     * LAST - the last item available in the box
-     * UNIQUE - only display if there is one item type in the box
-     * MOST - displays which item there is the most of in the box
+     * Which slot of the container should be displayed
+     * FIRST - the first item available in the container
+     * LAST - the last item available in the container
+     * UNIQUE - only display if there is one item type in the container
+     * MOST - displays which item there is the most of in the container
      */
     @ConfigEntry.Gui.Tooltip()
     @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
     public IconDisplayOption displayIcon = IconDisplayOption.FIRST;
+
+    /**
+     * Whether to use the custom name to determine the icon
+     * PREFER - prefer the custom name if valid, otherwise use the slot option
+     * ALWAYS - always use the custom name, otherwise don't display
+     * NEVER - never use the custom name
+     */
+    @ConfigEntry.Gui.Tooltip()
+    @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
+    public UseCustomNameOption useCustomName = UseCustomNameOption.PREFER;
 
     /** x, y, z offsets and scale */
     @ConfigEntry.Gui.CollapsibleObject()
