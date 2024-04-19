@@ -70,8 +70,8 @@
 	"text.autoconfig.simpleshulkerpreview.option.supportBundles.@Tooltip": "Displays items inside bundles",
 	"text.autoconfig.simpleshulkerpreview.option.supportCustomHeads": "Support Custom Heads",
 	"text.autoconfig.simpleshulkerpreview.option.supportCustomHeads.@Tooltip": "Treats custom heads separately from the minecraft:player_head",
-	"text.autoconfig.simpleshulkerpreview.option.supportRecursiveShulkers": "Support Recursive Shulkers",
-	"text.autoconfig.simpleshulkerpreview.option.supportRecursiveShulkers.@Tooltip": "Displays the item inside recursively stored shulker boxes",
+	"text.autoconfig.simpleshulkerpreview.option.supportOtherContainers": "Support Other Containers",
+	"text.autoconfig.simpleshulkerpreview.option.supportOtherContains.@Tooltip": "Displays items inside other containers (e.g. modded)", 
 	"config.simpleshulkerpreview.capacityDirection.left_to_right": "Left to Right",
 	"config.simpleshulkerpreview.capacityDirection.right_to_left": "Right to Left",
 	"config.simpleshulkerpreview.capacityDirection.top_to_bottom": "Top to Bottom",
@@ -81,7 +81,7 @@
 	"config.simpleshulkerpreview.displayIcon.unique": "Unique",
 	"config.simpleshulkerpreview.displayIcon.most": "Most",
 	"config.simpleshulkerpreview.displayIcon.least": "Least",
-	"config.simpleshulkerpreview.useCustomName.prefer": "Prefer",
-	"config.simpleshulkerpreview.useCustomName.always": "Always",
-	"config.simpleshulkerpreview.useCustomName.never": "Never"
+	"config.simpleshulkerpreview.customName.prefer": "Prefer",
+	"config.simpleshulkerpreview.customName.always": "Always",
+	"config.simpleshulkerpreview.customName.never": "Never"
 }

@@ -2,7 +2,7 @@ package com.bvengo.simpleshulkerpreview.mixin;
 
 import com.bvengo.simpleshulkerpreview.access.DrawContextAccess;
 import com.bvengo.simpleshulkerpreview.config.ConfigOptions;
-import com.bvengo.simpleshulkerpreview.container.ContainerParser;
+import com.bvengo.simpleshulkerpreview.container.ContainerManager;
 import com.bvengo.simpleshulkerpreview.container.ContainerType;
 import com.bvengo.simpleshulkerpreview.positioners.CapacityBarRenderer;
 import com.bvengo.simpleshulkerpreview.positioners.IconRenderer;
@@ -35,7 +35,7 @@ public abstract class DrawContextMixin implements DrawContextAccess {
 	private void renderShulkerItemOverlay(TextRenderer renderer, ItemStack stack, int x, int y, @Nullable String countLabel, CallbackInfo info) throws UnexpectedException {
 
 		ConfigOptions config = AutoConfig.getConfigHolder(ConfigOptions.class).getConfig();
-		ContainerParser containerParser = new ContainerParser(stack);
+		ContainerManager containerParser = new ContainerManager(stack);
 
 		ItemStack displayStack = containerParser.getDisplayStack();
 
