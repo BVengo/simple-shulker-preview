@@ -125,7 +125,7 @@ public class ItemStackManager {
         Identifier itemId = Identifier.tryParse(customName.getString());
         if(itemId == null) return null;
         
-        Item item = Registries.ITEM.get(itemId);
+        Item item = Registries.ITEM.getOrEmpty(itemId).orElse(null);
         if(item == null) return null;
 
         return new ItemStack(item);
