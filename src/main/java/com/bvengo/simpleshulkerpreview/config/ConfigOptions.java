@@ -26,7 +26,7 @@ public class ConfigOptions implements ConfigData {
      */
     @ConfigEntry.Gui.Tooltip()
     @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
-    public CustomNameOption useCustomName = CustomNameOption.PREFER;
+    public CustomNameOption customName = CustomNameOption.PREFER;
 
     /** x, y, z offsets and scale */
     @ConfigEntry.Gui.CollapsibleObject()
