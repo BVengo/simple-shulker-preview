@@ -1,14 +1,18 @@
 package com.bvengo.simpleshulkerpreview.mixin;
 
-import com.bvengo.simpleshulkerpreview.Utils;
 import com.bvengo.simpleshulkerpreview.access.DrawContextAccess;
 import com.bvengo.simpleshulkerpreview.config.ConfigOptions;
+import com.bvengo.simpleshulkerpreview.container.ContainerParser;
+import com.bvengo.simpleshulkerpreview.container.ContainerType;
 import com.bvengo.simpleshulkerpreview.positioners.CapacityBarRenderer;
 import com.bvengo.simpleshulkerpreview.positioners.IconRenderer;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.item.ItemStack;
+
+import java.rmi.UnexpectedException;
+
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -28,19 +32,22 @@ public abstract class DrawContextMixin implements DrawContextAccess {
 
 	@Inject(at = @At(value = "INVOKE", target = "net/minecraft/item/ItemStack.isItemBarVisible()Z"),
 			method = "drawItemInSlot(Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/item/ItemStack;IILjava/lang/String;)V")
-	private void renderShulkerItemOverlay(TextRenderer renderer, ItemStack stack, int x, int y, @Nullable String countLabel, CallbackInfo info) {
+	private void renderShulkerItemOverlay(TextRenderer renderer, ItemStack stack, int x, int y, @Nullable String countLabel, CallbackInfo info) throws UnexpectedException {
 
 		ConfigOptions config = AutoConfig.getConfigHolder(ConfigOptions.class).getConfig();
+		ContainerParser containerParser = new ContainerParser(stack);
 
-		if(!Utils.checkStackAllowed(stack)) return;
+		ItemStack displayStack = containerParser.getDisplayStack();
 
-		ItemStack displayItem = Utils.getDisplayItem(stack, config);
-		iconRenderer = new IconRenderer(config, stack, displayItem, x, y);
+		if(displayStack == null) return;
+
+		iconRenderer = new IconRenderer(config, containerParser, displayStack, x, y);
 		iconRenderer.renderOptional((DrawContext)(Object)this);
 
-		// Display itemBar for shulkers (bundles already have a very similar feature)
-		if(config.showCapacity && Utils.isShulkerStack(stack)) {
-			CapacityBarRenderer capacityBarRenderer = new CapacityBarRenderer(config, stack, x, y);
+		// Display itemBar for containers. Ignore bundles - they already have this feature
+		boolean isBundle = containerParser.getContainerType().equals(ContainerType.BUNDLE);
+		if(config.showCapacity && !isBundle) {
+			CapacityBarRenderer capacityBarRenderer = new CapacityBarRenderer(config, containerParser, stack, x, y);
 			capacityBarRenderer.renderOptional((DrawContext)(Object)this);
 		}
 	}

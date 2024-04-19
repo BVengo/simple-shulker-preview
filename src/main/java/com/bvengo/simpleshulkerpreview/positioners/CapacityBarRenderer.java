@@ -1,20 +1,12 @@
 package com.bvengo.simpleshulkerpreview.positioners;
 
-import com.bvengo.simpleshulkerpreview.RegexGroup;
 import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
-import com.bvengo.simpleshulkerpreview.Utils;
 import com.bvengo.simpleshulkerpreview.config.ConfigOptions;
+import com.bvengo.simpleshulkerpreview.container.ContainerParser;
 
-import net.minecraft.block.BlockWithEntity;
-import net.minecraft.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderLayer;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.BundleItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtList;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 
 public class CapacityBarRenderer extends OverlayRenderer {
@@ -33,9 +25,9 @@ public class CapacityBarRenderer extends OverlayRenderer {
     public int xCapacityEnd;
     public int yCapacityEnd;
 
-    public CapacityBarRenderer(ConfigOptions config, ItemStack stack, int x, int y) {
+    public CapacityBarRenderer(ConfigOptions config, ContainerParser containerParser, ItemStack stack, int x, int y) {
         super(config, stack, x, y);
-        this.capacity = getCapacity(stack, config);
+        this.capacity = containerParser.getCapacity();
     }
 
     /**
@@ -45,51 +37,52 @@ public class CapacityBarRenderer extends OverlayRenderer {
      * @return A float between 0 and 1 indicating how full the container is
      */
     private float getCapacity(ItemStack stack, ConfigOptions config) {
-        NbtCompound compound = stack.getNbt();
-        if(compound == null) return 0; // Triggers on containers in the creative menu
+        return 0.0f;
+        // NbtCompound compound = stack.getNbt();
+        // if(compound == null) return 0; // Triggers on containers in the creative menu
 
-        compound = compound.getCompound("BlockEntityTag");
-        if(compound == null) return 0; // Triggers on containers in the creative menu
+        // compound = compound.getCompound("BlockEntityTag");
+        // if(compound == null) return 0; // Triggers on containers in the creative menu
 
-        NbtList nbtList = compound.getList("Items", 10);
-        if (nbtList == null) return 0; // No items in container
+        // NbtList nbtList = compound.getList("Items", 10);
+        // if (nbtList == null) return 0; // No items in container
 
-        int total = 27; // Default number of slots in a shulker box
-        float sumCapacity = 0; // Sum of 'fullness' level for each slot
+        // int total = 27; // Default number of slots in a shulker box
+        // float sumCapacity = 0; // Sum of 'fullness' level for each slot
 
-        if (Utils.isShulkerStack(stack)) {
-            BlockWithEntity block = (BlockWithEntity) ((BlockItem) stack.getItem()).getBlock();
-            ShulkerBoxBlockEntity entity = (ShulkerBoxBlockEntity) block.createBlockEntity(BlockPos.ORIGIN, null);
+        // if (Utils.isShulkerStack(stack)) {
+        //     BlockWithEntity block = (BlockWithEntity) ((BlockItem) stack.getItem()).getBlock();
+        //     ShulkerBoxBlockEntity entity = (ShulkerBoxBlockEntity) block.createBlockEntity(BlockPos.ORIGIN, null);
 
-            if(entity != null) {
-                total = entity.size();
-            }
+        //     if(entity != null) {
+        //         total = entity.size();
+        //     }
 
-        } else if (Utils.isObject(stack, RegexGroup.MINECRAFT_BUNDLE)) {
-            total = 1;
-        }
+        // } else if (Utils.isObject(stack, RegexGroup.MINECRAFT_BUNDLE)) {
+        //     total = 1;
+        // }
 
-        for (int i = 0; i < nbtList.size(); ++i) {
-            NbtCompound nbtCompound = nbtList.getCompound(i);
-            ItemStack itemStack = ItemStack.fromNbt(nbtCompound);
+        // for (int i = 0; i < nbtList.size(); ++i) {
+        //     NbtCompound nbtCompound = nbtList.getCompound(i);
+        //     ItemStack itemStack = ItemStack.fromNbt(nbtCompound);
 
-            // Reduce the maxItemCount if items can't stack to 64
-            int maxStackSize = itemStack.getItem().getMaxCount();
-            sumCapacity += (float) itemStack.getCount() / (float) maxStackSize;
+        //     // Reduce the maxItemCount if items can't stack to 64
+        //     int maxStackSize = itemStack.getItem().getMaxCount();
+        //     sumCapacity += (float) itemStack.getCount() / (float) maxStackSize;
 
-            // TODO: Remove recursion support
-            // Calculate the ratio of items in stacked containers
-            if (config.supportRecursiveShulkers && Utils.isShulkerStack(itemStack)) {
-                // Can ignore stacked shulkers since their ratio multiplier gets cancelled out
-                sumCapacity += getCapacity(itemStack, config);
-            }
+        //     // TODO: Remove recursion support
+        //     // Calculate the ratio of items in stacked containers
+        //     if (config.supportRecursiveShulkers && Utils.isShulkerStack(itemStack)) {
+        //         // Can ignore stacked shulkers since their ratio multiplier gets cancelled out
+        //         sumCapacity += getCapacity(itemStack, config);
+        //     }
 
-            if (config.supportBundles && Utils.isObject(itemStack, RegexGroup.MINECRAFT_BUNDLE)) {
-                sumCapacity += BundleItem.getAmountFilled(itemStack);
-            }
-        }
+        //     if (config.supportBundles && Utils.isObject(itemStack, RegexGroup.MINECRAFT_BUNDLE)) {
+        //         sumCapacity += BundleItem.getAmountFilled(itemStack);
+        //     }
+        // }
 
-        return sumCapacity / (float)total; // Total divided by number of shulker slots
+        // return sumCapacity / (float)total; // Total divided by number of shulker slots
     }
 
     protected boolean canDisplay() {
