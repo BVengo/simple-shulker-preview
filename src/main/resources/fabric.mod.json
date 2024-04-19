@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "simpleshulkerpreview",
-  "version": "2.4.2",
+  "version": "2.4.3",
   "icon": "assets/simpleshulkerpreview/icon.png",
   "name": "Simple Shulker Preview",
   "description": "Display a configurable icon indicating the contents of a shulker box, as well as a capacity bar.",
@@ -19,11 +19,16 @@
   },
   "mixins": ["simpleshulkerpreview.mixins.json"],
   "depends": {
-    "fabricloader": ">=0.14.25",
-    "minecraft": ">=1.20.3",
-    "java": ">=17"
+    "fabricloader": ">=0.15.0",
+    "minecraft": ">=1.20.5-beta.3",
+    "java": ">=21"
   },
   "recommends": {
-    "modmenu": ">=9.0.0"
+    "modmenu": "10.0.0-alpha.3"
+  },
+  "custom": {
+    "modmenu": {
+      "update_checker": true
+    }
   }
 }

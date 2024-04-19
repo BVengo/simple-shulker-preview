@@ -6,8 +6,8 @@
 	"text.autoconfig.simpleshulkerpreview.option.disableMod.@Tooltip": "Disables the mod so that overlay icons are not displayed.",
 	"text.autoconfig.simpleshulkerpreview.option.displayIcon": "Display Icon",
 	"text.autoconfig.simpleshulkerpreview.option.displayIcon.@Tooltip": "Set which item in the shulker should be displayed.",
-	"text.autoconfig.simpleshulkerpreview.option.useCustomName": "Use Custom Name",
-	"text.autoconfig.simpleshulkerpreview.option.useCustomName.@Tooltip": "Set whether to use the custom name to determine the icon",
+	"text.autoconfig.simpleshulkerpreview.option.customName": "Custom Name",
+	"text.autoconfig.simpleshulkerpreview.option.customName.@Tooltip": "Set how custom names influence the displayed icon.",
 	"text.autoconfig.simpleshulkerpreview.option.groupEnchantment": "Group Enchantments",
 	"text.autoconfig.simpleshulkerpreview.option.groupEnchantment.@Tooltip": "Group enchanted items separately from un-enchanted items.",
 	"text.autoconfig.simpleshulkerpreview.option.showCapacity": "Show Capacity",
@@ -70,8 +70,8 @@
 	"text.autoconfig.simpleshulkerpreview.option.supportBundles.@Tooltip": "Displays items inside bundles",
 	"text.autoconfig.simpleshulkerpreview.option.supportCustomHeads": "Support Custom Heads",
 	"text.autoconfig.simpleshulkerpreview.option.supportCustomHeads.@Tooltip": "Treats custom heads separately from the minecraft:player_head",
-	"text.autoconfig.simpleshulkerpreview.option.supportRecursiveShulkers": "Support Recursive Shulkers",
-	"text.autoconfig.simpleshulkerpreview.option.supportRecursiveShulkers.@Tooltip": "Displays the item inside recursively stored shulker boxes",
+	"text.autoconfig.simpleshulkerpreview.option.supportOtherContainers": "Support Other Containers",
+	"text.autoconfig.simpleshulkerpreview.option.supportOtherContains.@Tooltip": "Displays items inside other containers (e.g. modded)", 
 	"config.simpleshulkerpreview.capacityDirection.left_to_right": "Left to Right",
 	"config.simpleshulkerpreview.capacityDirection.right_to_left": "Right to Left",
 	"config.simpleshulkerpreview.capacityDirection.top_to_bottom": "Top to Bottom",
@@ -81,7 +81,7 @@
 	"config.simpleshulkerpreview.displayIcon.unique": "Unique",
 	"config.simpleshulkerpreview.displayIcon.most": "Most",
 	"config.simpleshulkerpreview.displayIcon.least": "Least",
-	"config.simpleshulkerpreview.useCustomName.prefer": "Prefer",
-	"config.simpleshulkerpreview.useCustomName.always": "Always",
-	"config.simpleshulkerpreview.useCustomName.never": "Never"
+	"config.simpleshulkerpreview.customName.prefer": "Prefer",
+	"config.simpleshulkerpreview.customName.always": "Always",
+	"config.simpleshulkerpreview.customName.never": "Never"
 }

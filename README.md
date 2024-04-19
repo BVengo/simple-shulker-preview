@@ -19,6 +19,7 @@ I won't go through all the configs, since they've increased over time. A brief o
 | **Option**          | **Description**                                                                      |
 |---------------------|--------------------------------------------------------------------------------------|
 | `Display Item`      | Decides which item in the shulker should be displayed based on position or quantity. |
+| `Custom Name`       | Provides options to display an icon based on custom named shulkers                   |
 | `Icon Positions`    | Modify the x and y offsets of the icon, as well as scale.                            |
 | `Capacity Bar`      | Display a capacity bar, indicating how full the shulker box is                       |
 | `Bar Position`      | Set the position, size, and _direction_ the capacity bar is drawn.                   |
@@ -26,26 +27,7 @@ I won't go through all the configs, since they've increased over time. A brief o
 | `Enable ...`        | Option to enable additional features, such as bundles or recursive shulker support   |
 | `Disable Mod`       | Disables the mod so that overlay icons are not displayed.                            |
 
-## Mod Compatibility
-The following features have been tested for compatibility and work with this mod. Mods with these functionalities should also work, however I can't promise anything.
-- Bundles (can show the icon on bundles too)
-- Custom heads (treats them as individual items rather than a single player head)
-- Recursive shulkers (shulkers stored in shulkers)
-- Stacked shulkers (full / empty shulkers that are stacked together)
-- Variable shulkers sizes
-
-The following mods were used in testing:
-| **Mod** | **Feature** |
-|---------|-------------|
-| Carpet Essential Addons | Stacked shulkers |
-| Reinforced Shulker Boxes Mod | Variable sized shulkers |
-| MicroCutting | Custom Heads |
-| HeadIndex | Custom Heads |
-| JustMobHeads | Custom Heads |
-| MoreMobHeads | Custom Heads |
-| Player Head Drops | Custom Heads |
-| All Mob Heads | Custom Heads |
-| Forgotten... Need a new mod. | Recursive shulkers |
+When using custom named shulkers, you need to name it using the same conventions required for spawning in items. For example, naming a shulker `minecraft:grass_block` will display a grass block. If an invalid name has been given, it will continue to follow the 'Display Item' configuration (unless 'Custom Name' has been set to 'ALWAYS', of course).
 
 ## Contributing
 Contributions and suggestions are always welcome! Please limit all issues to only one feature at a time - feel free to open multiple at once if you have many ideas. Similarly, please limit pull requests to a single feature at a time and try to follow the existing code style.

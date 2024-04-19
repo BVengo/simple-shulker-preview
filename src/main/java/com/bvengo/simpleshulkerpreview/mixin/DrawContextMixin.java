@@ -1,14 +1,16 @@
 package com.bvengo.simpleshulkerpreview.mixin;
 
-import com.bvengo.simpleshulkerpreview.Utils;
 import com.bvengo.simpleshulkerpreview.access.DrawContextAccess;
 import com.bvengo.simpleshulkerpreview.config.ConfigOptions;
+import com.bvengo.simpleshulkerpreview.container.ContainerManager;
+import com.bvengo.simpleshulkerpreview.container.ContainerType;
 import com.bvengo.simpleshulkerpreview.positioners.CapacityBarRenderer;
 import com.bvengo.simpleshulkerpreview.positioners.IconRenderer;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.item.ItemStack;
+
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -31,16 +33,19 @@ public abstract class DrawContextMixin implements DrawContextAccess {
 	private void renderShulkerItemOverlay(TextRenderer renderer, ItemStack stack, int x, int y, @Nullable String countLabel, CallbackInfo info) {
 
 		ConfigOptions config = AutoConfig.getConfigHolder(ConfigOptions.class).getConfig();
+		ContainerManager containerParser = new ContainerManager(stack);
 
-		if(!Utils.checkStackAllowed(stack)) return;
+		ItemStack displayStack = containerParser.getDisplayStack();
 
-		ItemStack displayItem = Utils.getDisplayItem(stack, config);
-		iconRenderer = new IconRenderer(config, stack, displayItem, x, y);
+		if(displayStack == null) return;
+
+		iconRenderer = new IconRenderer(config, containerParser, displayStack, x, y);
 		iconRenderer.renderOptional((DrawContext)(Object)this);
 
-		// Display itemBar for shulkers (bundles already have a very similar feature)
-		if(config.showCapacity && Utils.isShulkerStack(stack)) {
-			CapacityBarRenderer capacityBarRenderer = new CapacityBarRenderer(config, stack, x, y);
+		// Display itemBar for containers. Ignore bundles - they already have this feature
+		boolean isBundle = containerParser.getContainerType().equals(ContainerType.BUNDLE);
+		if(config.showCapacity && !isBundle) {
+			CapacityBarRenderer capacityBarRenderer = new CapacityBarRenderer(config, containerParser, stack, x, y);
 			capacityBarRenderer.renderOptional((DrawContext)(Object)this);
 		}
 	}
@@ -60,7 +65,7 @@ public abstract class DrawContextMixin implements DrawContextAccess {
 	private void injectedScale(Args args) {
 		if(adjustSize) {
 			args.set(0, iconRenderer.scale);
-			args.set(1, iconRenderer.scale);
+			args.set(1, -iconRenderer.scale);
 			args.set(2, iconRenderer.scale);
 		}
 	}

@@ -19,10 +19,10 @@ public class SimpleShulkerPreviewMod implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
-		LOGGER.info(LOGGER.getName() + " loading...");
+        LOGGER.info("{} loading...", LOGGER.getName());
 
 		AutoConfig.register(ConfigOptions.class, GsonConfigSerializer::new);
 
-		LOGGER.info(LOGGER.getName() + " loaded.");
+        LOGGER.info("{} loaded.", LOGGER.getName());
 	}
 }
