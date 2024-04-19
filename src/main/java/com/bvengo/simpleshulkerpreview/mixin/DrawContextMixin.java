@@ -11,8 +11,6 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.item.ItemStack;
 
-import java.rmi.UnexpectedException;
-
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -67,7 +65,7 @@ public abstract class DrawContextMixin implements DrawContextAccess {
 	private void injectedScale(Args args) {
 		if(adjustSize) {
 			args.set(0, iconRenderer.scale);
-			args.set(1, iconRenderer.scale);
+			args.set(1, -iconRenderer.scale);
 			args.set(2, iconRenderer.scale);
 		}
 	}
