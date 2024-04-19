@@ -10,6 +10,7 @@ import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.BundleContentsComponent;
 import net.minecraft.component.type.ContainerComponent;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 
 public class ContainerParser {
     ConfigOptions config = AutoConfig.getConfigHolder(ConfigOptions.class).getConfig();
@@ -97,20 +98,14 @@ public class ContainerParser {
     }
 
     private void setContainerType() {
-        // TODO: Remove hard-coding of IDs
         if(containerContentsType == ContainerContentsType.NONE) {
             containerType = ContainerType.NONE;
+        } else if (containerId.matches("^minecraft:(.*_)?shulker_box$")) {
+            containerType = ContainerType.SHULKER_BOX;
+        } else if (containerStack.isOf(Items.BUNDLE)) {
+            containerType = ContainerType.BUNDLE;
         } else {
-            switch (containerId) {
-                case "minecraft:shulker_box":
-                    containerType = ContainerType.SHULKER_BOX;
-                    break;
-                case "minecraft:bundle":
-                    containerType = ContainerType.BUNDLE;
-                    break;
-                default:
-                    containerType = ContainerType.OTHER;
-            }
+            containerType = ContainerType.OTHER;
         }
     }
 
