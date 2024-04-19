@@ -32,7 +32,7 @@ public abstract class DrawContextMixin implements DrawContextAccess {
 
 	@Inject(at = @At(value = "INVOKE", target = "net/minecraft/item/ItemStack.isItemBarVisible()Z"),
 			method = "drawItemInSlot(Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/item/ItemStack;IILjava/lang/String;)V")
-	private void renderShulkerItemOverlay(TextRenderer renderer, ItemStack stack, int x, int y, @Nullable String countLabel, CallbackInfo info) throws UnexpectedException {
+	private void renderShulkerItemOverlay(TextRenderer renderer, ItemStack stack, int x, int y, @Nullable String countLabel, CallbackInfo info) {
 
 		ConfigOptions config = AutoConfig.getConfigHolder(ConfigOptions.class).getConfig();
 		ContainerManager containerParser = new ContainerManager(stack);
