@@ -1,7 +1,7 @@
 package com.bvengo.simpleshulkerpreview.positioners;
 
+import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
 import com.bvengo.simpleshulkerpreview.access.DrawContextAccess;
-import com.bvengo.simpleshulkerpreview.config.ConfigOptions;
 import com.bvengo.simpleshulkerpreview.config.IconPositionOptions;
 import com.bvengo.simpleshulkerpreview.container.ContainerManager;
 
@@ -17,25 +17,25 @@ public class IconRenderer extends OverlayRenderer {
     public float yOffset;
     public float zOffset;
 
-    public IconRenderer(ConfigOptions config, ContainerManager containerParser, ItemStack displayStack, int x, int y) {
-        super(config, displayStack, x, y);
-        setPositionOptions(config, containerParser);
+    public IconRenderer(ContainerManager containerParser, ItemStack displayStack, int x, int y) {
+        super(displayStack, x, y);
+        setPositionOptions(containerParser);
     }
 
-    private void setPositionOptions(ConfigOptions config, ContainerManager containerParser) {
+    private void setPositionOptions(ContainerManager containerParser) {
         switch(containerParser.getContainerType()) {
             case SHULKER_BOX:
                 iconPositionOptions = (
-                    containerParser.getStackSize() > 1 ? 
-                    config.iconPositionOptionsStacked : 
-                    config.iconPositionOptionsGeneral
+                    containerParser.getStackSize() > 1 ?
+                        SimpleShulkerPreviewMod.CONFIGS.iconPositionOptionsStacked :
+                        SimpleShulkerPreviewMod.CONFIGS.iconPositionOptionsGeneral
                 );
                 break;
             case BUNDLE:
-                iconPositionOptions = config.iconPositionOptionsBundle;
+                iconPositionOptions = SimpleShulkerPreviewMod.CONFIGS.iconPositionOptionsBundle;
                 break;
             case OTHER:
-                iconPositionOptions = config.iconPositionOptionsGeneral;
+                iconPositionOptions = SimpleShulkerPreviewMod.CONFIGS.iconPositionOptionsGeneral;
                 break;
             case NONE:
                 break;

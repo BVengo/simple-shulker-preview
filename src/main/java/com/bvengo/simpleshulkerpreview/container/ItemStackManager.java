@@ -5,10 +5,9 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import com.bvengo.simpleshulkerpreview.config.ConfigOptions;
+import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
 import com.bvengo.simpleshulkerpreview.config.CustomNameOption;
 
-import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ProfileComponent;
 import net.minecraft.item.Item;
@@ -19,8 +18,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 public class ItemStackManager {
-    private final static ConfigOptions config = AutoConfig.getConfigHolder(ConfigOptions.class).getConfig();
-
     private static class ItemStackGrouper {
         public final ItemStack itemStack;
         public String itemString;
@@ -42,7 +39,7 @@ public class ItemStackManager {
             }
 
             // Group enchantments
-            if (config.groupEnchantment && itemStack.hasEnchantments()) {
+            if (SimpleShulkerPreviewMod.CONFIGS.groupEnchantment && itemStack.hasEnchantments()) {
                 itemString += ".enchanted";
             }
         }
@@ -72,9 +69,9 @@ public class ItemStackManager {
     }
     
     public static ItemStack getDisplayStackFromIterable(Iterable<ItemStack> itemIterable) {
-        int itemThreshold = config.stackSizeOptions.minStackSize * config.stackSizeOptions.minStackCount;
+        int itemThreshold = SimpleShulkerPreviewMod.CONFIGS.stackSizeOptions.minStackSize * SimpleShulkerPreviewMod.CONFIGS.stackSizeOptions.minStackCount;
 
-        switch (config.displayIcon) {
+        switch (SimpleShulkerPreviewMod.CONFIGS.displayIcon) {
             case FIRST:
                 return StreamSupport.stream(itemIterable.spliterator(), false)
                         .filter(itemStack -> itemStack.getCount() >= itemThreshold)
@@ -117,7 +114,7 @@ public class ItemStackManager {
     }
 
     public static ItemStack getItemFromCustomName(ItemStack itemStack) {
-        if(config.customName == CustomNameOption.NEVER) return null;
+        if(SimpleShulkerPreviewMod.CONFIGS.customName == CustomNameOption.NEVER) return null;
 
         Text customName = itemStack.getComponents().get(DataComponentTypes.CUSTOM_NAME);
         if(customName == null) return null;

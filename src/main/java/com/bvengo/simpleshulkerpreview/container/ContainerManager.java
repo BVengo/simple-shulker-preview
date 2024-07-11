@@ -1,10 +1,9 @@
 package com.bvengo.simpleshulkerpreview.container;
 
 
-import com.bvengo.simpleshulkerpreview.config.ConfigOptions;
+import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
 import com.bvengo.simpleshulkerpreview.config.CustomNameOption;
 
-import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.component.ComponentMap;
 import net.minecraft.component.DataComponentTypes;
@@ -14,8 +13,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 
 public class ContainerManager {
-    private final static ConfigOptions config = AutoConfig.getConfigHolder(ConfigOptions.class).getConfig();
-    
     private ItemStack containerStack;
     private ComponentMap containerComponents;
     private String containerId;
@@ -40,7 +37,7 @@ public class ContainerManager {
 
         // Use item from custom name (if necessary)
         ItemStack displayStack = ItemStackManager.getItemFromCustomName(containerStack);
-        if(displayStack != null || config.customName == CustomNameOption.ALWAYS) {
+        if(displayStack != null || SimpleShulkerPreviewMod.CONFIGS.customName == CustomNameOption.ALWAYS) {
             return displayStack;
         }
 
@@ -72,8 +69,6 @@ public class ContainerManager {
 
     /**
      * Returns the ratio full that a container is.
-     * @param stack A container's NbtCompound
-     * @param config The current config options for SimpleShulkerPreview
      * @return A float between 0 and 1 indicating how full the container is
      */
     public float getCapacity() {
@@ -149,10 +144,10 @@ public class ContainerManager {
                 isContainerSupported = true;
                 return;
             case BUNDLE:
-                isContainerSupported = config.supportBundles;
+                isContainerSupported = SimpleShulkerPreviewMod.CONFIGS.supportBundles;
                 return;
             case OTHER:
-                isContainerSupported = config.supportOtherContainers;
+                isContainerSupported = SimpleShulkerPreviewMod.CONFIGS.supportOtherContainers;
                 return;
             default:
                 isContainerSupported = false;
