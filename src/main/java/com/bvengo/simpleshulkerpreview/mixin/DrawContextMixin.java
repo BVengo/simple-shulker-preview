@@ -1,12 +1,11 @@
 package com.bvengo.simpleshulkerpreview.mixin;
 
+import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
 import com.bvengo.simpleshulkerpreview.access.DrawContextAccess;
-import com.bvengo.simpleshulkerpreview.config.ConfigOptions;
 import com.bvengo.simpleshulkerpreview.container.ContainerManager;
 import com.bvengo.simpleshulkerpreview.container.ContainerType;
 import com.bvengo.simpleshulkerpreview.positioners.CapacityBarRenderer;
 import com.bvengo.simpleshulkerpreview.positioners.IconRenderer;
-import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.item.ItemStack;
@@ -32,20 +31,23 @@ public abstract class DrawContextMixin implements DrawContextAccess {
 			method = "drawItemInSlot(Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/item/ItemStack;IILjava/lang/String;)V")
 	private void renderShulkerItemOverlay(TextRenderer renderer, ItemStack stack, int x, int y, @Nullable String countLabel, CallbackInfo info) {
 
-		ConfigOptions config = AutoConfig.getConfigHolder(ConfigOptions.class).getConfig();
+		if(SimpleShulkerPreviewMod.CONFIGS.disableMod) {
+			return;
+		}
+
 		ContainerManager containerParser = new ContainerManager(stack);
 
 		ItemStack displayStack = containerParser.getDisplayStack();
 
 		if(displayStack == null) return;
 
-		iconRenderer = new IconRenderer(config, containerParser, displayStack, x, y);
+		iconRenderer = new IconRenderer(containerParser, displayStack, x, y);
 		iconRenderer.renderOptional((DrawContext)(Object)this);
 
 		// Display itemBar for containers. Ignore bundles - they already have this feature
 		boolean isBundle = containerParser.getContainerType().equals(ContainerType.BUNDLE);
-		if(config.showCapacity && !isBundle) {
-			CapacityBarRenderer capacityBarRenderer = new CapacityBarRenderer(config, containerParser, stack, x, y);
+		if(SimpleShulkerPreviewMod.CONFIGS.showCapacity && !isBundle) {
+			CapacityBarRenderer capacityBarRenderer = new CapacityBarRenderer(containerParser, stack, x, y);
 			capacityBarRenderer.renderOptional((DrawContext)(Object)this);
 		}
 	}
@@ -53,6 +55,10 @@ public abstract class DrawContextMixin implements DrawContextAccess {
 	@ModifyArgs(method = "drawItem(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/world/World;Lnet/minecraft/item/ItemStack;IIII)V",
 				at = @At(value = "INVOKE", target = "net/minecraft/client/util/math/MatrixStack.translate(FFF)V"))
 	private void injectedTranslateXYZ(Args args) {
+		if(SimpleShulkerPreviewMod.CONFIGS.disableMod) {
+			return;
+		}
+
 		if(adjustSize) {
 			args.set(0, (float)args.get(0) + iconRenderer.xOffset);
 			args.set(1, (float)args.get(1) + iconRenderer.yOffset);
@@ -63,6 +69,10 @@ public abstract class DrawContextMixin implements DrawContextAccess {
 	@ModifyArgs(method = "drawItem(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/world/World;Lnet/minecraft/item/ItemStack;IIII)V",
 			at = @At(value = "INVOKE", target = "net/minecraft/client/util/math/MatrixStack.scale(FFF)V"))
 	private void injectedScale(Args args) {
+		if(SimpleShulkerPreviewMod.CONFIGS.disableMod) {
+			return;
+		}
+
 		if(adjustSize) {
 			args.set(0, iconRenderer.scale);
 			args.set(1, -iconRenderer.scale);
