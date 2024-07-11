@@ -4,7 +4,6 @@ package com.bvengo.simpleshulkerpreview.container;
 import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
 import com.bvengo.simpleshulkerpreview.config.CustomNameOption;
 
-import net.minecraft.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.component.ComponentMap;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.BundleContentsComponent;
@@ -100,14 +99,10 @@ public class ContainerManager {
 
     private float getShulkerCapacity() {
         ContainerComponent containerComponent = containerStack.get(DataComponentTypes.CONTAINER);
-        Iterable<ItemStack> itemIterable = containerComponent.iterateNonEmpty();
+        double sumCapacity = containerComponent.stream().map(itemStack -> (float) itemStack.getCount() / itemStack.getItem().getMaxCount()).mapToDouble(Float::doubleValue).sum();
+        long size = containerComponent.stream().count();
 
-        float sumCapacity = 0.0f;
-        for(ItemStack itemStack : itemIterable) {
-            sumCapacity += (float) itemStack.getCount() / itemStack.getItem().getMaxCount();;
-        }
-
-        return sumCapacity / ShulkerBoxBlockEntity.INVENTORY_SIZE;
+        return (float) (sumCapacity / size);
     }
 
     private float getBundleCapacity() {
