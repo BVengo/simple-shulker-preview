@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "simpleshulkerpreview",
-  "version": "2.4.4",
+  "version": "2.4.5",
   "icon": "assets/simpleshulkerpreview/icon.png",
   "name": "Simple Shulker Preview",
   "description": "Display a configurable icon indicating the contents of a shulker box, as well as a capacity bar.",
@@ -24,7 +24,7 @@
     "java": ">=21"
   },
   "recommends": {
-    "modmenu": ">=11.0"
+    "modmenu": ">=12.0"
   },
   "custom": {
     "modmenu": {

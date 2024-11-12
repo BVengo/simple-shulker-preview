@@ -95,4 +95,13 @@ public class ConfigOptions implements ConfigData {
     @ConfigEntry.Category("compatibility")
     @ConfigEntry.Gui.Tooltip()
     public boolean supportOtherContainers = false;
+
+    /**
+     * Support mods that change the default size of shulkers.
+     * Requested in https://github.com/BVengo/simple-shulker-preview/issues/33
+     */
+    @ConfigEntry.Category("compatibility")
+    @ConfigEntry.Gui.CollapsibleObject()
+    @ConfigEntry.Gui.Tooltip()
+    public ShulkerInventoryOptions shulkerInventoryOptions = new ShulkerInventoryOptions();
 }

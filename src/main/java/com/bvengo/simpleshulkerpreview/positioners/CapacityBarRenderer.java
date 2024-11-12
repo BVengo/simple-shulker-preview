@@ -1,28 +1,34 @@
 package com.bvengo.simpleshulkerpreview.positioners;
 
 import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
+import com.bvengo.simpleshulkerpreview.config.CapacityBarOptions;
 import com.bvengo.simpleshulkerpreview.container.ContainerManager;
 
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Colors;
+import net.minecraft.util.math.ColorHelper;
+import org.apache.commons.lang3.math.Fraction;
 
 public class CapacityBarRenderer extends OverlayRenderer {
-    public static final int CAPACITY_BAR_COLOR_FILL = MathHelper.packRgb(0.4F, 0.4F, 1.0F);
-    public static final int CAPACITY_BAR_COLOR_BACK = -16777216;
+    // Taken from BundleItem.java
+    private static final int FULL_ITEM_BAR_COLOR = ColorHelper.fromFloats(1.0F, 1.0F, 0.33F, 0.33F);
+    private static final int ITEM_BAR_COLOR = ColorHelper.fromFloats(1.0F, 0.44F, 0.53F, 1.0F);
 
-    float capacity;
+    private Fraction capacity;
 
-    public int xBackgroundStart;
-    public int yBackgroundStart;
-    public int xBackgroundEnd;
-    public int yBackgroundEnd;
+    private int xBackgroundStart;
+    private int yBackgroundStart;
+    private int xBackgroundEnd;
+    private int yBackgroundEnd;
 
-    public int xCapacityStart;
-    public int yCapacityStart;
-    public int xCapacityEnd;
-    public int yCapacityEnd;
+    private int xCapacityStart;
+    private int yCapacityStart;
+    private int xCapacityEnd;
+    private int yCapacityEnd;
+    
+    private final CapacityBarOptions configs = SimpleShulkerPreviewMod.CONFIGS.capacityBarOptions;
 
     public CapacityBarRenderer(ContainerManager containerParser, ItemStack stack, int x, int y) {
         super(stack, x, y);
@@ -31,53 +37,53 @@ public class CapacityBarRenderer extends OverlayRenderer {
 
     protected boolean canDisplay() {
         return (
-            (!SimpleShulkerPreviewMod.CONFIGS.capacityBarOptions.hideWhenEmpty || capacity > 0.0f) &&
-            (!SimpleShulkerPreviewMod.CONFIGS.capacityBarOptions.hideWhenFull || capacity < 1.0f)
+            (!configs.hideWhenEmpty || capacity.compareTo(Fraction.ZERO) > 0) &&
+            (!configs.hideWhenFull || capacity.compareTo(Fraction.ONE) < 0)
         );
     }
 
     protected void calculatePositions() {
-        int step = (int)(SimpleShulkerPreviewMod.CONFIGS.capacityBarOptions.length * capacity);
-        int shadowHeight = SimpleShulkerPreviewMod.CONFIGS.capacityBarOptions.displayShadow ? 1 : 0;
+        int step = (int)(configs.length * capacity.floatValue());
+        int shadowHeight = configs.displayShadow ? 1 : 0;
 
-        xBackgroundStart = stackX + SimpleShulkerPreviewMod.CONFIGS.capacityBarOptions.translateX;
-        yBackgroundStart = stackY + SimpleShulkerPreviewMod.CONFIGS.capacityBarOptions.translateY;
+        xBackgroundStart = stackX + configs.translateX;
+        yBackgroundStart = stackY + configs.translateY;
 
-        switch(SimpleShulkerPreviewMod.CONFIGS.capacityBarOptions.direction) {
+        switch(configs.direction) {
             case LEFT_TO_RIGHT -> {
-                xBackgroundEnd = xBackgroundStart + SimpleShulkerPreviewMod.CONFIGS.capacityBarOptions.length;
-                yBackgroundEnd = yBackgroundStart + SimpleShulkerPreviewMod.CONFIGS.capacityBarOptions.width + shadowHeight;
+                xBackgroundEnd = xBackgroundStart + configs.length;
+                yBackgroundEnd = yBackgroundStart + configs.width + shadowHeight;
                 xCapacityStart = xBackgroundStart;
                 yCapacityStart = yBackgroundStart;
                 xCapacityEnd = xBackgroundStart + step;
-                yCapacityEnd = yCapacityStart + SimpleShulkerPreviewMod.CONFIGS.capacityBarOptions.width;
+                yCapacityEnd = yCapacityStart + configs.width;
             }
             case RIGHT_TO_LEFT -> {
-                xBackgroundEnd = xBackgroundStart + SimpleShulkerPreviewMod.CONFIGS.capacityBarOptions.length;
-                yBackgroundEnd = yBackgroundStart + SimpleShulkerPreviewMod.CONFIGS.capacityBarOptions.width  + shadowHeight;
+                xBackgroundEnd = xBackgroundStart + configs.length;
+                yBackgroundEnd = yBackgroundStart + configs.width  + shadowHeight;
                 xCapacityStart = xBackgroundEnd - step;
                 yCapacityStart = yBackgroundStart;
                 xCapacityEnd = xBackgroundEnd;
-                yCapacityEnd = yCapacityStart + SimpleShulkerPreviewMod.CONFIGS.capacityBarOptions.width;
+                yCapacityEnd = yCapacityStart + configs.width;
             }
             case TOP_TO_BOTTOM -> {
-                xBackgroundEnd = xBackgroundStart + SimpleShulkerPreviewMod.CONFIGS.capacityBarOptions.width;
-                yBackgroundEnd = yBackgroundStart + SimpleShulkerPreviewMod.CONFIGS.capacityBarOptions.length;
+                xBackgroundEnd = xBackgroundStart + configs.width;
+                yBackgroundEnd = yBackgroundStart + configs.length;
                 xCapacityStart = xBackgroundStart;
                 yCapacityStart = yBackgroundStart;
                 xCapacityEnd = xBackgroundEnd;
                 yCapacityEnd = yCapacityStart + step;
             }
             case BOTTOM_TO_TOP -> {
-                xBackgroundEnd = xBackgroundStart + SimpleShulkerPreviewMod.CONFIGS.capacityBarOptions.width;
-                yBackgroundEnd = yBackgroundStart + SimpleShulkerPreviewMod.CONFIGS.capacityBarOptions.length;
+                xBackgroundEnd = xBackgroundStart + configs.width;
+                yBackgroundEnd = yBackgroundStart + configs.length;
                 xCapacityStart = xBackgroundStart;
                 yCapacityStart = yBackgroundEnd - step;
                 xCapacityEnd = xBackgroundEnd;
                 yCapacityEnd = yBackgroundEnd;
             }
             default -> {
-                String err = "Unexpected value for capacity direction: " + SimpleShulkerPreviewMod.CONFIGS.capacityBarOptions.direction;
+                String err = "Unexpected value for capacity direction: " + configs.direction;
 
                 SimpleShulkerPreviewMod.LOGGER.error(err);
                 throw new IllegalStateException(err);
@@ -86,10 +92,12 @@ public class CapacityBarRenderer extends OverlayRenderer {
     }
 
     protected void render(DrawContext context) {
-        context.fill(RenderLayer.getGuiOverlay(), xBackgroundStart, yBackgroundStart, xBackgroundEnd, yBackgroundEnd,
-                    CAPACITY_BAR_COLOR_BACK);
-        context.fill(RenderLayer.getGuiOverlay(), xCapacityStart, yCapacityStart, xCapacityEnd, yCapacityEnd,
-                    CAPACITY_BAR_COLOR_FILL | CAPACITY_BAR_COLOR_BACK);
+        if(configs.displayShadow) {
+            context.fill(RenderLayer.getGuiOverlay(), xBackgroundStart, yBackgroundStart, xBackgroundEnd, yBackgroundEnd, Colors.BLACK);
+        }
+
+        int colour = capacity.compareTo(Fraction.ONE) == 0 ? FULL_ITEM_BAR_COLOR : ITEM_BAR_COLOR;
+        context.fill(RenderLayer.getGuiOverlay(), xCapacityStart, yCapacityStart, xCapacityEnd, yCapacityEnd, ColorHelper.fullAlpha(colour));
     }
 
     public void renderOptional(DrawContext context) {

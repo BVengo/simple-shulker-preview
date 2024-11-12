@@ -11,6 +11,7 @@ import net.minecraft.component.type.BundleContentsComponent;
 import net.minecraft.component.type.ContainerComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import org.apache.commons.lang3.math.Fraction;
 
 public class ContainerManager {
     private ItemStack containerStack;
@@ -71,48 +72,62 @@ public class ContainerManager {
      * Returns the ratio full that a container is.
      * @return A float between 0 and 1 indicating how full the container is
      */
-    public float getCapacity() {
-        switch(containerContentsType) {
-            case CONTAINER:
-                return getContainerCapacity();
-            case BUNDLE:
-                return getBundleCapacity();
-            default:
-                // String msg = String.format("Cannot get capacity of container '%s' with no contents type.", containerId);
-                // SimpleShulkerPreviewMod.LOGGER.warn(msg);
-                return 0.0f;
+    public Fraction getCapacity() {
+		Fraction capacity = switch (containerContentsType) {
+			case CONTAINER -> getContainerCapacity();
+			case BUNDLE -> getBundleCapacity();
+			default ->
+				// String msg = String.format("Cannot get capacity of container '%s' with no contents type.", containerId);
+				// SimpleShulkerPreviewMod.LOGGER.warn(msg);
+					Fraction.ZERO;
+		};
+
+        // Cap the capacity at 1, in case unsupported large containers are used without using the configs to
+        // modify inventory sizes
+        if(capacity.compareTo(Fraction.ONE) > 0) {
+            capacity = Fraction.ONE;
         }
+
+        return capacity;
     }
 
     public ContainerType getContainerType() {
         return containerType;
     }
 
-    private float getContainerCapacity() {
+    private Fraction getContainerCapacity() {
         if(containerType != ContainerType.SHULKER_BOX) {
             // String msg = String.format("Cannot get maximum inventory size of the container '%s'.", containerId);
             // SimpleShulkerPreviewMod.LOGGER.warn(msg);
-            return 0.0f;
+            return Fraction.ZERO;
         }
 
         return getShulkerCapacity();
     }
 
-    private float getShulkerCapacity() {
+    private Fraction getShulkerCapacity() {
         ContainerComponent containerComponent = containerStack.get(DataComponentTypes.CONTAINER);
-        Iterable<ItemStack> itemIterable = containerComponent.iterateNonEmpty();
-
-        float sumCapacity = 0.0f;
-        for(ItemStack itemStack : itemIterable) {
-            sumCapacity += (float) itemStack.getCount() / itemStack.getItem().getMaxCount();;
+        if(containerComponent == null) {
+//            String msg = String.format("Cannot get container component for container '%s'.", containerId);
+//            SimpleShulkerPreviewMod.LOGGER.warn(msg);
+            return Fraction.ZERO;
         }
 
-        return sumCapacity / ShulkerBoxBlockEntity.INVENTORY_SIZE;
+        int maxItems = SimpleShulkerPreviewMod.CONFIGS.shulkerInventoryOptions.getSize() * 64; // Maximum number of items in the shulker
+        int numItems = 0; // Actual number of items in the shulker
+
+        Iterable<ItemStack> itemIterable = containerComponent.iterateNonEmpty();
+        for(ItemStack itemStack : itemIterable) {
+            numItems += itemStack.getCount();
+            maxItems += itemStack.getItem().getMaxCount() - 64; // Replace the previous 64 with the actual max size of the item
+        }
+
+        return Fraction.getFraction(numItems, maxItems);
     }
 
-    private float getBundleCapacity() {
+    private Fraction getBundleCapacity() {
         BundleContentsComponent bundleComponent = containerStack.get(DataComponentTypes.BUNDLE_CONTENTS);
-        return bundleComponent.getOccupancy().floatValue();
+        return bundleComponent.getOccupancy();
     }
 
     private void setContainerContentsType() {

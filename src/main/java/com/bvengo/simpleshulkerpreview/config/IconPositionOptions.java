@@ -12,7 +12,7 @@ public class IconPositionOptions {
     public int translateY;
 
     @ConfigEntry.Gui.Tooltip()
-    @ConfigEntry.BoundedDiscrete(min = 0, max = 16)
+    @ConfigEntry.BoundedDiscrete(min = 0, max = 64)
     public int translateZ;
 
     @ConfigEntry.Gui.Tooltip()
