@@ -120,9 +120,12 @@ public class ItemStackManager {
         if(customName == null) return null;
 
         Identifier itemId = Identifier.tryParse(customName.getString());
+        // Note: Invalid custom names still return `minecraft:<customName>`, so we need to check the item instead of the ID
         if(itemId == null) return null;
-        
+
         Item item = Registries.ITEM.get(itemId);
+        if(item.equals(Items.AIR)) return null;  // Check for invalid item
+
         return new ItemStack(item);
     }
 
