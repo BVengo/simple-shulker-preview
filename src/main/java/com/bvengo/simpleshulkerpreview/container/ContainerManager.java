@@ -14,9 +14,9 @@ import net.minecraft.item.Items;
 import org.apache.commons.lang3.math.Fraction;
 
 public class ContainerManager {
-    private ItemStack containerStack;
-    private ComponentMap containerComponents;
-    private String containerId;
+    private final ItemStack containerStack;
+    private final ComponentMap containerComponents;
+    private final String containerId;
 
     private boolean isContainerSupported;
     
