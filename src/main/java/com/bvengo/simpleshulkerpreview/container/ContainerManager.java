@@ -2,9 +2,8 @@ package com.bvengo.simpleshulkerpreview.container;
 
 
 import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
-import com.bvengo.simpleshulkerpreview.config.CustomNameOption;
+import com.bvengo.simpleshulkerpreview.enums.CustomNameOption;
 
-import net.minecraft.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.component.ComponentMap;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.BundleContentsComponent;
@@ -113,7 +112,7 @@ public class ContainerManager {
             return Fraction.ZERO;
         }
 
-        int maxItems = SimpleShulkerPreviewMod.CONFIGS.shulkerInventoryOptions.getSize() * 64; // Maximum number of items in the shulker
+        int maxItems = SimpleShulkerPreviewMod.CONFIGS.shulkerInventoryRows * SimpleShulkerPreviewMod.CONFIGS.shulkerInventoryCols * 64; // Maximum number of items in the shulker
         int numItems = 0; // Actual number of items in the shulker
 
         Iterable<ItemStack> itemIterable = containerComponent.iterateNonEmpty();

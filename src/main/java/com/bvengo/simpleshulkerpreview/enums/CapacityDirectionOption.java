@@ -1,4 +1,4 @@
-package com.bvengo.simpleshulkerpreview.config;
+package com.bvengo.simpleshulkerpreview.enums;
 
 import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
 import net.minecraft.util.Language;

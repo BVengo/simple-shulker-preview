@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
-import com.bvengo.simpleshulkerpreview.config.CustomNameOption;
+import com.bvengo.simpleshulkerpreview.enums.CustomNameOption;
 
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ProfileComponent;
@@ -39,7 +39,7 @@ public class ItemStackManager {
             }
 
             // Group enchantments
-            if (SimpleShulkerPreviewMod.CONFIGS.groupEnchantment && itemStack.hasEnchantments()) {
+            if (SimpleShulkerPreviewMod.CONFIGS.groupEnchantments && itemStack.hasEnchantments()) {
                 itemString += ".enchanted";
             }
         }
@@ -69,7 +69,7 @@ public class ItemStackManager {
     }
     
     public static ItemStack getDisplayStackFromIterable(Iterable<ItemStack> itemIterable) {
-        int itemThreshold = SimpleShulkerPreviewMod.CONFIGS.stackSizeOptions.minStackSize * SimpleShulkerPreviewMod.CONFIGS.stackSizeOptions.minStackCount;
+        int itemThreshold = SimpleShulkerPreviewMod.CONFIGS.minStackSize * SimpleShulkerPreviewMod.CONFIGS.minStackCount;
 
         switch (SimpleShulkerPreviewMod.CONFIGS.displayIcon) {
             case FIRST:

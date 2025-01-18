@@ -1,5 +1,9 @@
 {
 	"text.autoconfig.simpleshulkerpreview.title": "Simple Shulker Preview",
+	"simpleshulkerpreview.options.xpos": "X Offset",
+	"simpleshulkerpreview.options.ypos": "Y Offset",
+	"simpleshulkerpreview.options.zpos": "Z Offset",
+	"simpleshulkerpreview.options.scale": "Scale",
 	"text.autoconfig.simpleshulkerpreview.category.default": "General Settings",
 	"text.autoconfig.simpleshulkerpreview.category.compatibility": "Compatibility Settings",
 	"text.autoconfig.simpleshulkerpreview.option.disableMod": "Disable Mod",

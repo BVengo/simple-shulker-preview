@@ -19,6 +19,7 @@ repositories {
 	maven { url = "https://api.modrinth.com/maven" }  // Modrinth
 	maven {	url "https://maven.terraformersmc.com/" }  // Mod Menu
 	maven { url "https://maven.shedaniel.me/" } // Cloth Config
+	maven { url 'https://maven.isxander.dev/releases' } // YACL
 }
 
 dependencies {

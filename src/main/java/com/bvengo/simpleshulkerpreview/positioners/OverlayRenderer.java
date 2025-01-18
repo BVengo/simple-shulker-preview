@@ -18,12 +18,10 @@ public abstract class OverlayRenderer {
 
     public void renderOptional(DrawContext context) {
         if(canDisplay()) {
-            calculatePositions();
             render(context);
         }
     }
 
     protected abstract boolean canDisplay();
-    protected abstract void calculatePositions();
     protected abstract void render(DrawContext context);
 }
