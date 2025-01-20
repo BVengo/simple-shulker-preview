@@ -9,9 +9,12 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.TextWidget;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.text.Text;
 import net.minecraft.util.Colors;
+import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 public class OptionsScreen extends Screen {
@@ -186,32 +189,6 @@ public class OptionsScreen extends Screen {
 		}
 	}
 
-	private void renderGeneralOptions(DrawContext context, int mouseX, int mouseY, float delta) {
-		/**
-		 * Renders the general options tab
-		 */
-	}
-
-	private void renderShulkerOptions(DrawContext context, int mouseX, int mouseY, float delta) {
-		/**
-		 * Renders the shulker options tab
-		 */
-		renderShulker(context);
-	}
-
-	private void renderBundleOptions(DrawContext context, int mouseX, int mouseY, float delta) {
-		/**
-		 * Renders the bundle options tab
-		 */
-		renderBundle(context);
-	}
-
-	private void renderCompatibilityOptions(DrawContext context, int mouseX, int mouseY, float delta) {
-		/**
-		 * Renders the compatibility options tab
-		 */
-	}
-
 	private void renderHeader(DrawContext context, int mouseX, int mouseY, float delta) {
 		/**
 		 * Renders the title and tab selector field
@@ -227,57 +204,88 @@ public class OptionsScreen extends Screen {
 		context.drawCenteredTextWithShadow(this.textRenderer, this.title, xPadding + titleWidth / 2, 14, 16777215);
 	}
 
-	private void renderShulker(DrawContext context) {
+	private void renderGeneralOptions(DrawContext context, int mouseX, int mouseY, float delta) {
 		/**
-		 * Renders a shulker box with a grass block inside
-		 * TODO: Try to combine this with actual rendering code, so it definitely displays the same thing
-		 * 	i.e. create a shulker with a grass block inside, and render that with the same settings
+		 * Renders the general options tab
 		 */
-		float scaleMultiplier = 8.0f;
-
-		float shulkerSize = IconRenderer.DEFAULT_SCALE * scaleMultiplier;
-		int shulkerCenterX = (int)(this.width * 3.0f / 4.0f) - xPadding;
-		int shulkerCenterY = 44 + (int)(shulkerSize / 2.0f);  // 44 is the height of the header
-
-		IconRenderer.setRenderingOptions(context, shulkerSize, 0.0f, 0.0f, 0.0f);
-		context.drawItem(Items.SHULKER_BOX.getDefaultStack(), shulkerCenterX, shulkerCenterY);
-		IconRenderer.resetRenderingOptions(context);
-
-		// Render a small grass block icon
-		IconRenderer.setRenderingOptions(context,
-				SimpleShulkerPreviewMod.CONFIGS.shulkerScale * scaleMultiplier,
-				SimpleShulkerPreviewMod.CONFIGS.shulkerTranslateX * scaleMultiplier,
-				SimpleShulkerPreviewMod.CONFIGS.shulkerTranslateY * scaleMultiplier,
-				shulkerSize * scaleMultiplier
-		);
-		context.drawItemWithoutEntity(Items.GRASS_BLOCK.getDefaultStack(), shulkerCenterX, shulkerCenterY);
-		IconRenderer.resetRenderingOptions(context);
 	}
 
-	private void renderBundle(DrawContext context) {
+	private void renderShulkerOptions(DrawContext context, int mouseX, int mouseY, float delta) {
 		/**
-		 * Renders a bundle with a grass block inside
-		 * TODO: Try to combine this with actual rendering code, so it definitely displays the same thing
-		 * 	i.e. create a bundle with a grass block inside, and render that with the same settings
+		 * Renders the shulker options tab
 		 */
-		float scaleMultiplier = 8.0f;
+		renderItem(
+				context,
+				Items.SHULKER_BOX.getDefaultStack(),
+				SimpleShulkerPreviewMod.CONFIGS.shulkerTranslateX,
+				SimpleShulkerPreviewMod.CONFIGS.shulkerTranslateY,
+				SimpleShulkerPreviewMod.CONFIGS.shulkerScale
+		);
+	}
 
-		float bundleSize = IconRenderer.DEFAULT_SCALE * scaleMultiplier;
-		int bundleCenterX = (int)(this.width * 3.0f / 4.0f) - xPadding;
-		int bundleCenterY = 44 + (int)(bundleSize / 2.0f);  // 44 is the height of the header
+	private void renderBundleOptions(DrawContext context, int mouseX, int mouseY, float delta) {
+		/**
+		 * Renders the bundle options tab
+		 */
+		renderItem(
+				context,
+				Items.BUNDLE.getDefaultStack(),
+				SimpleShulkerPreviewMod.CONFIGS.bundleTranslateX,
+				SimpleShulkerPreviewMod.CONFIGS.bundleTranslateY,
+				SimpleShulkerPreviewMod.CONFIGS.bundleScale
+		);
+	}
 
-		IconRenderer.setRenderingOptions(context, bundleSize, 0.0f, 0.0f, 0.0f);
-		context.drawItem(Items.BUNDLE.getDefaultStack(), bundleCenterX, bundleCenterY);
+	private void renderCompatibilityOptions(DrawContext context, int mouseX, int mouseY, float delta) {
+		/**
+		 * Renders the compatibility options tab
+		 */
+		ItemStack shulkerStack = Items.SHULKER_BOX.getDefaultStack();
+		shulkerStack.setCount(64);
+
+		renderItem(
+				context,
+				shulkerStack,
+				SimpleShulkerPreviewMod.CONFIGS.stackedTranslateX,
+				SimpleShulkerPreviewMod.CONFIGS.stackedTranslateY,
+				SimpleShulkerPreviewMod.CONFIGS.stackedScale
+		);
+	}
+
+	private void renderItem(DrawContext context, ItemStack stack, int overlayX, int overlayY, int overlayScale) {
+		/**
+		 * Renders an item stack at the specified position
+		 * TODO: Unify this with MC code, so it is a single render call with only a custom scale and position set
+		 */
+		// Calculations
+		final Identifier SLOT_FRAME_TEXTURE = Identifier.ofVanilla("widget/slot_frame");
+
+		final float scaleMultiplier = 8.0f;
+		float itemSize = IconRenderer.DEFAULT_SCALE * scaleMultiplier;
+		int itemCenterX = (int)(this.width * 3.0f / 4.0f - xPadding);
+		int itemCenterY = (int)(itemSize / 2.0f) + 44;  // 44 is the height of the header
+
+		// Render the slot
+		int slotX = itemCenterX - (int)(itemSize / 2.0f);
+		int slotY = itemCenterY - (int)(itemSize / 2.0f);
+		int slotSize = (int)(itemSize + scaleMultiplier * 2);
+
+		context.fill(slotX, slotY, slotX + slotSize, slotY + slotSize, Colors.GRAY);
+		context.drawGuiTexture(RenderLayer::getGuiTextured, SLOT_FRAME_TEXTURE, slotX, slotY, slotSize, slotSize);
+
+		// Render the item stack
+		IconRenderer.setRenderingOptions(context, itemSize, 0.0f, 0.0f, 0.0f);
+		context.drawItem(stack, itemCenterX, itemCenterY);
 		IconRenderer.resetRenderingOptions(context);
 
 		// Render a small grass block icon
 		IconRenderer.setRenderingOptions(context,
-				SimpleShulkerPreviewMod.CONFIGS.bundleScale * scaleMultiplier,
-				SimpleShulkerPreviewMod.CONFIGS.bundleTranslateX * scaleMultiplier,
-				SimpleShulkerPreviewMod.CONFIGS.bundleTranslateY * scaleMultiplier,
-				bundleSize * scaleMultiplier
+				overlayScale * scaleMultiplier,
+				overlayX * scaleMultiplier,
+				overlayY * scaleMultiplier,
+				itemSize * scaleMultiplier
 		);
-		context.drawItemWithoutEntity(Items.GRASS_BLOCK.getDefaultStack(), bundleCenterX, bundleCenterY);
+		context.drawItemWithoutEntity(Items.GRASS_BLOCK.getDefaultStack(), itemCenterX, itemCenterY);
 		IconRenderer.resetRenderingOptions(context);
 	}
 
