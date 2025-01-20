@@ -1,30 +1,27 @@
 package com.bvengo.simpleshulkerpreview.gui;
 
 import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
+import com.bvengo.simpleshulkerpreview.enums.TabOptions;
 import com.bvengo.simpleshulkerpreview.gui.components.IntegerSlider;
+import com.bvengo.simpleshulkerpreview.gui.components.IntegerTextInput;
 import com.bvengo.simpleshulkerpreview.positioners.IconRenderer;
-import com.mojang.serialization.Codec;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.option.SimpleOption;
+import net.minecraft.client.gui.widget.TextWidget;
 import net.minecraft.item.Items;
 import net.minecraft.text.Text;
 import net.minecraft.util.Colors;
 import org.jetbrains.annotations.Nullable;
 
-import static net.minecraft.client.option.GameOptions.getGenericValueText;
-
 public class OptionsScreen extends Screen {
 	protected final Screen parent;
 	protected TextFieldWidget tabSelect;  // Temporary until dropdown is implemented
 
-	protected IntegerSlider xPosSlider;
-	protected IntegerSlider yPosSlider;
-	protected IntegerSlider scaleSlider;
+	TabOptions selectedTab = TabOptions.GENERAL;
 
 	final int xPadding = 16;
+	int sliderWidth = 0;
 
 	public OptionsScreen(@Nullable Screen parent) {
 		super(Text.translatable("text.autoconfig.simpleshulkerpreview.title"));
@@ -33,31 +30,131 @@ public class OptionsScreen extends Screen {
 
 	@Override
 	protected void init() {
-		this.tabSelect = new TextFieldWidget(this.textRenderer, this.width / 2 - 100, 8, 200, 20, this.tabSelect, Text.of("Select page..."));
-		this.tabSelect.setChangedListener(search -> {}); // TODO: Implement dropdown. Set page to selected value
-		this.addSelectableChild(this.tabSelect);
+		this.tabSelect = new TextFieldWidget(this.textRenderer, this.width / 2 - 100, 8, 200, 20, Text.of("Select page..."));
+		this.tabSelect.setChangedListener(search -> {
+			if(search.isEmpty()) return;
+			try {
+				TabOptions tab = TabOptions.valueOf(search.toUpperCase());
+				selectTab(tab);
+			} catch (IllegalArgumentException ignored) {}
+		}); // TODO: Implement dropdown. Set page to selected value
 
-		int sliderWidth = (int)(width / 2.0f - xPadding * 2);
+		sliderWidth = (int)(width / 2.0f - xPadding * 2);
 
+		selectTab(selectedTab);
+	}
+
+	private void selectTab(TabOptions tab) {
+		/**
+		 * Selects the tab to display
+		 */
+		this.selectedTab = tab;
+
+		this.clearChildren();
+		this.addDrawableChild(this.tabSelect);
+
+		switch (tab) {
+			case GENERAL:
+				initGeneralOptions();
+				break;
+			case SHULKER:
+				initShulkerOptions();
+				break;
+			case BUNDLE:
+				initBundleOptions();
+				break;
+			case COMPATIBILITY:
+				initCompatibilityOptions();
+				break;
+			default:
+				break;
+		}
+	}
+
+	private void initGeneralOptions() {
+		int inputX = (int)(width / 2.0f + xPadding);
+		int inputWidth = (int)(width / 2.0f - xPadding * 2);
+
+		Text minStackText = Text.of("Minimum Stack Size");
+		this.addDrawable(new TextWidget(xPadding, 44, this.textRenderer.getWidth(minStackText), 20, Text.of("Minimum Stack Size"), this.textRenderer));
+		this.addDrawableChild(new IntegerTextInput(
+				this.textRenderer, inputX, 44, inputWidth, 20,
+				Text.of("Minimum Stack Size"), SimpleShulkerPreviewMod.CONFIGS.minStackSize, 1, Integer.MAX_VALUE,
+				value -> SimpleShulkerPreviewMod.CONFIGS.minStackSize = value
+			)
+		);
+
+		Text minCountText = Text.of("Minimum Stack Count");
+		this.addDrawable(new TextWidget(xPadding, 68, this.textRenderer.getWidth(minCountText), 20, Text.of("Minimum Stack Count"), this.textRenderer));
+		this.addDrawableChild(new IntegerTextInput(
+				this.textRenderer, inputX, 68, inputWidth, 20,
+				Text.of("Minimum Stack Count"), SimpleShulkerPreviewMod.CONFIGS.minStackCount, 1, Integer.MAX_VALUE,
+				value -> SimpleShulkerPreviewMod.CONFIGS.minStackCount = value
+			)
+		);
+	}
+
+	private void initShulkerOptions() {
 		// Position sliders
-		this.xPosSlider = new IntegerSlider(client, "xpos", -8, 8, xPadding, 44, sliderWidth,
+		this.addDrawableChild(new IntegerSlider(
+				client, "xpos", -8, 8, xPadding, 44, sliderWidth,
 				SimpleShulkerPreviewMod.CONFIGS.shulkerTranslateX,
 				value -> SimpleShulkerPreviewMod.CONFIGS.shulkerTranslateX = value
-		);
-		this.addDrawableChild(xPosSlider.widget);
+			).widget);
 
-		this.yPosSlider = new IntegerSlider(client, "ypos", -8, 8, xPadding, xPosSlider.widget.getBottom() + 4, sliderWidth,
+		this.addDrawableChild(new IntegerSlider(
+				client, "ypos", -8, 8, xPadding, 72, sliderWidth,
 				SimpleShulkerPreviewMod.CONFIGS.shulkerTranslateY,
 				value -> SimpleShulkerPreviewMod.CONFIGS.shulkerTranslateY = value
-		);
-		this.addDrawableChild(yPosSlider.widget);
+			).widget);
 
-		// Scale slider
-		this.scaleSlider = new IntegerSlider(client, "scale", 1, 16, xPadding, yPosSlider.widget.getBottom() + 4, sliderWidth,
+		this.addDrawableChild(new IntegerSlider(
+				client, "scale", 1, 16, xPadding, 100, sliderWidth,
 				SimpleShulkerPreviewMod.CONFIGS.shulkerScale,
 				value -> SimpleShulkerPreviewMod.CONFIGS.shulkerScale = value
-		);
-		this.addDrawableChild(scaleSlider.widget);
+			).widget);
+	}
+
+	private void initBundleOptions() {
+		// Position sliders
+		this.addDrawableChild(new IntegerSlider(
+				client, "xpos", -8, 8, xPadding, 44, sliderWidth,
+				SimpleShulkerPreviewMod.CONFIGS.bundleTranslateX,
+				value -> SimpleShulkerPreviewMod.CONFIGS.bundleTranslateX = value
+			).widget);
+
+		this.addDrawableChild(new IntegerSlider(
+				client, "ypos", -8, 8, xPadding, 72, sliderWidth,
+				SimpleShulkerPreviewMod.CONFIGS.bundleTranslateY,
+				value -> SimpleShulkerPreviewMod.CONFIGS.bundleTranslateY = value
+			).widget);
+
+		this.addDrawableChild(new IntegerSlider(
+				client, "scale", 1, 16, xPadding, 100, sliderWidth,
+				SimpleShulkerPreviewMod.CONFIGS.bundleScale,
+				value -> SimpleShulkerPreviewMod.CONFIGS.bundleScale = value
+			).widget);
+	}
+
+	private void initCompatibilityOptions() {
+		// Position sliders
+		this.addDrawableChild(new IntegerSlider(
+				client, "xpos", -8, 8, xPadding, 44, sliderWidth,
+				SimpleShulkerPreviewMod.CONFIGS.stackedTranslateX,
+				value -> SimpleShulkerPreviewMod.CONFIGS.stackedTranslateX = value
+			).widget);
+
+		this.addDrawableChild(new IntegerSlider(
+				client, "ypos", -8, 8, xPadding, 72, sliderWidth,
+				SimpleShulkerPreviewMod.CONFIGS.stackedTranslateY,
+				value -> SimpleShulkerPreviewMod.CONFIGS.stackedTranslateY = value
+			).widget);
+
+		this.addDrawableChild(new IntegerSlider(
+				client, "scale", 1, 16, xPadding, 100, sliderWidth,
+				SimpleShulkerPreviewMod.CONFIGS.stackedScale,
+				value -> SimpleShulkerPreviewMod.CONFIGS.stackedScale = value
+			).widget);
 	}
 
 	@Override
@@ -71,8 +168,47 @@ public class OptionsScreen extends Screen {
 		renderHeader(context, mouseX, mouseY, delta);
 		context.drawHorizontalLine(xPadding, this.width - xPadding, 36, Colors.LIGHT_GRAY);
 
-		// Note: Stuff below here will be based on the selected tab, and each will likely be in a different method (switch or classes)
+		switch(selectedTab) {
+			case GENERAL:
+				renderGeneralOptions(context, mouseX, mouseY, delta);
+				break;
+			case SHULKER:
+				renderShulkerOptions(context, mouseX, mouseY, delta);
+				break;
+			case BUNDLE:
+				renderBundleOptions(context, mouseX, mouseY, delta);
+				break;
+			case COMPATIBILITY:
+				renderCompatibilityOptions(context, mouseX, mouseY, delta);
+				break;
+			default:
+				break;
+		}
+	}
+
+	private void renderGeneralOptions(DrawContext context, int mouseX, int mouseY, float delta) {
+		/**
+		 * Renders the general options tab
+		 */
+	}
+
+	private void renderShulkerOptions(DrawContext context, int mouseX, int mouseY, float delta) {
+		/**
+		 * Renders the shulker options tab
+		 */
 		renderShulker(context);
+	}
+
+	private void renderBundleOptions(DrawContext context, int mouseX, int mouseY, float delta) {
+		/**
+		 * Renders the bundle options tab
+		 */
+	}
+
+	private void renderCompatibilityOptions(DrawContext context, int mouseX, int mouseY, float delta) {
+		/**
+		 * Renders the compatibility options tab
+		 */
 	}
 
 	private void renderHeader(DrawContext context, int mouseX, int mouseY, float delta) {
