@@ -203,6 +203,7 @@ public class OptionsScreen extends Screen {
 		/**
 		 * Renders the bundle options tab
 		 */
+		renderBundle(context);
 	}
 
 	private void renderCompatibilityOptions(DrawContext context, int mouseX, int mouseY, float delta) {
@@ -229,8 +230,10 @@ public class OptionsScreen extends Screen {
 	private void renderShulker(DrawContext context) {
 		/**
 		 * Renders a shulker box with a grass block inside
+		 * TODO: Try to combine this with actual rendering code, so it definitely displays the same thing
+		 * 	i.e. create a shulker with a grass block inside, and render that with the same settings
 		 */
-		final float scaleMultiplier = 8.0f;
+		float scaleMultiplier = 8.0f;
 
 		float shulkerSize = IconRenderer.DEFAULT_SCALE * scaleMultiplier;
 		int shulkerCenterX = (int)(this.width * 3.0f / 4.0f) - xPadding;
@@ -248,6 +251,33 @@ public class OptionsScreen extends Screen {
 				shulkerSize * scaleMultiplier
 		);
 		context.drawItemWithoutEntity(Items.GRASS_BLOCK.getDefaultStack(), shulkerCenterX, shulkerCenterY);
+		IconRenderer.resetRenderingOptions(context);
+	}
+
+	private void renderBundle(DrawContext context) {
+		/**
+		 * Renders a bundle with a grass block inside
+		 * TODO: Try to combine this with actual rendering code, so it definitely displays the same thing
+		 * 	i.e. create a bundle with a grass block inside, and render that with the same settings
+		 */
+		float scaleMultiplier = 8.0f;
+
+		float bundleSize = IconRenderer.DEFAULT_SCALE * scaleMultiplier;
+		int bundleCenterX = (int)(this.width * 3.0f / 4.0f) - xPadding;
+		int bundleCenterY = 44 + (int)(bundleSize / 2.0f);  // 44 is the height of the header
+
+		IconRenderer.setRenderingOptions(context, bundleSize, 0.0f, 0.0f, 0.0f);
+		context.drawItem(Items.BUNDLE.getDefaultStack(), bundleCenterX, bundleCenterY);
+		IconRenderer.resetRenderingOptions(context);
+
+		// Render a small grass block icon
+		IconRenderer.setRenderingOptions(context,
+				SimpleShulkerPreviewMod.CONFIGS.bundleScale * scaleMultiplier,
+				SimpleShulkerPreviewMod.CONFIGS.bundleTranslateX * scaleMultiplier,
+				SimpleShulkerPreviewMod.CONFIGS.bundleTranslateY * scaleMultiplier,
+				bundleSize * scaleMultiplier
+		);
+		context.drawItemWithoutEntity(Items.GRASS_BLOCK.getDefaultStack(), bundleCenterX, bundleCenterY);
 		IconRenderer.resetRenderingOptions(context);
 	}
 
