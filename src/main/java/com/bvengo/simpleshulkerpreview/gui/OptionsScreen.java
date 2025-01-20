@@ -1,6 +1,7 @@
 package com.bvengo.simpleshulkerpreview.gui;
 
 import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
+import com.bvengo.simpleshulkerpreview.enums.CapacityDirectionOption;
 import com.bvengo.simpleshulkerpreview.enums.TabOptions;
 import com.bvengo.simpleshulkerpreview.gui.components.IntegerSlider;
 import com.bvengo.simpleshulkerpreview.gui.components.IntegerTextInput;
@@ -66,6 +67,9 @@ public class OptionsScreen extends Screen {
 			case BUNDLE:
 				initBundleOptions();
 				break;
+			case STACKED:
+				initStackedShulkersOptions();
+				break;
 			case COMPATIBILITY:
 				initCompatibilityOptions();
 				break;
@@ -75,29 +79,37 @@ public class OptionsScreen extends Screen {
 	}
 
 	private void initGeneralOptions() {
+		// enum dropdown displayIcon
+		// enum dropdown customName
+
 		int inputX = (int)(width / 2.0f + xPadding);
 		int inputWidth = (int)(width / 2.0f - xPadding * 2);
 
 		Text minStackText = Text.of("Minimum Stack Size");
-		this.addDrawable(new TextWidget(xPadding, 44, this.textRenderer.getWidth(minStackText), 20, Text.of("Minimum Stack Size"), this.textRenderer));
+		this.addDrawable(new TextWidget(xPadding, 44, this.textRenderer.getWidth(minStackText), 20, minStackText, this.textRenderer));
 		this.addDrawableChild(new IntegerTextInput(
 				this.textRenderer, inputX, 44, inputWidth, 20,
-				Text.of("Minimum Stack Size"), SimpleShulkerPreviewMod.CONFIGS.minStackSize, 1, Integer.MAX_VALUE,
+				minStackText, SimpleShulkerPreviewMod.CONFIGS.minStackSize, 1, Integer.MAX_VALUE,
 				value -> SimpleShulkerPreviewMod.CONFIGS.minStackSize = value
 			)
 		);
 
 		Text minCountText = Text.of("Minimum Stack Count");
-		this.addDrawable(new TextWidget(xPadding, 68, this.textRenderer.getWidth(minCountText), 20, Text.of("Minimum Stack Count"), this.textRenderer));
+		this.addDrawable(new TextWidget(xPadding, 68, this.textRenderer.getWidth(minCountText), 20, minCountText, this.textRenderer));
 		this.addDrawableChild(new IntegerTextInput(
 				this.textRenderer, inputX, 68, inputWidth, 20,
-				Text.of("Minimum Stack Count"), SimpleShulkerPreviewMod.CONFIGS.minStackCount, 1, Integer.MAX_VALUE,
+				minCountText, SimpleShulkerPreviewMod.CONFIGS.minStackCount, 1, Integer.MAX_VALUE,
 				value -> SimpleShulkerPreviewMod.CONFIGS.minStackCount = value
 			)
 		);
+
+		// groupEnchantments boolean button
+
 	}
 
 	private void initShulkerOptions() {
+		// TODO: Use a scrollable area for these options
+
 		// Position sliders
 		this.addDrawableChild(new IntegerSlider(
 				client, "xpos", -8, 8, xPadding, 44, sliderWidth,
@@ -116,9 +128,43 @@ public class OptionsScreen extends Screen {
 				SimpleShulkerPreviewMod.CONFIGS.shulkerScale,
 				value -> SimpleShulkerPreviewMod.CONFIGS.shulkerScale = value
 			).widget);
+
+		// Capacity sliders
+		// boolean showCapacity
+
+		this.addDrawableChild(new IntegerSlider(
+				client, "capacityX", -8, 8, xPadding, 128, sliderWidth,
+				SimpleShulkerPreviewMod.CONFIGS.capacityTranslateX,
+				value -> SimpleShulkerPreviewMod.CONFIGS.capacityTranslateX = value
+			).widget);
+
+		this.addDrawableChild(new IntegerSlider(
+				client, "capacityY", -8, 8, xPadding, 156, sliderWidth,
+				SimpleShulkerPreviewMod.CONFIGS.capacityTranslateY,
+				value -> SimpleShulkerPreviewMod.CONFIGS.capacityTranslateY = value
+			).widget);
+
+		this.addDrawableChild(new IntegerSlider(
+				client, "capacityLength", 1, 16, xPadding, 184, sliderWidth,
+				SimpleShulkerPreviewMod.CONFIGS.capacityLength,
+				value -> SimpleShulkerPreviewMod.CONFIGS.capacityLength = value
+			).widget);
+
+		this.addDrawableChild(new IntegerSlider(
+				client, "capacityWidth", 1, 8, xPadding, 212, sliderWidth,
+				SimpleShulkerPreviewMod.CONFIGS.capacityWidth,
+				value -> SimpleShulkerPreviewMod.CONFIGS.capacityWidth = value
+			).widget);
+
+		// dropdown capacity direction
+		// boolean capacityDisplayShadow
+		// boolean capacityHideWhenEmpty
+		// boolean capacityHideWhenFull
 	}
 
 	private void initBundleOptions() {
+		// bopolean supportBundles
+
 		// Position sliders
 		this.addDrawableChild(new IntegerSlider(
 				client, "xpos", -8, 8, xPadding, 44, sliderWidth,
@@ -139,7 +185,7 @@ public class OptionsScreen extends Screen {
 			).widget);
 	}
 
-	private void initCompatibilityOptions() {
+	private void initStackedShulkersOptions() {
 		// Position sliders
 		this.addDrawableChild(new IntegerSlider(
 				client, "xpos", -8, 8, xPadding, 44, sliderWidth,
@@ -158,6 +204,32 @@ public class OptionsScreen extends Screen {
 				SimpleShulkerPreviewMod.CONFIGS.stackedScale,
 				value -> SimpleShulkerPreviewMod.CONFIGS.stackedScale = value
 			).widget);
+	}
+
+	private void initCompatibilityOptions() {
+		// boolean supportOtherContainers
+
+		int inputX = (int)(width / 2.0f + xPadding);
+		int inputWidth = (int)(width / 2.0f - xPadding * 2);
+
+		Text rowText = Text.of("Shulker Inventory Rows");
+		this.addDrawable(new TextWidget(xPadding, 44, this.textRenderer.getWidth(rowText), 20, rowText, this.textRenderer));
+		this.addDrawableChild(new IntegerTextInput(
+						this.textRenderer, inputX, 44, inputWidth, 20,
+						rowText, SimpleShulkerPreviewMod.CONFIGS.shulkerInventoryCols, 1, Integer.MAX_VALUE,
+						value -> SimpleShulkerPreviewMod.CONFIGS.shulkerInventoryCols = value
+				)
+		);
+
+		Text colText = Text.of("Shulker Inventory Cols");
+		this.addDrawable(new TextWidget(xPadding, 68, this.textRenderer.getWidth(colText), 20, colText, this.textRenderer));
+		this.addDrawableChild(new IntegerTextInput(
+						this.textRenderer, inputX, 68, inputWidth, 20,
+						colText, SimpleShulkerPreviewMod.CONFIGS.shulkerInventoryCols, 1, Integer.MAX_VALUE,
+						value -> SimpleShulkerPreviewMod.CONFIGS.shulkerInventoryCols = value
+				)
+		);
+
 	}
 
 	@Override
@@ -180,6 +252,9 @@ public class OptionsScreen extends Screen {
 				break;
 			case BUNDLE:
 				renderBundleOptions(context, mouseX, mouseY, delta);
+				break;
+			case STACKED:
+				renderStackedShulkersOptions(context, mouseX, mouseY, delta);
 				break;
 			case COMPATIBILITY:
 				renderCompatibilityOptions(context, mouseX, mouseY, delta);
@@ -236,9 +311,9 @@ public class OptionsScreen extends Screen {
 		);
 	}
 
-	private void renderCompatibilityOptions(DrawContext context, int mouseX, int mouseY, float delta) {
+	private void renderStackedShulkersOptions(DrawContext context, int mouseX, int mouseY, float delta) {
 		/**
-		 * Renders the compatibility options tab
+		 * Renders the stacked shulkers options tab
 		 */
 		ItemStack shulkerStack = Items.SHULKER_BOX.getDefaultStack();
 		shulkerStack.setCount(64);
@@ -250,6 +325,23 @@ public class OptionsScreen extends Screen {
 				SimpleShulkerPreviewMod.CONFIGS.stackedTranslateY,
 				SimpleShulkerPreviewMod.CONFIGS.stackedScale
 		);
+	}
+
+	private void renderCompatibilityOptions(DrawContext context, int mouseX, int mouseY, float delta) {
+		/**
+		 * Renders the compatibility options tab
+		 */
+	}
+
+	private void renderText(DrawContext context, String text, int x, int y, int z, float scale) {
+		/**
+		 * Renders text at the specified position
+		 */
+		context.getMatrices().push();
+		context.getMatrices().translate(0, 0, z);
+		context.getMatrices().scale(scale, scale, 1.0f);
+		context.drawText(textRenderer, text, (int)(x / scale), (int)(y / scale), Colors.WHITE, true);
+		context.getMatrices().pop();
 	}
 
 	private void renderItem(DrawContext context, ItemStack stack, int overlayX, int overlayY, int overlayScale) {
@@ -276,6 +368,15 @@ public class OptionsScreen extends Screen {
 		// Render the item stack
 		IconRenderer.setRenderingOptions(context, itemSize, 0.0f, 0.0f, 0.0f);
 		context.drawItem(stack, itemCenterX, itemCenterY);
+
+		if (stack.getCount() != 1) {
+			String string = String.valueOf(stack.getCount());
+			int textX = slotX + slotSize - (int)(textRenderer.getWidth(string) * scaleMultiplier);
+			int textY = itemCenterY + 9;
+
+			renderText(context, string, textX, textY, (int)(itemSize * 2), scaleMultiplier);
+		}
+
 		IconRenderer.resetRenderingOptions(context);
 
 		// Render a small grass block icon
@@ -283,7 +384,7 @@ public class OptionsScreen extends Screen {
 				overlayScale * scaleMultiplier,
 				overlayX * scaleMultiplier,
 				overlayY * scaleMultiplier,
-				itemSize * scaleMultiplier
+				itemSize  // Size of the shulker ItemStack is our z-offset
 		);
 		context.drawItemWithoutEntity(Items.GRASS_BLOCK.getDefaultStack(), itemCenterX, itemCenterY);
 		IconRenderer.resetRenderingOptions(context);

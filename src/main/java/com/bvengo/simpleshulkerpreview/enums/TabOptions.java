@@ -4,6 +4,7 @@ public enum TabOptions {
 	GENERAL("general"),
 	SHULKER("shulker"),
 	BUNDLE("bundle"),
+	STACKED("stacked"),
 	COMPATIBILITY("compatibility");
 
 	private final String name;
