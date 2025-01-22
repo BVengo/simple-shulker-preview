@@ -1,10 +1,8 @@
 package com.bvengo.simpleshulkerpreview.gui;
 
 import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
-import com.bvengo.simpleshulkerpreview.enums.CapacityDirectionOption;
 import com.bvengo.simpleshulkerpreview.enums.TabOptions;
-import com.bvengo.simpleshulkerpreview.gui.components.IntegerSlider;
-import com.bvengo.simpleshulkerpreview.gui.components.IntegerTextInput;
+import com.bvengo.simpleshulkerpreview.gui.components.*;
 import com.bvengo.simpleshulkerpreview.positioners.IconRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -26,6 +24,8 @@ public class OptionsScreen extends Screen {
 
 	final int xPadding = 16;
 	int sliderWidth = 0;
+
+	protected final int SCALE_MULTIPLIER = 8;
 
 	public OptionsScreen(@Nullable Screen parent) {
 		super(Text.translatable("text.autoconfig.simpleshulkerpreview.title"));
@@ -109,57 +109,94 @@ public class OptionsScreen extends Screen {
 
 	private void initShulkerOptions() {
 		// TODO: Use a scrollable area for these options
+		int deltaY = 28;
+		int y = 44 - deltaY;
 
-		// Position sliders
-		this.addDrawableChild(new IntegerSlider(
-				client, "xpos", -8, 8, xPadding, 44, sliderWidth,
-				SimpleShulkerPreviewMod.CONFIGS.shulkerTranslateX,
-				value -> SimpleShulkerPreviewMod.CONFIGS.shulkerTranslateX = value
-			).widget);
+		float itemSize = IconRenderer.DEFAULT_SCALE * SCALE_MULTIPLIER;
 
-		this.addDrawableChild(new IntegerSlider(
-				client, "ypos", -8, 8, xPadding, 72, sliderWidth,
-				SimpleShulkerPreviewMod.CONFIGS.shulkerTranslateY,
-				value -> SimpleShulkerPreviewMod.CONFIGS.shulkerTranslateY = value
-			).widget);
+		int slotSize = (int)(itemSize + SCALE_MULTIPLIER * 2);
+		int slotX = this.width - slotSize - xPadding;  // left x
 
-		this.addDrawableChild(new IntegerSlider(
-				client, "scale", 1, 16, xPadding, 100, sliderWidth,
-				SimpleShulkerPreviewMod.CONFIGS.shulkerScale,
-				value -> SimpleShulkerPreviewMod.CONFIGS.shulkerScale = value
-			).widget);
+		int optionsWidth = slotX - xPadding * 2;
 
-		// Capacity sliders
-		// boolean showCapacity
+		this.addDrawableChild(new ScrollableTabWidget(
+				xPadding, 36, optionsWidth, height - 36, Text.of("Shulker Options")
+			));
 
-		this.addDrawableChild(new IntegerSlider(
-				client, "capacityX", -8, 8, xPadding, 128, sliderWidth,
-				SimpleShulkerPreviewMod.CONFIGS.capacityTranslateX,
-				value -> SimpleShulkerPreviewMod.CONFIGS.capacityTranslateX = value
-			).widget);
-
-		this.addDrawableChild(new IntegerSlider(
-				client, "capacityY", -8, 8, xPadding, 156, sliderWidth,
-				SimpleShulkerPreviewMod.CONFIGS.capacityTranslateY,
-				value -> SimpleShulkerPreviewMod.CONFIGS.capacityTranslateY = value
-			).widget);
-
-		this.addDrawableChild(new IntegerSlider(
-				client, "capacityLength", 1, 16, xPadding, 184, sliderWidth,
-				SimpleShulkerPreviewMod.CONFIGS.capacityLength,
-				value -> SimpleShulkerPreviewMod.CONFIGS.capacityLength = value
-			).widget);
-
-		this.addDrawableChild(new IntegerSlider(
-				client, "capacityWidth", 1, 8, xPadding, 212, sliderWidth,
-				SimpleShulkerPreviewMod.CONFIGS.capacityWidth,
-				value -> SimpleShulkerPreviewMod.CONFIGS.capacityWidth = value
-			).widget);
-
-		// dropdown capacity direction
-		// boolean capacityDisplayShadow
-		// boolean capacityHideWhenEmpty
-		// boolean capacityHideWhenFull
+//		// Position sliders
+//		this.addDrawableChild(new IntegerSlider(
+//				client, "xpos", -8, 8, xPadding, y += deltaY, sliderWidth,
+//				SimpleShulkerPreviewMod.CONFIGS.shulkerTranslateX,
+//				value -> SimpleShulkerPreviewMod.CONFIGS.shulkerTranslateX = value
+//			).widget);
+//
+//		this.addDrawableChild(new IntegerSlider(
+//				client, "ypos", -8, 8, xPadding, y += deltaY, sliderWidth,
+//				SimpleShulkerPreviewMod.CONFIGS.shulkerTranslateY,
+//				value -> SimpleShulkerPreviewMod.CONFIGS.shulkerTranslateY = value
+//			).widget);
+//
+//		this.addDrawableChild(new IntegerSlider(
+//				client, "scale", 1, 16, xPadding, y += deltaY, sliderWidth,
+//				SimpleShulkerPreviewMod.CONFIGS.shulkerScale,
+//				value -> SimpleShulkerPreviewMod.CONFIGS.shulkerScale = value
+//			).widget);
+//
+//		// Capacity options
+//		this.addDrawableChild(new BooleanOptions(
+//				client, "showCapacity", xPadding, y += deltaY, sliderWidth,
+//				SimpleShulkerPreviewMod.CONFIGS.showCapacity,
+//				value -> SimpleShulkerPreviewMod.CONFIGS.showCapacity = value
+//			).widget);
+//
+//		this.addDrawableChild(new IntegerSlider(
+//				client, "capacityX", -8, 8, xPadding, y += deltaY, sliderWidth,
+//				SimpleShulkerPreviewMod.CONFIGS.capacityTranslateX,
+//				value -> SimpleShulkerPreviewMod.CONFIGS.capacityTranslateX = value
+//			).widget);
+//
+//		this.addDrawableChild(new IntegerSlider(
+//				client, "capacityY", -8, 8, xPadding, y += deltaY, sliderWidth,
+//				SimpleShulkerPreviewMod.CONFIGS.capacityTranslateY,
+//				value -> SimpleShulkerPreviewMod.CONFIGS.capacityTranslateY = value
+//			).widget);
+//
+//		this.addDrawableChild(new IntegerSlider(
+//				client, "capacityLength", 1, 16, xPadding, y += deltaY, sliderWidth,
+//				SimpleShulkerPreviewMod.CONFIGS.capacityLength,
+//				value -> SimpleShulkerPreviewMod.CONFIGS.capacityLength = value
+//			).widget);
+//
+//		this.addDrawableChild(new IntegerSlider(
+//				client, "capacityWidth", 1, 8, xPadding, y += deltaY, sliderWidth,
+//				SimpleShulkerPreviewMod.CONFIGS.capacityWidth,
+//				value -> SimpleShulkerPreviewMod.CONFIGS.capacityWidth = value
+//			).widget);
+//
+//		this.addDrawableChild(new EnumOptions<>(
+//				CapacityDirectionOption.class, client,
+//				"capacityDirection", xPadding, y += deltaY, sliderWidth,
+//				SimpleShulkerPreviewMod.CONFIGS.capacityDirection,
+//				value -> SimpleShulkerPreviewMod.CONFIGS.capacityDirection = value
+//			).widget);
+//
+//		this.addDrawableChild(new BooleanOptions(
+//				client, "capacityDisplayShadow", xPadding, y += deltaY, sliderWidth,
+//				SimpleShulkerPreviewMod.CONFIGS.capacityDisplayShadow,
+//				value -> SimpleShulkerPreviewMod.CONFIGS.capacityDisplayShadow = value
+//			).widget);
+//
+//		this.addDrawableChild(new BooleanOptions(
+//				client, "capacityHideWhenEmpty", xPadding, y += deltaY, sliderWidth,
+//				SimpleShulkerPreviewMod.CONFIGS.capacityHideWhenEmpty,
+//				value -> SimpleShulkerPreviewMod.CONFIGS.capacityHideWhenEmpty = value
+//			).widget);
+//
+//		this.addDrawableChild(new BooleanOptions(
+//				client, "capacityHideWhenFull", xPadding, y += deltaY, sliderWidth,
+//				SimpleShulkerPreviewMod.CONFIGS.capacityHideWhenFull,
+//				value -> SimpleShulkerPreviewMod.CONFIGS.capacityHideWhenFull = value
+//			).widget);
 	}
 
 	private void initBundleOptions() {
@@ -352,38 +389,36 @@ public class OptionsScreen extends Screen {
 		// Calculations
 		final Identifier SLOT_FRAME_TEXTURE = Identifier.ofVanilla("widget/slot_frame");
 
-		final float scaleMultiplier = 8.0f;
-		float itemSize = IconRenderer.DEFAULT_SCALE * scaleMultiplier;
-		int itemCenterX = (int)(this.width * 3.0f / 4.0f - xPadding);
-		int itemCenterY = (int)(itemSize / 2.0f) + 44;  // 44 is the height of the header
+		float itemSize = IconRenderer.DEFAULT_SCALE * SCALE_MULTIPLIER;
 
-		// Render the slot
-		int slotX = itemCenterX - (int)(itemSize / 2.0f);
-		int slotY = itemCenterY - (int)(itemSize / 2.0f);
-		int slotSize = (int)(itemSize + scaleMultiplier * 2);
+		int slotSize = (int)(itemSize + SCALE_MULTIPLIER * 2);
+		int slotX = this.width - slotSize - xPadding;  // left x
+		int slotY = 36 + (int)((this.height - 36 - slotSize) / 2.0f);
+
+		int itemCenterX = (int)(slotX + slotSize / 2.0f);
+		int itemCenterY = (int)(slotY + slotSize / 2.0f);
 
 		context.fill(slotX, slotY, slotX + slotSize, slotY + slotSize, Colors.GRAY);
 		context.drawGuiTexture(RenderLayer::getGuiTextured, SLOT_FRAME_TEXTURE, slotX, slotY, slotSize, slotSize);
 
 		// Render the item stack
-		IconRenderer.setRenderingOptions(context, itemSize, 0.0f, 0.0f, 0.0f);
+		// Offsets required due to the way the item is rendered
+		IconRenderer.setRenderingOptions(context, itemSize, -(int)SCALE_MULTIPLIER, -(int)SCALE_MULTIPLIER, 0.0f);
 		context.drawItem(stack, itemCenterX, itemCenterY);
 
 		if (stack.getCount() != 1) {
 			String string = String.valueOf(stack.getCount());
-			int textX = slotX + slotSize - (int)(textRenderer.getWidth(string) * scaleMultiplier);
+			int textX = slotX + slotSize - (int)(textRenderer.getWidth(string) * SCALE_MULTIPLIER);
 			int textY = itemCenterY + 9;
 
-			renderText(context, string, textX, textY, (int)(itemSize * 2), scaleMultiplier);
+			renderText(context, string, textX, textY, (int)(itemSize * 2), SCALE_MULTIPLIER);
 		}
-
-		IconRenderer.resetRenderingOptions(context);
 
 		// Render a small grass block icon
 		IconRenderer.setRenderingOptions(context,
-				overlayScale * scaleMultiplier,
-				overlayX * scaleMultiplier,
-				overlayY * scaleMultiplier,
+				overlayScale * SCALE_MULTIPLIER,
+				overlayX * SCALE_MULTIPLIER,
+				overlayY * SCALE_MULTIPLIER,
 				itemSize  // Size of the shulker ItemStack is our z-offset
 		);
 		context.drawItemWithoutEntity(Items.GRASS_BLOCK.getDefaultStack(), itemCenterX, itemCenterY);

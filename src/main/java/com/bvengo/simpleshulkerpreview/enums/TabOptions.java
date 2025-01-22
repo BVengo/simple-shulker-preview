@@ -1,19 +1,23 @@
 package com.bvengo.simpleshulkerpreview.enums;
 
-public enum TabOptions {
-	GENERAL("general"),
-	SHULKER("shulker"),
-	BUNDLE("bundle"),
-	STACKED("stacked"),
-	COMPATIBILITY("compatibility");
+import net.minecraft.util.TranslatableOption;
 
-	private final String name;
+public enum TabOptions implements TranslatableOption {
+	GENERAL,
+	SHULKER,
+	BUNDLE,
+	STACKED,
+	COMPATIBILITY;
 
-	TabOptions(String name) {
-		this.name = name;
+	private static final String TRANSLATION_GROUP = "options.tabOptions.";
+
+	@Override
+	public int getId() {
+		return this.ordinal();
 	}
 
-	public String getName() {
-		return name;
+	@Override
+	public String getTranslationKey() {
+		return TRANSLATION_GROUP + this.name().toLowerCase();
 	}
 }
