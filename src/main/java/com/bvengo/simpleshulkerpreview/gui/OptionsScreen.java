@@ -55,7 +55,7 @@ public class OptionsScreen extends Screen {
 		int panelY = tabSelect.getBottom() + 16;
 		int panelWidth = this.width - slotSize - Panel.X_PADDING * 3;
 
-		int panelHeight = height - panelY - 16;
+		int panelHeight = height - panelY - 8;
 
 		panels = new HashMap<>();
 		panels.put(TabOptions.GENERAL, new GeneralPanel(Panel.X_PADDING, panelY, panelWidth, panelHeight, client));
@@ -118,7 +118,7 @@ public class OptionsScreen extends Screen {
 					Items.BUNDLE.getDefaultStack(),
 					SimpleShulkerPreviewMod.CONFIGS.bundleTranslateX,
 					SimpleShulkerPreviewMod.CONFIGS.bundleTranslateY,
-					SimpleShulkerPreviewMod.CONFIGS.bundleScale
+					SimpleShulkerPreviewMod.CONFIGS.supportBundles ? SimpleShulkerPreviewMod.CONFIGS.bundleScale : 0
 			);
 		} else if (selectedTab == TabOptions.STACKED) {
 			ItemStack shulkerStack = Items.SHULKER_BOX.getDefaultStack();
