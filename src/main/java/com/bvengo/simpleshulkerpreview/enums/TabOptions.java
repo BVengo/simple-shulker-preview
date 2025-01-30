@@ -1,5 +1,6 @@
 package com.bvengo.simpleshulkerpreview.enums;
 
+import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
 import net.minecraft.util.TranslatableOption;
 
 public enum TabOptions implements TranslatableOption {
@@ -9,7 +10,9 @@ public enum TabOptions implements TranslatableOption {
 	STACKED,
 	COMPATIBILITY;
 
-	private static final String TRANSLATION_GROUP = "options.tabOptions.";
+	public static String getKey() {
+		return "tabOptions";
+	}
 
 	@Override
 	public int getId() {
@@ -18,6 +21,6 @@ public enum TabOptions implements TranslatableOption {
 
 	@Override
 	public String getTranslationKey() {
-		return TRANSLATION_GROUP + this.name().toLowerCase();
+		return SimpleShulkerPreviewMod.MOD_ID + "options." + getKey() + "." + this.name().toLowerCase();
 	}
 }

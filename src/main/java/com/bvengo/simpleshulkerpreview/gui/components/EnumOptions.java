@@ -19,6 +19,8 @@ public class EnumOptions<T extends Enum<T> & TranslatableOption> {
 	public ClickableWidget widget;
 
 	public EnumOptions(Class<T> clazz, MinecraftClient client, String key, int x, int y, int width, T defaultValue, Consumer<T> setter) {
+		String translationKey = SimpleShulkerPreviewMod.MOD_ID + ".options." + key;
+
 		List<T> values = List.of(clazz.getEnumConstants());
 		Codec<T> enumCodec = Codec.INT.xmap(
 				values::get,
@@ -26,7 +28,7 @@ public class EnumOptions<T extends Enum<T> & TranslatableOption> {
 		);
 
 		this.option = new SimpleOption<T>(
-				SimpleShulkerPreviewMod.MOD_ID + ".options." + key,
+				translationKey,
 				value -> Tooltip.of(Text.translatable(value.getTranslationKey() + ".tooltip")),
 				(optionText, value) -> getGenericValueText(optionText, Text.of(value.toString())),
 				new SimpleOption.PotentialValuesBasedCallbacks<>(values, enumCodec),

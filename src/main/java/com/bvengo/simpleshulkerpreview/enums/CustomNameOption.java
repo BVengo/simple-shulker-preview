@@ -1,5 +1,6 @@
 package com.bvengo.simpleshulkerpreview.enums;
 
+import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
 import net.minecraft.util.TranslatableOption;
 
 /** Shulker box slots that can be displayed */
@@ -8,7 +9,9 @@ public enum CustomNameOption implements TranslatableOption {
     PREFER,
     NEVER;
 
-    private static final String TRANSLATION_GROUP = "options.customName.";
+    public static String getKey() {
+        return "customName";
+    }
 
     @Override
     public int getId() {
@@ -17,6 +20,6 @@ public enum CustomNameOption implements TranslatableOption {
 
     @Override
     public String getTranslationKey() {
-        return TRANSLATION_GROUP + this.name().toLowerCase();
+        return SimpleShulkerPreviewMod.MOD_ID + "options." + getKey() + "." + this.name().toLowerCase();
     }
 }
