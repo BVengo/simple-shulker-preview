@@ -12,8 +12,6 @@ import net.minecraft.util.TranslatableOption;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static net.minecraft.client.option.GameOptions.getGenericValueText;
-
 public class EnumOptions<T extends Enum<T> & TranslatableOption> {
 	public SimpleOption<T> option;
 	public ClickableWidget widget;
@@ -30,7 +28,7 @@ public class EnumOptions<T extends Enum<T> & TranslatableOption> {
 		this.option = new SimpleOption<T>(
 				translationKey,
 				value -> Tooltip.of(Text.translatable(value.getTranslationKey() + ".tooltip")),
-				(optionText, value) -> getGenericValueText(optionText, Text.of(value.toString())),
+				(optionText, value) -> Text.of(value.toString()),
 				new SimpleOption.PotentialValuesBasedCallbacks<>(values, enumCodec),
 				defaultValue,
 				setter

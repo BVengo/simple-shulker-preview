@@ -20,6 +20,6 @@ public enum CustomNameOption implements TranslatableOption {
 
     @Override
     public String getTranslationKey() {
-        return SimpleShulkerPreviewMod.MOD_ID + "options." + getKey() + "." + this.name().toLowerCase();
+        return SimpleShulkerPreviewMod.MOD_ID + ".options." + getKey() + "." + this.name().toLowerCase();
     }
 }

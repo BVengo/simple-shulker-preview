@@ -7,6 +7,7 @@ import net.minecraft.util.TranslatableOption;
 public enum IconDisplayOption implements TranslatableOption {
     FIRST,
     LAST,
+    CYCLE,
     UNIQUE,
     MOST,
     LEAST;
@@ -22,6 +23,6 @@ public enum IconDisplayOption implements TranslatableOption {
 
     @Override
     public String getTranslationKey() {
-        return SimpleShulkerPreviewMod.MOD_ID + "options." + getKey() + "." + this.name().toLowerCase();
+        return SimpleShulkerPreviewMod.MOD_ID + ".options." + getKey() + "." + this.name().toLowerCase();
     }
 }
