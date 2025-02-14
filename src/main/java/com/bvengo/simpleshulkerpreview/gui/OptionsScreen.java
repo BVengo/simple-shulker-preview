@@ -2,11 +2,12 @@ package com.bvengo.simpleshulkerpreview.gui;
 
 import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
 import com.bvengo.simpleshulkerpreview.enums.TabOptions;
+import com.bvengo.simpleshulkerpreview.gui.components.DropdownSelection;
 import com.bvengo.simpleshulkerpreview.gui.panels.*;
 import com.bvengo.simpleshulkerpreview.positioners.IconRenderer;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -16,13 +17,13 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.Optional;
 
 public class OptionsScreen extends Screen {
 	protected final Screen parent;
-	protected TextFieldWidget tabSelect;  // Temporary until dropdown is implemented
+	protected DropdownSelection<TabOptions> tabSelect;
 
 	Panel selectedPanel;
-	TabOptions selectedTab = TabOptions.GENERAL;
 
 	int titleWidth = 0;
 
@@ -34,7 +35,7 @@ public class OptionsScreen extends Screen {
 	HashMap<TabOptions, Panel> panels = new HashMap<>();
 
 	public OptionsScreen(@Nullable Screen parent) {
-		super(Text.translatable("text.autoconfig.simpleshulkerpreview.title"));
+		super(Text.translatable("simpleshulkerpreview.title"));
 		this.parent = parent;
 	}
 
@@ -42,17 +43,12 @@ public class OptionsScreen extends Screen {
 	protected void init() {
 		titleWidth = this.textRenderer.getWidth(this.title);
 
-		tabSelect = new TextFieldWidget(this.textRenderer, this.width / 2 - 100, 8, 200, 20, Text.of("Select page..."));
-		tabSelect.setChangedListener(search -> {
-			if(search.isEmpty()) return;
-			try {
-				TabOptions tab = TabOptions.valueOf(search.toUpperCase());
-				selectTab(tab);
-			} catch (IllegalArgumentException ignored) {}
-		}); // TODO: Implement dropdown. Set page to selected value
-		addDrawableChild(tabSelect);
+		tabSelect = new DropdownSelection<>(TabOptions.class, TabOptions.GENERAL, client, this.width / 2 - 100, 8, 200, 20, 200, this::selectTab);
+		tabSelect.init();
+		addDrawableChild(tabSelect.selectedDisplay);
+//		addDrawableChild(tabSelect.dropdown);
 
-		int panelY = tabSelect.getBottom() + 16;
+		int panelY = tabSelect.selectedDisplay.getBottom() + 16;
 		int panelWidth = this.width - slotSize - Panel.X_PADDING * 3;
 
 		int panelHeight = height - panelY - 8;
@@ -68,7 +64,7 @@ public class OptionsScreen extends Screen {
 			panel.init();
 		});
 
-		this.selectedPanel = panels.get(selectedTab);
+		this.selectedPanel = panels.get(tabSelect.getSelected());
 		this.addDrawableChild(selectedPanel);
 	}
 
@@ -76,17 +72,12 @@ public class OptionsScreen extends Screen {
 		/**
 		 * Selects the tab to display
 		 */
-		if(tab == selectedTab) return;  // No point in re-selecting the same tab
+		TabOptions newSelection = tabSelect.getSelected();
+		if(tab == newSelection) return;  // No point in re-selecting the same tab
 
 		this.remove(selectedPanel);
-		selectedTab = tab;
-		selectedPanel = panels.get(tab);
+		selectedPanel = panels.get(newSelection);
 		this.addDrawableChild(selectedPanel);
-	}
-
-	@Override
-	protected void setInitialFocus() {
-		this.setInitialFocus(this.tabSelect);
 	}
 
 	private void renderHeader(DrawContext context, int mouseX, int mouseY, float delta) {
@@ -95,10 +86,8 @@ public class OptionsScreen extends Screen {
 		 */
 		final int titleWidth = this.textRenderer.getWidth(this.title);
 
-		int tabSelectWidth = this.width - titleWidth - Panel.X_PADDING * 3;  // padding on each side and between
-
-		this.tabSelect.setWidth(tabSelectWidth);
-		this.tabSelect.setX(titleWidth + Panel.X_PADDING * 2); // padding on left of title and between
+		this.tabSelect.width = this.width - titleWidth - Panel.X_PADDING * 3;  // padding on each side and between
+		this.tabSelect.x = titleWidth + Panel.X_PADDING * 2; // padding on left of title and between
 
 		this.tabSelect.render(context, mouseX, mouseY, delta);
 		context.drawCenteredTextWithShadow(this.textRenderer, this.title, Panel.X_PADDING + titleWidth / 2, 14, 16777215);
@@ -108,8 +97,9 @@ public class OptionsScreen extends Screen {
 	public void render(DrawContext context, int mouseX, int mouseY, float delta) {
 		super.render(context, mouseX, mouseY, delta);
 		renderHeader(context, mouseX, mouseY, delta);
-		context.drawHorizontalLine(Panel.X_PADDING, this.width - Panel.X_PADDING, tabSelect.getBottom() + 8, Colors.LIGHT_GRAY);
+		context.drawHorizontalLine(Panel.X_PADDING, this.width - Panel.X_PADDING, tabSelect.selectedDisplay.getBottom() + 8, Colors.LIGHT_GRAY);
 
+		TabOptions selectedTab = tabSelect.getSelected();
 		panels.get(selectedTab).render(context, mouseX, mouseY, delta);
 
 		if(selectedTab == TabOptions.BUNDLE) {
