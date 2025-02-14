@@ -2,6 +2,7 @@ package com.bvengo.simpleshulkerpreview.container;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -67,25 +68,42 @@ public class ItemStackManager {
         return StreamSupport.stream(itemIterable.spliterator(), false)
                 .collect(Collectors.groupingBy(ItemStackGrouper::new, Collectors.summingInt(ItemStack::getCount)));
     }
-    
-    public static ItemStack getDisplayStackFromIterable(Iterable<ItemStack> itemIterable) {
+
+    public static ItemStack getDisplayStackFromIterable(Iterable<ItemStack> itemIterable, AtomicInteger cycleIndex) {
         int itemThreshold = SimpleShulkerPreviewMod.CONFIGS.minStackSize * SimpleShulkerPreviewMod.CONFIGS.minStackCount;
+        Map<ItemStackGrouper, Integer> groupedItems;
 
         switch (SimpleShulkerPreviewMod.CONFIGS.displayIcon) {
+            case CYCLE:
+                // Cycle through each unique item stack type
+                groupedItems = groupItemStacks(itemIterable);
+                if (groupedItems.isEmpty()) return null;
+
+                int size = groupedItems.size();
+                int index = cycleIndex.get() % size;
+                cycleIndex.set((cycleIndex.get() + 1) % size);
+
+                return groupedItems.keySet().stream()
+                        .filter(grouper -> groupedItems.get(grouper) >= itemThreshold)
+                        .skip(index)
+                        .findFirst()
+                        .map(grouper -> grouper.itemStack)
+                        .orElse(null);
+
             case FIRST:
-                return StreamSupport.stream(itemIterable.spliterator(), false)
+                return StreamSupport.stream(itemIterable.spliterator(), true)
                         .filter(itemStack -> itemStack.getCount() >= itemThreshold)
                         .findFirst()
                         .orElse(null);
 
             case LAST:
-                return StreamSupport.stream(itemIterable.spliterator(), false)
+                return StreamSupport.stream(itemIterable.spliterator(), true)
                         .filter(itemStack -> itemStack.getCount() >= itemThreshold)
                         .reduce((first, second) -> second)
                         .orElse(null);
 
             case UNIQUE:
-                Map<ItemStackGrouper, Integer> groupedItems = groupItemStacks(itemIterable);
+                groupedItems = groupItemStacks(itemIterable);
                 if (groupedItems.size() == 1) {
                     Map.Entry<ItemStackGrouper, Integer> entry = groupedItems.entrySet().iterator().next();
                     return entry.getValue() >= itemThreshold ? entry.getKey().itemStack : null;

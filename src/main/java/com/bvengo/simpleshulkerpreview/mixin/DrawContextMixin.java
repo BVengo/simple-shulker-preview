@@ -3,6 +3,7 @@ package com.bvengo.simpleshulkerpreview.mixin;
 import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
 import com.bvengo.simpleshulkerpreview.access.DrawContextAccess;
 import com.bvengo.simpleshulkerpreview.container.ContainerManager;
+import com.bvengo.simpleshulkerpreview.container.ContainerManagerCache;
 import com.bvengo.simpleshulkerpreview.container.ContainerType;
 import com.bvengo.simpleshulkerpreview.positioners.CapacityBarRenderer;
 import com.bvengo.simpleshulkerpreview.positioners.IconRenderer;
@@ -15,6 +16,8 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
+
+import java.awt.*;
 
 @Mixin(DrawContext.class)
 public abstract class DrawContextMixin implements DrawContextAccess {
@@ -40,17 +43,22 @@ public abstract class DrawContextMixin implements DrawContextAccess {
 	@Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawItemBar(Lnet/minecraft/item/ItemStack;II)V"),
 			method = "drawStackOverlay(Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/item/ItemStack;IILjava/lang/String;)V")
 	private void renderShulkerItemOverlay(TextRenderer textRenderer, ItemStack stack, int x, int y, String stackCountText, CallbackInfo info) {
-		ContainerManager containerParser = new ContainerManager(stack);
+
+		if (!ContainerManager.isContainer(stack)) {
+			return;
+		}
+
+		ContainerManager containerParser = ContainerManagerCache.getContainerManager(stack);
 
 		ItemStack displayStack = containerParser.getDisplayStack();
-		if(displayStack == null) return;
+		if (displayStack == null) return;
 
 		iconRenderer = new IconRenderer(containerParser, displayStack, x, y);
 		iconRenderer.renderOptional((DrawContext)(Object)this);
 
 		// Display itemBar for containers. Ignore bundles - they already have this feature
 		boolean isBundle = containerParser.getContainerType().equals(ContainerType.BUNDLE);
-		if(SimpleShulkerPreviewMod.CONFIGS.showCapacity && !isBundle) {
+		if (SimpleShulkerPreviewMod.CONFIGS.showCapacity && !isBundle) {
 			CapacityBarRenderer capacityBarRenderer = new CapacityBarRenderer(containerParser, stack, x, y);
 			capacityBarRenderer.renderOptional((DrawContext)(Object)this);
 		}

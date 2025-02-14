@@ -12,38 +12,62 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import org.apache.commons.lang3.math.Fraction;
 
+import java.time.Instant;
+import java.time.Duration;
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class ContainerManager {
     private final ItemStack containerStack;
-    private final ComponentMap containerComponents;
-    private final String containerId;
 
-    private boolean isContainerSupported;
+	private final boolean isContainerSupported;
     
-    private ContainerType containerType;
-    private ContainerContentsType containerContentsType;
+    private final ContainerType containerType;
+    private final ContainerContentsType containerContentsType;
+
+    private ItemStack currentDisplayStack;
+    private Instant lastUpdated;
+    private final AtomicInteger cycleIndex = new AtomicInteger(0);
 
     public ContainerManager(ItemStack containerStack) {
         this.containerStack = containerStack;
-        this.containerId = containerStack.getRegistryEntry().getIdAsString();
-        this.containerComponents = containerStack.getComponents();
+
+        String containerId = containerStack.getRegistryEntry().getIdAsString();
+		ComponentMap containerComponents = containerStack.getComponents();
         
-        setContainerContentsType();
-        setContainerType();
-        setContainerSupported();
+        containerContentsType = getContainerContentsType(containerComponents);
+        containerType = getContainerType(containerContentsType, containerId, containerStack);
+        isContainerSupported = getContainerSupported(containerType);
+
+        this.lastUpdated = Instant.now();
+        this.currentDisplayStack = findDisplayStack();
+    }
+
+    public static boolean isContainer(ItemStack stack) {
+        ContainerContentsType containerContentsType = getContainerContentsType(stack.getComponents());
+        return containerContentsType != ContainerContentsType.NONE;
     }
 
     public ItemStack getDisplayStack() {
-        if(!isContainerSupported) return null;
+        if (!isContainerSupported) return null;
 
+        if (Duration.between(lastUpdated, Instant.now()).getSeconds() >= 1) {
+            this.currentDisplayStack = findDisplayStack();
+            this.lastUpdated = Instant.now();
+        }
+
+        return currentDisplayStack;
+    }
+
+    private ItemStack findDisplayStack() {
         // Use item from custom name (if necessary)
         ItemStack displayStack = ItemStackManager.getItemFromCustomName(containerStack);
-        if(displayStack != null || SimpleShulkerPreviewMod.CONFIGS.customName == CustomNameOption.ALWAYS) {
+        if (displayStack != null || SimpleShulkerPreviewMod.CONFIGS.customName == CustomNameOption.ALWAYS) {
             return displayStack;
         }
 
         // Get items from container
         Iterable<ItemStack> itemIterable;
-        switch(containerContentsType) {
+        switch (containerContentsType) {
             case CONTAINER:
                 ContainerComponent containerComponent = containerStack.get(DataComponentTypes.CONTAINER);
                 itemIterable = containerComponent.iterateNonEmptyCopy();
@@ -53,14 +77,11 @@ public class ContainerManager {
                 itemIterable = bundleComponent.iterateCopy();
                 break;
             case NONE:
-                // String badContainerId = containerStack.getRegistryEntry().getIdAsString();
-                // String msg = String.format("Item %s marked as container, but has no container components.", badContainerId);
-                // SimpleShulkerPreviewMod.LOGGER.warn(msg);
             default:
                 return null;
         }
 
-        return ItemStackManager.getDisplayStackFromIterable(itemIterable);
+        return ItemStackManager.getDisplayStackFromIterable(itemIterable, cycleIndex);
     }
 
     public int getStackSize() {
@@ -129,43 +150,39 @@ public class ContainerManager {
         return bundleComponent.getOccupancy();
     }
 
-    private void setContainerContentsType() {
+    private static ContainerContentsType getContainerContentsType(ComponentMap containerComponents) {
         if(containerComponents.contains(DataComponentTypes.CONTAINER)) {
-            containerContentsType = ContainerContentsType.CONTAINER;
+            return ContainerContentsType.CONTAINER;
         } else if(containerComponents.contains(DataComponentTypes.BUNDLE_CONTENTS)) {
-            containerContentsType = ContainerContentsType.BUNDLE;
+            return ContainerContentsType.BUNDLE;
         } else {
-            containerContentsType = ContainerContentsType.NONE;
-        };
-    }
-
-    private void setContainerType() {
-        if(containerContentsType == ContainerContentsType.NONE) {
-            containerType = ContainerType.NONE;
-        } else if (containerId.matches("^minecraft:(.*_)?shulker_box$")) {
-            containerType = ContainerType.SHULKER_BOX;
-        } else if (containerStack.isOf(Items.BUNDLE)) {
-            containerType = ContainerType.BUNDLE;
-        } else {
-            containerType = ContainerType.OTHER;
+            return ContainerContentsType.NONE;
         }
     }
 
-    private void setContainerSupported() {
+    private static ContainerType getContainerType(ContainerContentsType containerContentsType, String containerId, ItemStack containerStack) {
+        if(containerContentsType == ContainerContentsType.NONE) {
+            return ContainerType.NONE;
+        } else if (containerId.matches("^minecraft:(.*_)?shulker_box$")) {
+            return ContainerType.SHULKER_BOX;
+        } else if (containerStack.isOf(Items.BUNDLE)) {
+            return ContainerType.BUNDLE;
+        } else {
+            return ContainerType.OTHER;
+        }
+    }
+
+    private static boolean getContainerSupported(ContainerType containerType) {
         // Check if the container display is enabled (e.g. bundles)
         switch(containerType) {
             case SHULKER_BOX:
-                isContainerSupported = true;
-                return;
+                return true;
             case BUNDLE:
-                isContainerSupported = SimpleShulkerPreviewMod.CONFIGS.supportBundles;
-                return;
+                return SimpleShulkerPreviewMod.CONFIGS.supportBundles;
             case OTHER:
-                isContainerSupported = SimpleShulkerPreviewMod.CONFIGS.supportOtherContainers;
-                return;
+                return SimpleShulkerPreviewMod.CONFIGS.supportOtherContainers;
             default:
-                isContainerSupported = false;
-                return;
+                return false;
         }
     }
 }
