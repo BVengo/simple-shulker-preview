@@ -113,16 +113,15 @@ public class ContainerManager {
             return Fraction.ZERO;
         }
 
-        int maxItems = SimpleShulkerPreviewMod.CONFIGS.shulkerInventoryOptions.getSize() * 64; // Maximum number of items in the shulker
-        int numItems = 0; // Actual number of items in the shulker
+        Fraction maxItems = Fraction.getFraction(SimpleShulkerPreviewMod.CONFIGS.shulkerInventoryOptions.getSize() * 64, 1); // Maximum number of items in the shulker
+        Fraction numItems = Fraction.ZERO; // Actual number of items in the shulker
 
         Iterable<ItemStack> itemIterable = containerComponent.iterateNonEmpty();
         for(ItemStack itemStack : itemIterable) {
-            numItems += itemStack.getCount();
-            maxItems += itemStack.getItem().getMaxCount() - 64; // Replace the previous 64 with the actual max size of the item
+        	numItems = numItems.add(Fraction.getFraction(itemStack.getCount(), itemStack.getItem().getMaxCount()).multiplyBy(Fraction.getFraction(64, 1))); // Adjust by max stack size of item
         }
 
-        return Fraction.getFraction(numItems, maxItems);
+        return numItems.divideBy(maxItems);
     }
 
     private Fraction getBundleCapacity() {
