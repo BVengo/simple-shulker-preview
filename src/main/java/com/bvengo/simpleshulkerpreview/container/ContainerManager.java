@@ -4,7 +4,6 @@ package com.bvengo.simpleshulkerpreview.container;
 import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
 import com.bvengo.simpleshulkerpreview.config.CustomNameOption;
 
-import net.minecraft.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.component.ComponentMap;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.BundleContentsComponent;
@@ -144,7 +143,7 @@ public class ContainerManager {
             containerType = ContainerType.NONE;
         } else if (containerId.matches("^minecraft:(.*_)?shulker_box$")) {
             containerType = ContainerType.SHULKER_BOX;
-        } else if (containerStack.isOf(Items.BUNDLE)) {
+        } else if (containerId.matches("^minecraft:(.*_)?bundle$")) {
             containerType = ContainerType.BUNDLE;
         } else {
             containerType = ContainerType.OTHER;
