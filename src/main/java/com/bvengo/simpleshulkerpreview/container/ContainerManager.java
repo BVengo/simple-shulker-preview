@@ -117,7 +117,7 @@ public class ContainerManager {
 
         Iterable<ItemStack> itemIterable = containerComponent.iterateNonEmpty();
         for(ItemStack itemStack : itemIterable) {
-        	numItems = numItems.add(Fraction.getFraction(itemStack.getCount(), itemStack.getItem().getMaxCount()).multiplyBy(Fraction.getFraction(64, 1))); // Adjust by max stack size of item
+        	numItems = numItems.add(ItemStackManager.getItemCountEquivalent(itemStack)); // Adjust by max stack size of item
         }
 
         return numItems.divideBy(maxItems);

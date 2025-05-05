@@ -1,7 +1,9 @@
 package com.bvengo.simpleshulkerpreview.container;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -9,6 +11,7 @@ import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
 import com.bvengo.simpleshulkerpreview.config.CustomNameOption;
 
 import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.PotionContentsComponent;
 import net.minecraft.component.type.ProfileComponent;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -16,6 +19,7 @@ import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import org.apache.commons.lang3.math.Fraction;
 
 public class ItemStackManager {
     private static class ItemStackGrouper {
@@ -34,9 +38,10 @@ public class ItemStackManager {
             if(itemStack.isOf(Items.PLAYER_HEAD)) {
                 String skullName = getSkullName(itemStack);
                 if(skullName != null) {
-                    itemString += skullName;
+                    itemString += "." + skullName;
                 }
             }
+
 
             // Group enchantments
             if (SimpleShulkerPreviewMod.CONFIGS.groupEnchantment && itemStack.hasEnchantments()) {
@@ -63,54 +68,56 @@ public class ItemStackManager {
         }
     }
 
-    private static Map<ItemStackGrouper, Integer> groupItemStacks(Iterable<ItemStack> itemIterable) {
+    private static Map<ItemStackGrouper, Double> groupItemStacks(Iterable<ItemStack> itemIterable) {
         return StreamSupport.stream(itemIterable.spliterator(), false)
-                .collect(Collectors.groupingBy(ItemStackGrouper::new, Collectors.summingInt(ItemStack::getCount)));
+                .collect(Collectors.groupingBy(
+                        ItemStackGrouper::new,
+                        LinkedHashMap::new, // Preserving insertion order
+                        Collectors.summingDouble(x -> getItemCountEquivalent(x).doubleValue())));
+    }
+
+    public static Fraction getItemFraction(ItemStack itemStack) {
+        return Fraction.getFraction(itemStack.getCount(), itemStack.getMaxCount());
+    }
+
+    public static Fraction getItemCountEquivalent(ItemStack itemStack) {
+        return getItemFraction(itemStack).multiplyBy(Fraction.getFraction(64, 1));
     }
     
     public static ItemStack getDisplayStackFromIterable(Iterable<ItemStack> itemIterable) {
         int itemThreshold = SimpleShulkerPreviewMod.CONFIGS.stackSizeOptions.minStackSize * SimpleShulkerPreviewMod.CONFIGS.stackSizeOptions.minStackCount;
+        Map<ItemStackGrouper, Double> groupedItems = groupItemStacks(itemIterable);
 
-        switch (SimpleShulkerPreviewMod.CONFIGS.displayIcon) {
-            case FIRST:
-                return StreamSupport.stream(itemIterable.spliterator(), false)
-                        .filter(itemStack -> itemStack.getCount() >= itemThreshold)
-                        .findFirst()
-                        .orElse(null);
+        Optional<Map.Entry<ItemStackGrouper, Double>> selected;
 
-            case LAST:
-                return StreamSupport.stream(itemIterable.spliterator(), false)
-                        .filter(itemStack -> itemStack.getCount() >= itemThreshold)
-                        .reduce((first, second) -> second)
-                        .orElse(null);
+		selected = switch (SimpleShulkerPreviewMod.CONFIGS.displayIcon) {
+			case FIRST -> groupedItems.entrySet().stream()
+					.filter(entry -> entry.getValue() >= itemThreshold)
+                    .findFirst();
+			case LAST -> groupedItems.entrySet().stream()
+                    .filter(entry -> entry.getValue() >= itemThreshold)
+					.reduce((first, second) -> second);
+			case UNIQUE -> {
+				if (groupedItems.size() != 1) {
+					yield Optional.empty(); // More than one type of item in the shulker.
+				}
 
-            case UNIQUE:
-                Map<ItemStackGrouper, Integer> groupedItems = groupItemStacks(itemIterable);
-                if (groupedItems.size() == 1) {
-                    Map.Entry<ItemStackGrouper, Integer> entry = groupedItems.entrySet().iterator().next();
-                    return entry.getValue() >= itemThreshold ? entry.getKey().itemStack : null;
-                }
-                return null;
+				// Now check if the unique item is above the item limit.
+				yield groupedItems.entrySet().stream()
+						.filter(entry -> entry.getValue() >= itemThreshold)
+						.findFirst();
+			}
+			case MOST -> groupItemStacks(itemIterable).entrySet().stream()
+					.filter(entry -> entry.getValue() >= itemThreshold)
+					.max(Map.Entry.comparingByValue());
+			case LEAST -> groupItemStacks(itemIterable).entrySet().stream()
+					.filter(entry -> entry.getValue() >= itemThreshold)
+					.min(Map.Entry.comparingByValue());
+		};
 
-            case MOST:
-                return groupItemStacks(itemIterable).entrySet().stream()
-                        .filter(entry -> entry.getValue() >= itemThreshold)
-                        .max(Map.Entry.comparingByValue())
-                        .map(Map.Entry::getKey)
-                        .map(grouper -> grouper.itemStack)
-                        .orElse(null);
-
-            case LEAST:
-                return groupItemStacks(itemIterable).entrySet().stream()
-                        .filter(entry -> entry.getValue() >= itemThreshold)
-                        .min(Map.Entry.comparingByValue())
-                        .map(Map.Entry::getKey)
-                        .map(grouper -> grouper.itemStack)
-                        .orElse(null);
-
-            default:
-                return null;
-        }
+        return selected.map(Map.Entry::getKey)
+                .map(grouper -> grouper.itemStack)
+                .orElse(null);
     }
 
     public static ItemStack getItemFromCustomName(ItemStack itemStack) {
@@ -130,10 +137,10 @@ public class ItemStackManager {
     }
 
     /**
-     * Returns an item to display on a shulker box icon.
+     * Returns the name of a skull.
      *
      * @param itemStack An ItemStack containing a minecraft player head
-     * @return A String indicating with the head ID. If missing, returns a default "minecraft.player_head".
+     * @return A String indicating with the head ID. If missing, returns null.
      */
     private static String getSkullName(ItemStack itemStack) {
         ProfileComponent profileComponent = itemStack.get(DataComponentTypes.PROFILE);
@@ -141,4 +148,17 @@ public class ItemStackManager {
 
         return(profileComponent.name().orElse(null));
     }
+
+	/**
+	 * Returns the type of potion item, rather than just 'potion'.
+	 *
+	 * @param itemStack An ItemStack containing a potion
+	 * @return A String indicating the potion type. If missing, returns null.
+	 */
+	private static String getPotionType(ItemStack itemStack) {
+		PotionContentsComponent potionComponent = itemStack.get(DataComponentTypes.POTION_CONTENTS);
+		if(potionComponent == null) return null;
+
+		return potionComponent.getName("").getString();
+	}
 }
