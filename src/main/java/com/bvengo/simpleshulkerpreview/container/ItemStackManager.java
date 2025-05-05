@@ -42,6 +42,13 @@ public class ItemStackManager {
                 }
             }
 
+			// Potions
+			if(itemStack.isOf(Items.POTION)) {
+				String potionType = getPotionType(itemStack);
+				if(potionType != null) {
+					itemString += "." + potionType;
+				}
+			}
 
             // Group enchantments
             if (SimpleShulkerPreviewMod.CONFIGS.groupEnchantment && itemStack.hasEnchantments()) {
