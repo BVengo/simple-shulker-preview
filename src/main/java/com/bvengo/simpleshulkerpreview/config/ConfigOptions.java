@@ -31,7 +31,7 @@ public class ConfigOptions implements ConfigData {
     /** x, y, z offsets and scale */
     @ConfigEntry.Gui.CollapsibleObject()
     @ConfigEntry.Gui.Tooltip()
-    public IconPositionOptions iconPositionOptionsGeneral = new IconPositionOptions(12, 4, 10, 10);
+    public IconPositionOptions iconPositionOptionsGeneral = new IconPositionOptions(12, 4, 10);
 
     /** Stack size bounds */
     @ConfigEntry.Gui.CollapsibleObject()
@@ -75,19 +75,19 @@ public class ConfigOptions implements ConfigData {
     @ConfigEntry.Category("compatibility")
     @ConfigEntry.Gui.CollapsibleObject()
     @ConfigEntry.Gui.Tooltip()
-    public IconPositionOptions iconPositionOptionsBundle = new IconPositionOptions(12, 4, 10, 10);
+    public IconPositionOptions iconPositionOptionsBundle = new IconPositionOptions(12, 4, 10);
 
-    /** 
+    /**
      * Stacked shulkers - tested with Carpet Essential Addons
      * Requested in https://github.com/BVengo/simple-shulker-preview/issues/5
-     * 
+     *
      * x, y, z offsets and scale - different position to avoid overlap with stack
      * size indicator
      */
     @ConfigEntry.Category("compatibility")
     @ConfigEntry.Gui.CollapsibleObject()
     @ConfigEntry.Gui.Tooltip()
-    public IconPositionOptions iconPositionOptionsStacked = new IconPositionOptions(12, 4, 10, 10);
+    public IconPositionOptions iconPositionOptionsStacked = new IconPositionOptions(12, 4, 10);
 
     /**
      * Support any other item with the 'container' component.

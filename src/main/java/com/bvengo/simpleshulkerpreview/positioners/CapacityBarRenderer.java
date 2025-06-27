@@ -4,8 +4,8 @@ import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
 import com.bvengo.simpleshulkerpreview.config.CapacityBarOptions;
 import com.bvengo.simpleshulkerpreview.container.ContainerManager;
 
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Colors;
 import net.minecraft.util.math.ColorHelper;
@@ -93,11 +93,11 @@ public class CapacityBarRenderer extends OverlayRenderer {
 
     protected void render(DrawContext context) {
         if(configs.displayShadow) {
-            context.fill(RenderLayer.getGuiOverlay(), xBackgroundStart, yBackgroundStart, xBackgroundEnd, yBackgroundEnd, Colors.BLACK);
+            context.fill(RenderPipelines.GUI, xBackgroundStart, yBackgroundStart, xBackgroundEnd, yBackgroundEnd, Colors.BLACK);
         }
 
         int colour = capacity.compareTo(Fraction.ONE) == 0 ? FULL_ITEM_BAR_COLOR : ITEM_BAR_COLOR;
-        context.fill(RenderLayer.getGuiOverlay(), xCapacityStart, yCapacityStart, xCapacityEnd, yCapacityEnd, ColorHelper.fullAlpha(colour));
+        context.fill(RenderPipelines.GUI, xCapacityStart, yCapacityStart, xCapacityEnd, yCapacityEnd, ColorHelper.fullAlpha(colour));
     }
 
     public void renderOptional(DrawContext context) {

@@ -15,7 +15,6 @@ public class IconRenderer extends OverlayRenderer {
     public float scale;
     public float xOffset;
     public float yOffset;
-    public float zOffset;
 
     public IconRenderer(ContainerManager containerParser, ItemStack displayStack, int x, int y) {
         super(displayStack, x, y);
@@ -46,7 +45,6 @@ public class IconRenderer extends OverlayRenderer {
         // Normal icon location
         xOffset = (float)iconPositionOptions.translateX - 8.0f;
         yOffset = (float)iconPositionOptions.translateY - 8.0f;
-        zOffset = 100.0f + (float)(iconPositionOptions.translateZ * 10);
 
         scale = iconPositionOptions.scale;
     }

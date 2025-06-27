@@ -12,17 +12,12 @@ public class IconPositionOptions {
     public int translateY;
 
     @ConfigEntry.Gui.Tooltip()
-    @ConfigEntry.BoundedDiscrete(min = 0, max = 64)
-    public int translateZ;
-
-    @ConfigEntry.Gui.Tooltip()
-    @ConfigEntry.BoundedDiscrete(min = 0, max = 16)
+    @ConfigEntry.BoundedDiscrete(min = 1, max = 16)
     public int scale;
 
-    public IconPositionOptions(int x, int y, int z, int scale) {
+    public IconPositionOptions(int x, int y, int scale) {
         this.translateX = x;
         this.translateY = y;
-        this.translateZ = z;
         this.scale = scale;
     }
 }
