@@ -6,11 +6,13 @@ import com.bvengo.simpleshulkerpreview.container.ContainerManager;
 import com.bvengo.simpleshulkerpreview.container.ContainerType;
 import com.bvengo.simpleshulkerpreview.positioners.CapacityBarRenderer;
 import com.bvengo.simpleshulkerpreview.positioners.IconRenderer;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.ScreenRect;
 import net.minecraft.client.gui.render.state.ItemGuiElementRenderState;
-import net.minecraft.client.render.item.ItemRenderState;
+import net.minecraft.client.render.item.KeyedItemRenderState;
 import net.minecraft.item.ItemStack;
 
 import org.joml.Matrix3x2f;
@@ -54,7 +56,7 @@ public abstract class DrawContextMixin implements DrawContextAccess {
 	}
 
 	/**
-	 * Redirects the item rendering to apply scaling and centering based on the icon renderer's settings.
+	 * Warps the item rendering to apply scaling and centering based on the icon renderer's settings.
 	 * <p>
 	 * Beyond the {@link DrawContext} class, the following classes/methods are relevant for the rendering process:
 	 * <ul>
@@ -62,16 +64,16 @@ public abstract class DrawContextMixin implements DrawContextAccess {
 	 *   <li>{@link net.minecraft.client.gui.render.GuiRenderer#prepareItem(ItemGuiElementRenderState, float, float, int, int)} - Where the quad render state is prepared for rendering the item.</li>
 	 * </ul>
 	 */
-	@Redirect(
+	@WrapOperation(
 			method = "drawItem(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/world/World;Lnet/minecraft/item/ItemStack;III)V",
 			at = @At(
 					value = "NEW",
-					target = "(Ljava/lang/String;Lorg/joml/Matrix3x2f;Lnet/minecraft/client/render/item/ItemRenderState;IILnet/minecraft/client/gui/ScreenRect;)Lnet/minecraft/client/gui/render/state/ItemGuiElementRenderState;"
+					target = "(Ljava/lang/String;Lorg/joml/Matrix3x2f;Lnet/minecraft/client/render/item/KeyedItemRenderState;IILnet/minecraft/client/gui/ScreenRect;)Lnet/minecraft/client/gui/render/state/ItemGuiElementRenderState;"
 			)
 	)
-	private ItemGuiElementRenderState wrapDrawItem(String itemName, Matrix3x2f originalMatrix, ItemRenderState state, int x, int y, ScreenRect scissor) {
+	private ItemGuiElementRenderState wrapDrawItem(String itemName, Matrix3x2f originalMatrix, KeyedItemRenderState state, int x, int y, ScreenRect scissor, Operation<ItemGuiElementRenderState> original) {
 		if (!adjustSize) {
-			return new ItemGuiElementRenderState(itemName, originalMatrix, state, x, y, scissor);
+			return original.call(itemName, originalMatrix, state, x, y, scissor);
 		}
 
 		// Apply scaling
@@ -85,6 +87,6 @@ public abstract class DrawContextMixin implements DrawContextAccess {
 		int newScreenX = (int) ((x + iconRenderer.xOffset + shift) / scale);
 		int newScreenY = (int) ((y + iconRenderer.yOffset + shift) / scale);
 
-		return new ItemGuiElementRenderState(itemName, newMatrix, state, newScreenX, newScreenY, scissor);
+		return original.call(itemName, newMatrix, state, newScreenX, newScreenY, scissor);
 	}
 }
