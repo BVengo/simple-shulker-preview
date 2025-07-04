@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "simpleshulkerpreview",
-  "version": "2.4.8",
+  "version": "2.4.9",
   "icon": "assets/simpleshulkerpreview/icon.png",
   "name": "Simple Shulker Preview",
   "description": "Display a configurable icon indicating the contents of a shulker box, as well as a capacity bar.",
