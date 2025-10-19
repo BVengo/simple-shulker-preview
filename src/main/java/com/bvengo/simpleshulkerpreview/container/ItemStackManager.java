@@ -153,7 +153,7 @@ public class ItemStackManager {
         ProfileComponent profileComponent = itemStack.get(DataComponentTypes.PROFILE);
         if(profileComponent == null) return null;
 
-        return(profileComponent.name().orElse(null));
+        return(profileComponent.getName().orElse(null));
     }
 
 	/**
