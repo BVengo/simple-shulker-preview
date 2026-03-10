@@ -42,10 +42,14 @@ public abstract class DrawContextMixin implements DrawContextAccess {
 
 		ItemStack displayStack = containerParser.getDisplayStack();
 
-		if(displayStack == null) return;
+		if(displayStack == null && (!containerParser.isSupported() || SimpleShulkerPreviewMod.CONFIGS.hideCapacityIfNoIcon)) {
+			return;
+		}
 
-		iconRenderer = new IconRenderer(containerParser, displayStack, x, y);
-		iconRenderer.renderOptional((DrawContext)(Object)this);
+		if(displayStack != null) {
+			iconRenderer = new IconRenderer(containerParser, displayStack, x, y);
+			iconRenderer.renderOptional((DrawContext)(Object)this);
+		}
 
 		// Display itemBar for containers. Ignore bundles - they already have this feature
 		boolean isBundle = containerParser.getContainerType().equals(ContainerType.BUNDLE);

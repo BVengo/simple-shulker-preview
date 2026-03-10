@@ -12,6 +12,8 @@
 	"text.autoconfig.simpleshulkerpreview.option.groupEnchantment.@Tooltip": "Group enchanted items separately from un-enchanted items.",
 	"text.autoconfig.simpleshulkerpreview.option.showCapacity": "Show Capacity",
 	"text.autoconfig.simpleshulkerpreview.option.showCapacity.@Tooltip": "Show the capacity of the shulker box.",
+	"text.autoconfig.simpleshulkerpreview.option.hideCapacityIfNoIcon": "Hide If No Icon",
+	"text.autoconfig.simpleshulkerpreview.option.hideCapacityIfNoIcon.@Tooltip": "Hide the capacity bar when no icon is displayed. Disable to show the capacity bar even for shulkers with mixed items.",
 	"text.autoconfig.simpleshulkerpreview.option.stackSizeOptions": "Stack Size Options",
 	"text.autoconfig.simpleshulkerpreview.option.stackSizeOptions.@Tooltip": "Set the quantity bounds required to display an icon. There must be at least (stack size * stack count) of an item for it to be displayed.",
 	"text.autoconfig.simpleshulkerpreview.option.stackSizeOptions.minStackSize": "Minimum Stack Size",
