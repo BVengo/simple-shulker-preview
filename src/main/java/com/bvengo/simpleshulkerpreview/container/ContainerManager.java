@@ -89,6 +89,10 @@ public class ContainerManager {
         return capacity;
     }
 
+    public boolean isSupported() {
+        return isContainerSupported;
+    }
+
     public ContainerType getContainerType() {
         return containerType;
     }

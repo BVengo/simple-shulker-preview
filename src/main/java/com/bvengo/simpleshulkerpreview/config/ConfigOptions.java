@@ -46,6 +46,10 @@ public class ConfigOptions implements ConfigData {
     @ConfigEntry.Gui.Tooltip()
     public boolean showCapacity = true;
 
+    /** Hide the capacity bar when no icon is displayed. */
+    @ConfigEntry.Gui.Tooltip()
+    public boolean hideCapacityIfNoIcon = true;
+
     @ConfigEntry.Gui.CollapsibleObject()
     @ConfigEntry.Gui.Tooltip()
     public CapacityBarOptions capacityBarOptions = new CapacityBarOptions();
