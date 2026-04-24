@@ -4,9 +4,8 @@ import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
 import com.bvengo.simpleshulkerpreview.access.DrawContextAccess;
 import com.bvengo.simpleshulkerpreview.config.IconPositionOptions;
 import com.bvengo.simpleshulkerpreview.container.ContainerManager;
-
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.item.ItemStack;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.world.item.ItemStack;
 
 public class IconRenderer extends OverlayRenderer {
 
@@ -49,13 +48,13 @@ public class IconRenderer extends OverlayRenderer {
         scale = iconPositionOptions.scale;
     }
 
-    protected void render(DrawContext context) {
+    protected void render(GuiGraphics context) {
         ((DrawContextAccess) context).simple_shulker_preview$setAdjustSize(true);
-        context.drawItemWithoutEntity(stack, stackX, stackY);
+        context.renderFakeItem(stack, stackX, stackY);
         ((DrawContextAccess) context).simple_shulker_preview$setAdjustSize(false);
     }
 
-    public void renderOptional(DrawContext context) {
+    public void renderOptional(GuiGraphics context) {
         if(canDisplay()) {
             calculatePositions();
             render(context);

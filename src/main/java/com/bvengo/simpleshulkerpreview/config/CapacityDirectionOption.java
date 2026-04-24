@@ -1,7 +1,7 @@
 package com.bvengo.simpleshulkerpreview.config;
 
 import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
-import net.minecraft.util.Language;
+import net.minecraft.locale.Language;
 
 /** Which direction does the capacity bar fill up in? */
 public enum CapacityDirectionOption {
@@ -12,6 +12,6 @@ public enum CapacityDirectionOption {
 
     @Override
     public String toString() {
-        return Language.getInstance().get("config." + SimpleShulkerPreviewMod.MOD_ID + ".capacityDirection." + this.name().toLowerCase());
+        return Language.getInstance().getOrDefault("config." + SimpleShulkerPreviewMod.MOD_ID + ".capacityDirection." + this.name().toLowerCase());
     }
 }

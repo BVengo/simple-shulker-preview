@@ -3,17 +3,16 @@ package com.bvengo.simpleshulkerpreview.container;
 
 import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
 import com.bvengo.simpleshulkerpreview.config.CustomNameOption;
-
-import net.minecraft.component.ComponentMap;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.BundleContentsComponent;
-import net.minecraft.component.type.ContainerComponent;
-import net.minecraft.item.ItemStack;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.BundleContents;
+import net.minecraft.world.item.component.ItemContainerContents;
 import org.apache.commons.lang3.math.Fraction;
 
 public class ContainerManager {
     private final ItemStack containerStack;
-    private final ComponentMap containerComponents;
+    private final DataComponentMap containerComponents;
     private final String containerId;
 
     private boolean isContainerSupported;
@@ -23,7 +22,7 @@ public class ContainerManager {
 
     public ContainerManager(ItemStack containerStack) {
         this.containerStack = containerStack;
-        this.containerId = containerStack.getRegistryEntry().getIdAsString();
+        this.containerId = containerStack.getItemHolder().getRegisteredName();
         this.containerComponents = containerStack.getComponents();
         
         setContainerContentsType();
@@ -44,12 +43,12 @@ public class ContainerManager {
         Iterable<ItemStack> itemIterable;
         switch(containerContentsType) {
             case CONTAINER:
-                ContainerComponent containerComponent = containerStack.get(DataComponentTypes.CONTAINER);
-                itemIterable = containerComponent.iterateNonEmptyCopy();
+                ItemContainerContents containerComponent = containerStack.get(DataComponents.CONTAINER);
+                itemIterable = containerComponent.nonEmptyItemsCopy();
                 break;
             case BUNDLE:
-                BundleContentsComponent bundleComponent = containerStack.get(DataComponentTypes.BUNDLE_CONTENTS);
-                itemIterable = bundleComponent.iterateCopy();
+                BundleContents bundleComponent = containerStack.get(DataComponents.BUNDLE_CONTENTS);
+                itemIterable = bundleComponent.itemsCopy();
                 break;
             case NONE:
                 // String badContainerId = containerStack.getRegistryEntry().getIdAsString();
@@ -104,7 +103,7 @@ public class ContainerManager {
     }
 
     private Fraction getShulkerCapacity() {
-        ContainerComponent containerComponent = containerStack.get(DataComponentTypes.CONTAINER);
+        ItemContainerContents containerComponent = containerStack.get(DataComponents.CONTAINER);
         if(containerComponent == null) {
 //            String msg = String.format("Cannot get container component for container '%s'.", containerId);
 //            SimpleShulkerPreviewMod.LOGGER.warn(msg);
@@ -114,7 +113,7 @@ public class ContainerManager {
         Fraction maxItems = Fraction.getFraction(SimpleShulkerPreviewMod.CONFIGS.shulkerInventoryOptions.getSize() * 64, 1); // Maximum number of items in the shulker
         Fraction numItems = Fraction.ZERO; // Actual number of items in the shulker
 
-        Iterable<ItemStack> itemIterable = containerComponent.iterateNonEmpty();
+        Iterable<ItemStack> itemIterable = containerComponent.nonEmptyItems();
         for(ItemStack itemStack : itemIterable) {
         	numItems = numItems.add(ItemStackManager.getItemCountEquivalent(itemStack)); // Adjust by max stack size of item
         }
@@ -123,14 +122,14 @@ public class ContainerManager {
     }
 
     private Fraction getBundleCapacity() {
-        BundleContentsComponent bundleComponent = containerStack.get(DataComponentTypes.BUNDLE_CONTENTS);
-        return bundleComponent.getOccupancy();
+        BundleContents bundleComponent = containerStack.get(DataComponents.BUNDLE_CONTENTS);
+        return bundleComponent.weight();
     }
 
     private void setContainerContentsType() {
-        if(containerComponents.contains(DataComponentTypes.CONTAINER)) {
+        if(containerComponents.has(DataComponents.CONTAINER)) {
             containerContentsType = ContainerContentsType.CONTAINER;
-        } else if(containerComponents.contains(DataComponentTypes.BUNDLE_CONTENTS)) {
+        } else if(containerComponents.has(DataComponents.BUNDLE_CONTENTS)) {
             containerContentsType = ContainerContentsType.BUNDLE;
         } else {
             containerContentsType = ContainerContentsType.NONE;
