@@ -1,6 +1,6 @@
 package com.bvengo.simpleshulkerpreview.container;
 
-
+import java.util.stream.Stream;
 import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
 import com.bvengo.simpleshulkerpreview.config.CustomNameOption;
 import net.minecraft.core.component.DataComponentMap;
@@ -22,7 +22,7 @@ public class ContainerManager {
 
     public ContainerManager(ItemStack containerStack) {
         this.containerStack = containerStack;
-        this.containerId = containerStack.getItemHolder().getRegisteredName();
+        this.containerId = containerStack.typeHolder().getRegisteredName();
         this.containerComponents = containerStack.getComponents();
         
         setContainerContentsType();
@@ -44,11 +44,13 @@ public class ContainerManager {
         switch(containerContentsType) {
             case CONTAINER:
                 ItemContainerContents containerComponent = containerStack.get(DataComponents.CONTAINER);
-                itemIterable = containerComponent.nonEmptyItemsCopy();
+                Stream<ItemStack> nonEmptyItemCopyStream = containerComponent.nonEmptyItemCopyStream();
+                itemIterable = () -> nonEmptyItemCopyStream.iterator();
                 break;
             case BUNDLE:
                 BundleContents bundleComponent = containerStack.get(DataComponents.BUNDLE_CONTENTS);
-                itemIterable = bundleComponent.itemsCopy();
+                Stream<ItemStack> itemCopyStream = bundleComponent.itemCopyStream();
+                itemIterable = () -> itemCopyStream.iterator();
                 break;
             case NONE:
                 // String badContainerId = containerStack.getRegistryEntry().getIdAsString();
@@ -113,7 +115,8 @@ public class ContainerManager {
         Fraction maxItems = Fraction.getFraction(SimpleShulkerPreviewMod.CONFIGS.shulkerInventoryOptions.getSize() * 64, 1); // Maximum number of items in the shulker
         Fraction numItems = Fraction.ZERO; // Actual number of items in the shulker
 
-        Iterable<ItemStack> itemIterable = containerComponent.nonEmptyItems();
+        Stream<ItemStack> nonEmptyItemCopyStream = containerComponent.nonEmptyItemCopyStream();
+        Iterable<ItemStack> itemIterable = () -> nonEmptyItemCopyStream.iterator();
         for(ItemStack itemStack : itemIterable) {
         	numItems = numItems.add(ItemStackManager.getItemCountEquivalent(itemStack)); // Adjust by max stack size of item
         }
@@ -123,7 +126,7 @@ public class ContainerManager {
 
     private Fraction getBundleCapacity() {
         BundleContents bundleComponent = containerStack.get(DataComponents.BUNDLE_CONTENTS);
-        return bundleComponent.weight();
+        return bundleComponent.weight().result().get();
     }
 
     private void setContainerContentsType() {
