@@ -112,10 +112,10 @@ public class ItemStackManager {
 						.filter(entry -> entry.getValue() >= itemThreshold)
 						.findFirst();
 			}
-			case MOST -> groupItemStacks(itemIterable).entrySet().stream()
+			case MOST -> groupedItems.entrySet().stream()
 					.filter(entry -> entry.getValue() >= itemThreshold)
 					.max(Map.Entry.comparingByValue());
-			case LEAST -> groupItemStacks(itemIterable).entrySet().stream()
+			case LEAST -> groupedItems.entrySet().stream()
 					.filter(entry -> entry.getValue() >= itemThreshold)
 					.min(Map.Entry.comparingByValue());
 		};

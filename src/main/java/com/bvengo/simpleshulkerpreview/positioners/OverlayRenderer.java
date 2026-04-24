@@ -1,6 +1,6 @@
 package com.bvengo.simpleshulkerpreview.positioners;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.item.ItemStack;
 
 public abstract class OverlayRenderer {
@@ -16,7 +16,7 @@ public abstract class OverlayRenderer {
         this.stackY = y;
     }
 
-    public void renderOptional(GuiGraphics context) {
+    public void renderOptional(GuiGraphicsExtractor context) {
         if(canDisplay()) {
             calculatePositions();
             render(context);
@@ -25,5 +25,5 @@ public abstract class OverlayRenderer {
 
     protected abstract boolean canDisplay();
     protected abstract void calculatePositions();
-    protected abstract void render(GuiGraphics context);
+    protected abstract void render(GuiGraphicsExtractor context);
 }

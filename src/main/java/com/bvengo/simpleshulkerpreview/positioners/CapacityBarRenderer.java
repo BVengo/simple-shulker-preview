@@ -3,7 +3,7 @@ package com.bvengo.simpleshulkerpreview.positioners;
 import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
 import com.bvengo.simpleshulkerpreview.config.CapacityBarOptions;
 import com.bvengo.simpleshulkerpreview.container.ContainerManager;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.CommonColors;
@@ -90,7 +90,7 @@ public class CapacityBarRenderer extends OverlayRenderer {
         }
     }
 
-    protected void render(GuiGraphics context) {
+    protected void render(GuiGraphicsExtractor context) {
         if(configs.displayShadow) {
             context.fill(RenderPipelines.GUI, xBackgroundStart, yBackgroundStart, xBackgroundEnd, yBackgroundEnd, CommonColors.BLACK);
         }
@@ -99,7 +99,7 @@ public class CapacityBarRenderer extends OverlayRenderer {
         context.fill(RenderPipelines.GUI, xCapacityStart, yCapacityStart, xCapacityEnd, yCapacityEnd, ARGB.opaque(colour));
     }
 
-    public void renderOptional(GuiGraphics context) {
+    public void renderOptional(GuiGraphicsExtractor context) {
         if(canDisplay()) {
             calculatePositions();
             render(context);
