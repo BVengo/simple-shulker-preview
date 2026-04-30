@@ -6,6 +6,18 @@
   "name": "Simple Shulker Preview",
   "description": "Display a configurable icon indicating the contents of a shulker box, as well as a capacity bar.",
   "authors": ["BVengo"],
+  "contributors": [
+    "Meshiest",
+    "MordorsElite",
+    "mnowak32",
+    "crpz1",
+    "SophiaWhiteMA",
+    "Florlet",
+    "dirtTW",
+    "theendercore",
+    "Wyne10",
+    "Boden-C"
+  ],
   "contact": {
     "homepage": "https://www.curseforge.com/minecraft/mc-mods/simple-shulker-preview/",
     "sources": "https://github.com/BVengo/simple-shulker-preview",
