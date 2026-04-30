@@ -6,19 +6,17 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.world.item.component.ResolvableProfile;
 import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
 import com.bvengo.simpleshulkerpreview.config.CustomNameOption;
-
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.PotionContentsComponent;
-import net.minecraft.component.type.ProfileComponent;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.registry.Registries;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import org.apache.commons.lang3.math.Fraction;
 
 public class ItemStackManager {
@@ -32,10 +30,10 @@ public class ItemStackManager {
         }
 
         private void setItemString() {
-            itemString = itemStack.getItem().getTranslationKey();
+            itemString = itemStack.getItem().getDescriptionId();
             
             // Player heads
-            if(itemStack.isOf(Items.PLAYER_HEAD)) {
+            if(itemStack.is(Items.PLAYER_HEAD)) {
                 String skullName = getSkullName(itemStack);
                 if(skullName != null) {
                     itemString += "." + skullName;
@@ -43,7 +41,7 @@ public class ItemStackManager {
             }
 
 			// Potions
-			if(itemStack.isOf(Items.POTION)) {
+			if(itemStack.is(Items.POTION)) {
 				String potionType = getPotionType(itemStack);
 				if(potionType != null) {
 					itemString += "." + potionType;
@@ -51,7 +49,7 @@ public class ItemStackManager {
 			}
 
             // Group enchantments
-            if (SimpleShulkerPreviewMod.CONFIGS.groupEnchantment && itemStack.hasEnchantments()) {
+            if (SimpleShulkerPreviewMod.CONFIGS.groupEnchantment && itemStack.isEnchanted()) {
                 itemString += ".enchanted";
             }
         }
@@ -84,7 +82,7 @@ public class ItemStackManager {
     }
 
     public static Fraction getItemFraction(ItemStack itemStack) {
-        return Fraction.getFraction(itemStack.getCount(), itemStack.getMaxCount());
+        return Fraction.getFraction(itemStack.getCount(), itemStack.getMaxStackSize());
     }
 
     public static Fraction getItemCountEquivalent(ItemStack itemStack) {
@@ -114,10 +112,10 @@ public class ItemStackManager {
 						.filter(entry -> entry.getValue() >= itemThreshold)
 						.findFirst();
 			}
-			case MOST -> groupItemStacks(itemIterable).entrySet().stream()
+			case MOST -> groupedItems.entrySet().stream()
 					.filter(entry -> entry.getValue() >= itemThreshold)
 					.max(Map.Entry.comparingByValue());
-			case LEAST -> groupItemStacks(itemIterable).entrySet().stream()
+			case LEAST -> groupedItems.entrySet().stream()
 					.filter(entry -> entry.getValue() >= itemThreshold)
 					.min(Map.Entry.comparingByValue());
 		};
@@ -130,14 +128,14 @@ public class ItemStackManager {
     public static ItemStack getItemFromCustomName(ItemStack itemStack) {
         if(SimpleShulkerPreviewMod.CONFIGS.customName == CustomNameOption.NEVER) return null;
 
-        Text customName = itemStack.getComponents().get(DataComponentTypes.CUSTOM_NAME);
+        Component customName = itemStack.getComponents().get(DataComponents.CUSTOM_NAME);
         if(customName == null) return null;
 
         Identifier itemId = Identifier.tryParse(customName.getString());
         // Note: Invalid custom names still return `minecraft:<customName>`, so we need to check the item instead of the ID
         if(itemId == null) return null;
 
-        Item item = Registries.ITEM.get(itemId);
+        Item item = BuiltInRegistries.ITEM.getValue(itemId);
         if(item.equals(Items.AIR)) return null;  // Check for invalid item
 
         return new ItemStack(item);
@@ -150,10 +148,10 @@ public class ItemStackManager {
      * @return A String indicating with the head ID. If missing, returns null.
      */
     private static String getSkullName(ItemStack itemStack) {
-        ProfileComponent profileComponent = itemStack.get(DataComponentTypes.PROFILE);
+        ResolvableProfile profileComponent = itemStack.get(DataComponents.PROFILE);
         if(profileComponent == null) return null;
 
-        return(profileComponent.getName().orElse(null));
+        return(profileComponent.name().orElse(null));
     }
 
 	/**
@@ -163,7 +161,7 @@ public class ItemStackManager {
 	 * @return A String indicating the potion type. If missing, returns null.
 	 */
 	private static String getPotionType(ItemStack itemStack) {
-		PotionContentsComponent potionComponent = itemStack.get(DataComponentTypes.POTION_CONTENTS);
+		PotionContents potionComponent = itemStack.get(DataComponents.POTION_CONTENTS);
 		if(potionComponent == null) return null;
 
 		return potionComponent.getName("").getString();

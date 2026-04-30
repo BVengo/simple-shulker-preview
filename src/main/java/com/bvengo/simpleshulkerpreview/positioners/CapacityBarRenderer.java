@@ -3,18 +3,17 @@ package com.bvengo.simpleshulkerpreview.positioners;
 import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
 import com.bvengo.simpleshulkerpreview.config.CapacityBarOptions;
 import com.bvengo.simpleshulkerpreview.container.ContainerManager;
-
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Colors;
-import net.minecraft.util.math.ColorHelper;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.util.ARGB;
+import net.minecraft.util.CommonColors;
+import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.math.Fraction;
 
 public class CapacityBarRenderer extends OverlayRenderer {
     // Taken from BundleItem.java
-    private static final int FULL_ITEM_BAR_COLOR = ColorHelper.fromFloats(1.0F, 1.0F, 0.33F, 0.33F);
-    private static final int ITEM_BAR_COLOR = ColorHelper.fromFloats(1.0F, 0.44F, 0.53F, 1.0F);
+    private static final int FULL_ITEM_BAR_COLOR = ARGB.colorFromFloat(1.0F, 1.0F, 0.33F, 0.33F);
+    private static final int ITEM_BAR_COLOR = ARGB.colorFromFloat(1.0F, 0.44F, 0.53F, 1.0F);
 
     private Fraction capacity;
 
@@ -91,16 +90,16 @@ public class CapacityBarRenderer extends OverlayRenderer {
         }
     }
 
-    protected void render(DrawContext context) {
+    protected void render(GuiGraphicsExtractor context) {
         if(configs.displayShadow) {
-            context.fill(RenderPipelines.GUI, xBackgroundStart, yBackgroundStart, xBackgroundEnd, yBackgroundEnd, Colors.BLACK);
+            context.fill(RenderPipelines.GUI, xBackgroundStart, yBackgroundStart, xBackgroundEnd, yBackgroundEnd, CommonColors.BLACK);
         }
 
         int colour = capacity.compareTo(Fraction.ONE) == 0 ? FULL_ITEM_BAR_COLOR : ITEM_BAR_COLOR;
-        context.fill(RenderPipelines.GUI, xCapacityStart, yCapacityStart, xCapacityEnd, yCapacityEnd, ColorHelper.fullAlpha(colour));
+        context.fill(RenderPipelines.GUI, xCapacityStart, yCapacityStart, xCapacityEnd, yCapacityEnd, ARGB.opaque(colour));
     }
 
-    public void renderOptional(DrawContext context) {
+    public void renderOptional(GuiGraphicsExtractor context) {
         if(canDisplay()) {
             calculatePositions();
             render(context);
