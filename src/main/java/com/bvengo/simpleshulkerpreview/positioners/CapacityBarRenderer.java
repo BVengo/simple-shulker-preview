@@ -35,7 +35,10 @@ public class CapacityBarRenderer extends OverlayRenderer {
     }
 
     protected boolean canDisplay() {
+        boolean hasIcon = stack != null && stack.getItem() != null && SimpleShulkerPreviewMod.CONFIGS.showPreviewIcon;
         return (
+            SimpleShulkerPreviewMod.CONFIGS.showCapacity &&
+            (!SimpleShulkerPreviewMod.CONFIGS.hideWhenNoIcon || hasIcon) &&
             (!configs.hideWhenEmpty || capacity.compareTo(Fraction.ZERO) > 0) &&
             (!configs.hideWhenFull || capacity.compareTo(Fraction.ONE) < 0)
         );

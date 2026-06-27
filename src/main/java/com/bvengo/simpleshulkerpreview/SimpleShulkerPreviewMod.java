@@ -1,8 +1,6 @@
 package com.bvengo.simpleshulkerpreview;
 
 import com.bvengo.simpleshulkerpreview.config.ConfigOptions;
-import me.shedaniel.autoconfig.AutoConfig;
-import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -21,7 +19,8 @@ public class SimpleShulkerPreviewMod implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
         LOGGER.info("{} loading...", LOGGER.getName());
-		CONFIGS = AutoConfig.register(ConfigOptions.class, GsonConfigSerializer::new).getConfig();
+        ConfigOptions.HANDLER.load();
+		CONFIGS = ConfigOptions.HANDLER.instance();
         LOGGER.info("{} loaded.", LOGGER.getName());
 	}
 }

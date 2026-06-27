@@ -24,13 +24,15 @@ public class IconRenderer extends OverlayRenderer {
         switch(containerParser.getContainerType()) {
             case SHULKER_BOX:
                 iconPositionOptions = (
-                    containerParser.getStackSize() > 1 ?
+                    containerParser.getStackSize() > 1 && SimpleShulkerPreviewMod.CONFIGS.overrideStackedIconPosition ?
                         SimpleShulkerPreviewMod.CONFIGS.iconPositionOptionsStacked :
                         SimpleShulkerPreviewMod.CONFIGS.iconPositionOptionsGeneral
                 );
                 break;
             case BUNDLE:
-                iconPositionOptions = SimpleShulkerPreviewMod.CONFIGS.iconPositionOptionsBundle;
+                iconPositionOptions = SimpleShulkerPreviewMod.CONFIGS.overrideBundleIconPosition ? 
+                        SimpleShulkerPreviewMod.CONFIGS.iconPositionOptionsBundle :
+                        SimpleShulkerPreviewMod.CONFIGS.iconPositionOptionsGeneral;
                 break;
             case OTHER:
                 iconPositionOptions = SimpleShulkerPreviewMod.CONFIGS.iconPositionOptionsGeneral;
@@ -63,6 +65,6 @@ public class IconRenderer extends OverlayRenderer {
 
     @Override
     protected boolean canDisplay() {
-        return stack != null && stack.getItem() != null;
+        return stack != null && stack.getItem() != null && SimpleShulkerPreviewMod.CONFIGS.showPreviewIcon;
     }
 }

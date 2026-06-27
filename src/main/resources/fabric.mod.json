@@ -32,9 +32,10 @@
   "mixins": ["simpleshulkerpreview.mixins.json"],
   "depends": {
     "fabricloader": ">=0.18.4",
-    "minecraft": ">=26.1",
+    "minecraft": [">=26.1", "<26.3"],
     "java": ">=25",
-    "fabric-api": "*"
+    "fabric-api": "*",
+    "yet_another_config_lib_v3": ">=3.4.2"
   },
   "recommends": {
     "modmenu": "*"

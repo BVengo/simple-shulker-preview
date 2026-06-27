@@ -1,34 +1,29 @@
 package com.bvengo.simpleshulkerpreview.config;
 
-import me.shedaniel.autoconfig.annotation.ConfigEntry;
+import dev.isxander.yacl3.config.v2.api.SerialEntry;
 
 public class CapacityBarOptions {
-    @ConfigEntry.Gui.Tooltip()
-    @ConfigEntry.BoundedDiscrete(min = 1, max = 16)
+    @SerialEntry
     public int translateX = 2;
 
-    @ConfigEntry.Gui.Tooltip()
-    @ConfigEntry.BoundedDiscrete(min = 1, max = 16)
+    @SerialEntry
     public int translateY = 13;
 
-    @ConfigEntry.Gui.Tooltip()
-    @ConfigEntry.BoundedDiscrete(min = 1, max = 16)
+    @SerialEntry
     public int length = 13;
 
-    @ConfigEntry.Gui.Tooltip()
-    @ConfigEntry.BoundedDiscrete(min = 1, max = 16)
+    @SerialEntry
     public int width = 1;
 
-    @ConfigEntry.Gui.Tooltip()
-    @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
+    @SerialEntry
     public CapacityDirectionOption direction = CapacityDirectionOption.LEFT_TO_RIGHT;
 
-    @ConfigEntry.Gui.Tooltip()
+    @SerialEntry
     public boolean displayShadow = true;
 
-    @ConfigEntry.Gui.Tooltip()
+    @SerialEntry
     public boolean hideWhenEmpty = true;
 
-    @ConfigEntry.Gui.Tooltip()
+    @SerialEntry
     public boolean hideWhenFull = false;
 }

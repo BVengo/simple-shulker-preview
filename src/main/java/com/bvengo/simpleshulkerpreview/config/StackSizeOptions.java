@@ -1,14 +1,11 @@
 package com.bvengo.simpleshulkerpreview.config;
 
-import me.shedaniel.autoconfig.annotation.ConfigEntry;
-
+import dev.isxander.yacl3.config.v2.api.SerialEntry;
 
 public class StackSizeOptions {
-    @ConfigEntry.Gui.Tooltip()
-    @ConfigEntry.BoundedDiscrete(min = 1, max = 64)
+    @SerialEntry
     public int minStackSize = 1;
 
-    @ConfigEntry.Gui.Tooltip()
-    @ConfigEntry.BoundedDiscrete(min = 1, max = 27)
+    @SerialEntry
     public int minStackCount = 1;
 }
