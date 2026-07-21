@@ -10,10 +10,14 @@ import net.minecraft.util.CommonColors;
 import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.math.Fraction;
 
-public class CapacityBarRenderer extends OverlayRenderer {
+public class CapacityBarRenderer {
     // Taken from BundleItem.java
     private static final int FULL_ITEM_BAR_COLOR = ARGB.colorFromFloat(1.0F, 1.0F, 0.33F, 0.33F);
     private static final int ITEM_BAR_COLOR = ARGB.colorFromFloat(1.0F, 0.44F, 0.53F, 1.0F);
+
+    ItemStack stack;
+    int stackX;
+    int stackY;
 
     private Fraction capacity;
 
@@ -30,7 +34,9 @@ public class CapacityBarRenderer extends OverlayRenderer {
     private final CapacityBarOptions configs = SimpleShulkerPreviewMod.CONFIGS.capacityBarOptions;
 
     public CapacityBarRenderer(ContainerManager containerParser, ItemStack stack, int x, int y) {
-        super(stack, x, y);
+        this.stack = stack;
+        this.stackX = x;
+        this.stackY = y;
         this.capacity = containerParser.getCapacity();
     }
 

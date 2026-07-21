@@ -32,6 +32,11 @@ public abstract class DrawContextMixin implements DrawContextAccess {
 		adjustSize = newValue;
 	}
 
+	@Override
+	public void simple_shulker_preview$setIconRenderer(IconRenderer renderer) {
+		this.iconRenderer = renderer;
+	}
+
 	@Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;itemBar(Lnet/minecraft/world/item/ItemStack;II)V"),
 			method = "itemDecorations(Lnet/minecraft/client/gui/Font;Lnet/minecraft/world/item/ItemStack;IILjava/lang/String;)V")
 	private void renderShulkerItemOverlay(Font textRenderer, ItemStack stack, int x, int y, String stackCountText, CallbackInfo info) {
@@ -43,10 +48,14 @@ public abstract class DrawContextMixin implements DrawContextAccess {
 
 		ItemStack displayStack = containerParser.getDisplayStack();
 
-		if(displayStack == null) return;
+		if(displayStack == null && (!containerParser.isSupported() || SimpleShulkerPreviewMod.CONFIGS.hideWhenNoIcon)) {
+			return;
+		}
 
-		iconRenderer = new IconRenderer(containerParser, displayStack, x, y);
-		iconRenderer.renderOptional((GuiGraphicsExtractor)(Object)this);
+		if (displayStack != null) {
+			iconRenderer = new IconRenderer(containerParser, displayStack, x, y);
+			iconRenderer.renderOptional((GuiGraphicsExtractor)(Object)this);
+		}
 
 		// Display itemBar for containers. Ignore bundles - they already have this feature
 		boolean isBundle = containerParser.getContainerType().equals(ContainerType.BUNDLE);

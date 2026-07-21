@@ -7,7 +7,11 @@ import com.bvengo.simpleshulkerpreview.container.ContainerManager;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.item.ItemStack;
 
-public class IconRenderer extends OverlayRenderer {
+public class IconRenderer {
+
+    ItemStack stack;
+    int stackX;
+    int stackY;
 
     IconPositionOptions iconPositionOptions;
 
@@ -16,7 +20,9 @@ public class IconRenderer extends OverlayRenderer {
     public float yOffset;
 
     public IconRenderer(ContainerManager containerParser, ItemStack displayStack, int x, int y) {
-        super(displayStack, x, y);
+        this.stack = displayStack;
+        this.stackX = x;
+        this.stackY = y;
         setPositionOptions(containerParser);
     }
 
@@ -51,6 +57,7 @@ public class IconRenderer extends OverlayRenderer {
     }
 
     protected void render(GuiGraphicsExtractor context) {
+        ((DrawContextAccess) context).simple_shulker_preview$setIconRenderer(this);
         ((DrawContextAccess) context).simple_shulker_preview$setAdjustSize(true);
         context.fakeItem(stack, stackX, stackY);
         ((DrawContextAccess) context).simple_shulker_preview$setAdjustSize(false);
@@ -63,7 +70,6 @@ public class IconRenderer extends OverlayRenderer {
         }
     }
 
-    @Override
     protected boolean canDisplay() {
         return stack != null && stack.getItem() != null && SimpleShulkerPreviewMod.CONFIGS.showPreviewIcon;
     }

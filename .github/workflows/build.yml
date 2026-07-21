@@ -1,0 +1,43 @@
+name: Build
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        java: [25]
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Validate gradle wrapper
+        uses: gradle/actions/wrapper-validation@v3
+        
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: ${{ matrix.java }}
+          
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        
+      - name: Make gradle wrapper executable
+        run: chmod +x ./gradlew
+        
+      - name: Build
+        run: ./gradlew build
+        
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: simple-shulker-preview-build
+          path: build/libs/

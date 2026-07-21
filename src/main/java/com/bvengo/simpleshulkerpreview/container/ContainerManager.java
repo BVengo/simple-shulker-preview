@@ -18,14 +18,12 @@ public class ContainerManager {
     private boolean isContainerSupported;
     
     private ContainerType containerType;
-    private ContainerContentsType containerContentsType;
 
     public ContainerManager(ItemStack containerStack) {
         this.containerStack = containerStack;
         this.containerId = containerStack.typeHolder().getRegisteredName();
         this.containerComponents = containerStack.getComponents();
         
-        setContainerContentsType();
         setContainerType();
         setContainerSupported();
     }
@@ -39,25 +37,17 @@ public class ContainerManager {
             return displayStack;
         }
 
-        // Get items from container
         Iterable<ItemStack> itemIterable;
-        switch(containerContentsType) {
-            case CONTAINER:
-                ItemContainerContents containerComponent = containerStack.get(DataComponents.CONTAINER);
-                Stream<ItemStack> nonEmptyItemCopyStream = containerComponent.nonEmptyItemCopyStream();
-                itemIterable = () -> nonEmptyItemCopyStream.iterator();
-                break;
-            case BUNDLE:
-                BundleContents bundleComponent = containerStack.get(DataComponents.BUNDLE_CONTENTS);
-                Stream<ItemStack> itemCopyStream = bundleComponent.itemCopyStream();
-                itemIterable = () -> itemCopyStream.iterator();
-                break;
-            case NONE:
-                // String badContainerId = containerStack.getRegistryEntry().getIdAsString();
-                // String msg = String.format("Item %s marked as container, but has no container components.", badContainerId);
-                // SimpleShulkerPreviewMod.LOGGER.warn(msg);
-            default:
-                return null;
+        if (containerType == ContainerType.SHULKER_BOX || containerType == ContainerType.OTHER) {
+            ItemContainerContents containerComponent = containerStack.get(DataComponents.CONTAINER);
+            if (containerComponent == null) return null;
+            itemIterable = () -> containerComponent.nonEmptyItemCopyStream().iterator();
+        } else if (containerType == ContainerType.BUNDLE) {
+            BundleContents bundleComponent = containerStack.get(DataComponents.BUNDLE_CONTENTS);
+            if (bundleComponent == null) return null;
+            itemIterable = () -> bundleComponent.itemCopyStream().iterator();
+        } else {
+            return null;
         }
 
         return ItemStackManager.getDisplayStackFromIterable(itemIterable);
@@ -72,13 +62,10 @@ public class ContainerManager {
      * @return A float between 0 and 1 indicating how full the container is
      */
     public Fraction getCapacity() {
-		Fraction capacity = switch (containerContentsType) {
-			case CONTAINER -> getContainerCapacity();
+		Fraction capacity = switch (containerType) {
+			case SHULKER_BOX, OTHER -> getShulkerCapacity();
 			case BUNDLE -> getBundleCapacity();
-			default ->
-				// String msg = String.format("Cannot get capacity of container '%s' with no contents type.", containerId);
-				// SimpleShulkerPreviewMod.LOGGER.warn(msg);
-					Fraction.ZERO;
+			default -> Fraction.ZERO;
 		};
 
         // Cap the capacity at 1, in case unsupported large containers are used without using the configs to
@@ -90,18 +77,12 @@ public class ContainerManager {
         return capacity;
     }
 
-    public ContainerType getContainerType() {
-        return containerType;
+    public boolean isSupported() {
+        return isContainerSupported;
     }
 
-    private Fraction getContainerCapacity() {
-        if(containerType != ContainerType.SHULKER_BOX) {
-            // String msg = String.format("Cannot get maximum inventory size of the container '%s'.", containerId);
-            // SimpleShulkerPreviewMod.LOGGER.warn(msg);
-            return Fraction.ZERO;
-        }
-
-        return getShulkerCapacity();
+    public ContainerType getContainerType() {
+        return containerType;
     }
 
     private Fraction getShulkerCapacity() {
@@ -129,25 +110,17 @@ public class ContainerManager {
         return bundleComponent.weight().result().get();
     }
 
-    private void setContainerContentsType() {
-        if(containerComponents.has(DataComponents.CONTAINER)) {
-            containerContentsType = ContainerContentsType.CONTAINER;
-        } else if(containerComponents.has(DataComponents.BUNDLE_CONTENTS)) {
-            containerContentsType = ContainerContentsType.BUNDLE;
-        } else {
-            containerContentsType = ContainerContentsType.NONE;
-        };
-    }
-
     private void setContainerType() {
-        if(containerContentsType == ContainerContentsType.NONE) {
-            containerType = ContainerType.NONE;
-        } else if (containerId.matches("^minecraft:(.*_)?shulker_box$")) {
-            containerType = ContainerType.SHULKER_BOX;
-        } else if (containerId.matches("^minecraft:(.*_)?bundle$")) {
+        if (containerComponents.has(DataComponents.CONTAINER)) {
+            if (containerId.matches("^minecraft:(.*_)?shulker_box$")) {
+                containerType = ContainerType.SHULKER_BOX;
+            } else {
+                containerType = ContainerType.OTHER;
+            }
+        } else if (containerComponents.has(DataComponents.BUNDLE_CONTENTS)) {
             containerType = ContainerType.BUNDLE;
         } else {
-            containerType = ContainerType.OTHER;
+            containerType = ContainerType.NONE;
         }
     }
 

@@ -3,21 +3,17 @@ package com.bvengo.simpleshulkerpreview.config;
 import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
 import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.controller.*;
-import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.component.ItemContainerContents;
-import java.util.List;
 
 public class YaclScreenBuilder {
 
     public static Screen createScreen(Screen parent) {
         return YetAnotherConfigLib.create(ConfigOptions.HANDLER, (defaults, config, builder) -> {
+            // Mutable holder so option listeners can reference the preview widget
+            // (which is created later in screenInit).
+            final PersistentPreviewWidget[] previewHolder = {null};
+
             
             // -------------------------
             // GENERAL TAB
@@ -33,37 +29,37 @@ public class YaclScreenBuilder {
                             .option(Option.<Boolean>createBuilder()
                                     .name(Component.translatable("config.simpleshulkerpreview.showPreviewIcon"))
                                     .description(OptionDescription.of(Component.translatable("config.simpleshulkerpreview.showPreviewIcon.tooltip")))
-                                    .binding(defaults.showPreviewIcon, () -> config.showPreviewIcon, val -> config.showPreviewIcon = val)
+                                    .stateManager(StateManager.createInstant(defaults.showPreviewIcon, () -> config.showPreviewIcon, val -> config.showPreviewIcon = val))
                                     .controller(TickBoxControllerBuilder::create)
                                     .build())
                             .option(Option.<Boolean>createBuilder()
                                     .name(Component.translatable("config.simpleshulkerpreview.showCapacity"))
                                     .description(OptionDescription.of(Component.translatable("config.simpleshulkerpreview.showCapacity.tooltip")))
-                                    .binding(defaults.showCapacity, () -> config.showCapacity, val -> config.showCapacity = val)
+                                    .stateManager(StateManager.createInstant(defaults.showCapacity, () -> config.showCapacity, val -> config.showCapacity = val))
                                     .controller(TickBoxControllerBuilder::create)
                                     .build())
                             .option(Option.<Boolean>createBuilder()
                                     .name(Component.translatable("config.simpleshulkerpreview.supportBundles"))
                                     .description(OptionDescription.of(Component.translatable("config.simpleshulkerpreview.supportBundles.tooltip")))
-                                    .binding(defaults.supportBundles, () -> config.supportBundles, val -> config.supportBundles = val)
+                                    .stateManager(StateManager.createInstant(defaults.supportBundles, () -> config.supportBundles, val -> config.supportBundles = val))
                                     .controller(TickBoxControllerBuilder::create)
                                     .build())
                             .option(Option.<Boolean>createBuilder()
                                     .name(Component.translatable("config.simpleshulkerpreview.supportOtherContainers"))
                                     .description(OptionDescription.of(Component.translatable("config.simpleshulkerpreview.supportOtherContainers.tooltip")))
-                                    .binding(defaults.supportOtherContainers, () -> config.supportOtherContainers, val -> config.supportOtherContainers = val)
+                                    .stateManager(StateManager.createInstant(defaults.supportOtherContainers, () -> config.supportOtherContainers, val -> config.supportOtherContainers = val))
                                     .controller(TickBoxControllerBuilder::create)
                                     .build())
                             .option(Option.<IconDisplayOption>createBuilder()
                                     .name(Component.translatable("config.simpleshulkerpreview.displayIcon"))
                                     .description(OptionDescription.of(Component.translatable("config.simpleshulkerpreview.displayIcon.tooltip")))
-                                    .binding(defaults.displayIcon, () -> config.displayIcon, val -> config.displayIcon = val)
+                                    .stateManager(StateManager.createInstant(defaults.displayIcon, () -> config.displayIcon, val -> config.displayIcon = val))
                                     .controller(opt -> EnumControllerBuilder.create(opt).enumClass(IconDisplayOption.class).formatValue(val -> Component.translatable("config.simpleshulkerpreview.displayIcon." + val.name().toLowerCase())))
                                     .build())
                             .option(Option.<CustomNameOption>createBuilder()
                                     .name(Component.translatable("config.simpleshulkerpreview.customName"))
                                     .description(OptionDescription.of(Component.translatable("config.simpleshulkerpreview.customName.tooltip")))
-                                    .binding(defaults.customName, () -> config.customName, val -> config.customName = val)
+                                    .stateManager(StateManager.createInstant(defaults.customName, () -> config.customName, val -> config.customName = val))
                                     .controller(opt -> EnumControllerBuilder.create(opt).enumClass(CustomNameOption.class).formatValue(val -> Component.translatable("config.simpleshulkerpreview.customName." + val.name().toLowerCase())))
                                     .build())
                     .build();
@@ -77,18 +73,20 @@ public class YaclScreenBuilder {
                     .group(buildIconPositionGroup("config.simpleshulkerpreview.group.iconPositionOptionsGeneral", config.iconPositionOptionsGeneral, defaults.iconPositionOptionsGeneral))
                     .group(OptionGroup.createBuilder()
                             .name(Component.translatable("config.simpleshulkerpreview.group.capacityBarOptions"))
-                            .description(OptionDescription.of(Component.translatable("config.simpleshulkerpreview.group.capacityBarOptions.tooltip")))
+                            .description(OptionDescription.createBuilder()
+                                    .text(Component.translatable("config.simpleshulkerpreview.group.capacityBarOptions.tooltip"))
+                                    .build())
 
                             .option(Option.<CapacityDirectionOption>createBuilder()
                                     .name(Component.translatable("config.simpleshulkerpreview.direction"))
                                     .description(OptionDescription.of(Component.translatable("config.simpleshulkerpreview.direction.tooltip")))
-                                    .binding(defaults.capacityBarOptions.direction, () -> config.capacityBarOptions.direction, val -> config.capacityBarOptions.direction = val)
+                                    .stateManager(StateManager.createInstant(defaults.capacityBarOptions.direction, () -> config.capacityBarOptions.direction, val -> config.capacityBarOptions.direction = val))
                                     .controller(opt -> EnumControllerBuilder.create(opt).enumClass(CapacityDirectionOption.class).formatValue(val -> Component.translatable("config.simpleshulkerpreview.capacityDirection." + val.name().toLowerCase())))
                                     .build())
                             .option(Option.<Boolean>createBuilder()
                                     .name(Component.translatable("config.simpleshulkerpreview.displayShadow"))
                                     .description(OptionDescription.of(Component.translatable("config.simpleshulkerpreview.displayShadow.tooltip")))
-                                    .binding(defaults.capacityBarOptions.displayShadow, () -> config.capacityBarOptions.displayShadow, val -> config.capacityBarOptions.displayShadow = val)
+                                    .stateManager(StateManager.createInstant(defaults.capacityBarOptions.displayShadow, () -> config.capacityBarOptions.displayShadow, val -> config.capacityBarOptions.displayShadow = val))
                                     .controller(TickBoxControllerBuilder::create)
                                     .build())
                             .option(Option.<Integer>createBuilder()
@@ -124,13 +122,13 @@ public class YaclScreenBuilder {
                             .option(Option.<Boolean>createBuilder()
                                     .name(Component.translatable("config.simpleshulkerpreview.hideWhenFull"))
                                     .description(OptionDescription.of(Component.translatable("config.simpleshulkerpreview.hideWhenFull.tooltip")))
-                                    .binding(defaults.capacityBarOptions.hideWhenFull, () -> config.capacityBarOptions.hideWhenFull, val -> config.capacityBarOptions.hideWhenFull = val)
+                                    .stateManager(StateManager.createInstant(defaults.capacityBarOptions.hideWhenFull, () -> config.capacityBarOptions.hideWhenFull, val -> config.capacityBarOptions.hideWhenFull = val))
                                     .controller(TickBoxControllerBuilder::create)
                                     .build())
                             .option(Option.<Boolean>createBuilder()
                                     .name(Component.translatable("config.simpleshulkerpreview.hideWhenNoIcon"))
                                     .description(OptionDescription.of(Component.translatable("config.simpleshulkerpreview.hideWhenNoIcon.tooltip")))
-                                    .binding(defaults.hideWhenNoIcon, () -> config.hideWhenNoIcon, val -> config.hideWhenNoIcon = val)
+                                    .stateManager(StateManager.createInstant(defaults.hideWhenNoIcon, () -> config.hideWhenNoIcon, val -> config.hideWhenNoIcon = val))
                                     .controller(TickBoxControllerBuilder::create)
                                     .build())
                             .build())
@@ -172,6 +170,10 @@ public class YaclScreenBuilder {
                         bundleTransXOpt.setAvailable(val);
                         bundleTransYOpt.setAvailable(val);
                         bundleScaleOpt.setAvailable(val);
+                        // Switch preview to bundle when enabled, back to shulker when disabled
+                        if (previewHolder[0] != null) {
+                            previewHolder[0].setShowBundle(val);
+                        }
                     })
                     .build();
 
@@ -217,7 +219,7 @@ public class YaclScreenBuilder {
                     .option(Option.<Boolean>createBuilder()
                             .name(Component.translatable("config.simpleshulkerpreview.groupEnchantment"))
                             .description(OptionDescription.of(Component.translatable("config.simpleshulkerpreview.groupEnchantment.tooltip")))
-                            .binding(defaults.groupEnchantment, () -> config.groupEnchantment, val -> config.groupEnchantment = val)
+                            .stateManager(StateManager.createInstant(defaults.groupEnchantment, () -> config.groupEnchantment, val -> config.groupEnchantment = val))
                             .controller(TickBoxControllerBuilder::create)
                             .build())
                     .group(OptionGroup.createBuilder()
@@ -248,7 +250,7 @@ public class YaclScreenBuilder {
                             .option(Option.<Integer>createBuilder()
                                     .name(Component.translatable("config.simpleshulkerpreview.minStackCount"))
                                     .description(OptionDescription.of(Component.translatable("config.simpleshulkerpreview.minStackCount.tooltip")))
-                                    .binding(defaults.stackSizeOptions.minStackCount, () -> config.stackSizeOptions.minStackCount, val -> config.stackSizeOptions.minStackCount = val)
+                                    .stateManager(StateManager.createInstant(defaults.stackSizeOptions.minStackCount, () -> config.stackSizeOptions.minStackCount, val -> config.stackSizeOptions.minStackCount = val))
                                     .controller(opt -> IntegerSliderControllerBuilder.create(opt).range(1, 27).step(1))
                                     .build())
                             .build())
@@ -274,14 +276,61 @@ public class YaclScreenBuilder {
                     .title(Component.translatable("config.simpleshulkerpreview.title"))
                     .category(generalCategory)
                     .category(visualsCategory)
-                    .category(advancedCategory);
+                    .category(advancedCategory)
+                    .screenInit(screen -> {
+                        // ── Right-panel geometry ────────────────────────────
+                        // YACL: left 2/3 = options list, right 1/3 = OptionDescriptionWidget + buttons
+                        int rightPanelWidth = screen.width / 3;
+                        int rightPanelX     = screen.width - rightPanelWidth;
+
+                        // ── Preview sizing (responsive to GUI scale) ────────
+                        // The slot is 18 item-pixels.  We scale it so the preview
+                        // takes at most 1/3 of the available vertical space.
+                        int tabBarHeight     = 30;  // YACL top tab bar
+                        int buttonAreaHeight = 80;  // Search + Reset/Undo + Done + margins
+                        int availableHeight  = screen.height - tabBarHeight - buttonAreaHeight;
+                        int maxPreviewPx     = Math.max(36, availableHeight / 3);
+
+                        int renderScale = Math.max(2, Math.min(4,
+                                Math.min(maxPreviewPx / 18, (rightPanelWidth - 20) / 18)));
+                        int slotPx  = 18 * renderScale;
+                        int boxWidth  = slotPx + 12;   // small margin around the slot
+                        int boxHeight = slotPx + 16;   // divider + top/bottom padding
+
+                        // ── Vertical positioning (above button area) ────────
+                        int boxX = rightPanelX + (rightPanelWidth - boxWidth) / 2;
+                        int boxY = screen.height - buttonAreaHeight - boxHeight - 4; // 4px gap above buttons
+
+                        // ── Shrink the OptionDescriptionWidget ──────────────
+                        // Its text will scroll inside the reduced height, keeping
+                        // our preview area clear.
+                        for (var child : screen.children()) {
+                            if (child.getClass().getSimpleName().equals("OptionDescriptionWidget")) {
+                                if (child instanceof net.minecraft.client.gui.components.AbstractWidget widget) {
+                                    int newHeight = boxY - 2 - widget.getY();
+                                    if (newHeight > 0) {
+                                        widget.setHeight(newHeight);
+                                    }
+                                }
+                            }
+                        }
+
+                        // ── Inject the preview widget ───────────────────────
+                        PersistentPreviewWidget previewBox = new PersistentPreviewWidget(
+                                boxX, boxY, boxWidth, boxHeight, config, renderScale
+                        );
+                        previewHolder[0] = previewBox;
+                        net.fabricmc.fabric.api.client.screen.v1.Screens.getWidgets(screen).add(previewBox);
+                    });
         }).generateScreen(parent);
     }
 
     private static OptionGroup buildIconPositionGroup(String translationKey, IconPositionOptions configInstance, IconPositionOptions defaultInstance) {
         return OptionGroup.createBuilder()
                 .name(Component.translatable(translationKey))
-                .description(OptionDescription.of(Component.translatable(translationKey + ".tooltip")))
+                .description(OptionDescription.createBuilder()
+                        .text(Component.translatable(translationKey + ".tooltip"))
+                        .build())
                 .option(Option.<Integer>createBuilder()
                         .name(Component.translatable("config.simpleshulkerpreview.translateX"))
                         .description(OptionDescription.of(Component.translatable("config.simpleshulkerpreview.translateX.tooltip")))
