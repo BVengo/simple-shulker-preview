@@ -1,14 +1,13 @@
 package com.bvengo.simpleshulkerpreview.container;
 
-import java.util.stream.Stream;
 import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
 import com.bvengo.simpleshulkerpreview.config.CustomNameOption;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.BundleContents;
 import net.minecraft.world.item.component.ItemContainerContents;
-import org.apache.commons.lang3.math.Fraction;
 
 public class ContainerManager {
     private final ItemStack containerStack;
@@ -61,20 +60,16 @@ public class ContainerManager {
      * Returns the ratio full that a container is.
      * @return A float between 0 and 1 indicating how full the container is
      */
-    public Fraction getCapacity() {
-		Fraction capacity = switch (containerType) {
-			case SHULKER_BOX, OTHER -> getShulkerCapacity();
-			case BUNDLE -> getBundleCapacity();
-			default -> Fraction.ZERO;
-		};
+    public float getCapacity() {
+        float capacity = switch (containerType) {
+            case SHULKER_BOX, OTHER -> getShulkerCapacity();
+            case BUNDLE -> getBundleCapacity();
+            default -> 0.0f;
+        };
 
         // Cap the capacity at 1, in case unsupported large containers are used without using the configs to
         // modify inventory sizes
-        if(capacity.compareTo(Fraction.ONE) > 0) {
-            capacity = Fraction.ONE;
-        }
-
-        return capacity;
+        return Mth.clamp(capacity, 0.0f, 1.0f);
     }
 
     public boolean isSupported() {
@@ -85,29 +80,31 @@ public class ContainerManager {
         return containerType;
     }
 
-    private Fraction getShulkerCapacity() {
+    private float getShulkerCapacity() {
         ItemContainerContents containerComponent = containerStack.get(DataComponents.CONTAINER);
         if(containerComponent == null) {
 //            String msg = String.format("Cannot get container component for container '%s'.", containerId);
 //            SimpleShulkerPreviewMod.LOGGER.warn(msg);
-            return Fraction.ZERO;
+            return 0.0f;
         }
 
-        Fraction maxItems = Fraction.getFraction(SimpleShulkerPreviewMod.CONFIGS.shulkerInventoryOptions.getSize() * 64, 1); // Maximum number of items in the shulker
-        Fraction numItems = Fraction.ZERO; // Actual number of items in the shulker
+        float maxItems = SimpleShulkerPreviewMod.CONFIGS.shulkerInventoryOptions.getSize() * 64.0f; // Maximum number of items in the shulker
+        if (maxItems <= 0.0f) return 0.0f;
 
-        Stream<ItemStack> nonEmptyItemCopyStream = containerComponent.nonEmptyItemCopyStream();
-        Iterable<ItemStack> itemIterable = () -> nonEmptyItemCopyStream.iterator();
+        float numItems = 0.0f; // Actual number of items in the shulker
+        Iterable<ItemStack> itemIterable = () -> containerComponent.nonEmptyItemCopyStream().iterator();
         for(ItemStack itemStack : itemIterable) {
-        	numItems = numItems.add(ItemStackManager.getItemCountEquivalent(itemStack)); // Adjust by max stack size of item
+            numItems += ItemStackManager.getItemCountEquivalent(itemStack); // Adjust by max stack size of item
         }
 
-        return numItems.divideBy(maxItems);
+        return numItems / maxItems;
     }
 
-    private Fraction getBundleCapacity() {
+    private float getBundleCapacity() {
         BundleContents bundleComponent = containerStack.get(DataComponents.BUNDLE_CONTENTS);
-        return bundleComponent.weight().result().get();
+        if (bundleComponent == null) return 0.0f;
+        // Convert vanilla Fraction to primitive float to avoid heap allocations in rendering loops
+        return bundleComponent.weight().result().map(org.apache.commons.lang3.math.Fraction::floatValue).orElse(0.0f);
     }
 
     private void setContainerType() {

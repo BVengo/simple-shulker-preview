@@ -17,7 +17,7 @@ repositories {
 	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
 	// for more information about repositories.
 	maven { url = "https://api.modrinth.com/maven" }  // Modrinth
-	maven { url = "https://maven.terraformersmc.com/" }  // Mod Menu
+	maven { url = "https://maven.terraformersmc.com/releases/" }  // Mod Menu
 	maven { url = "https://maven.isxander.dev/releases" } // YACL
 }
 
@@ -59,8 +59,9 @@ java {
 	// If you remove this line, sources will not be generated.
 	withSourcesJar()
 
-	sourceCompatibility = JavaVersion.VERSION_25
-	targetCompatibility = JavaVersion.VERSION_25
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(25)
+	}
 }
 
 jar {

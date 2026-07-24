@@ -32,10 +32,10 @@
 	"config.simpleshulkerpreview.group.iconPositionOptionsGeneral": "预览图标位置与大小",
 	"config.simpleshulkerpreview.group.iconPositionOptionsGeneral.tooltip": "调整预览图标的 X/Y 坐标与缩放比例。拖动滑块可实时查看图标的移动。",
 	"config.simpleshulkerpreview.group.overrideBundle": "收纳袋图标位置覆盖",
-	"config.simpleshulkerpreview.overrideBundleIconPosition": "覆盖收纳袋图标变换",
+	"config.simpleshulkerpreview.overrideBundleIconPosition": "覆盖收纳袋图标位置",
 	"config.simpleshulkerpreview.overrideBundleIconPosition.tooltip": "覆盖收纳袋预览图标的默认位置和缩放比例。",
 	"config.simpleshulkerpreview.group.overrideStacked": "堆叠的潜影盒图标位置覆盖",
-	"config.simpleshulkerpreview.overrideStackedIconPosition": "覆盖堆叠潜影盒图标变换",
+	"config.simpleshulkerpreview.overrideStackedIconPosition": "覆盖堆叠潜影盒图标位置",
 	"config.simpleshulkerpreview.overrideStackedIconPosition.tooltip": "覆盖堆叠潜影盒（非原版行为）的位置和缩放比例。",
 	"config.simpleshulkerpreview.translateX": "X轴偏移",
 	"config.simpleshulkerpreview.translateY": "Y轴偏移",
@@ -43,7 +43,7 @@
 	"config.simpleshulkerpreview.category.advanced": "高级",
 	"config.simpleshulkerpreview.category.advanced.tooltip": "高级兼容性设置。",
 	"config.simpleshulkerpreview.groupEnchantment": "区分附魔",
-	"config.simpleshulkerpreview.groupEnchantment.tooltip": "在汇总容器内容时，将附魔物品与未附魔物品视为完全不同的物品。这会影响它们是否能达到最小阈值，以及它们是否被认定为 '唯一的' 或 '最多的' 物品。",
+	"config.simpleshulkerpreview.groupEnchantment.tooltip": "在汇总容器内容时，将附魔物品与未附魔物品视为完全不同的物品。这会影响它们是否能达到最小阈值，以及它们是否被视为同一种 '类型' 或是数量最多。",
 	"config.simpleshulkerpreview.group.stackSizeOptions": "显示图标的阈值",
 	"config.simpleshulkerpreview.group.stackSizeOptions.tooltip": "某一类物品在容器内的总数必须达到此数值，才有资格成为预览图标。计算公式为：（最小堆叠大小 × 最小堆叠组数）。",
 	"config.simpleshulkerpreview.minStackSize": "最小堆叠大小",
@@ -58,7 +58,7 @@
 	"config.simpleshulkerpreview.capacityDirection.bottom_to_top": "从下到上",
 	"config.simpleshulkerpreview.displayIcon.first": "第一个物品",
 	"config.simpleshulkerpreview.displayIcon.last": "最后一个物品",
-	"config.simpleshulkerpreview.displayIcon.unique": "最独特的物品",
+	"config.simpleshulkerpreview.displayIcon.unique": "仅单一物品",
 	"config.simpleshulkerpreview.displayIcon.most": "最多的物品",
 	"config.simpleshulkerpreview.displayIcon.least": "最少的物品",
 	"config.simpleshulkerpreview.customName.prefer": "优先重命名",
@@ -78,5 +78,6 @@
 	"config.simpleshulkerpreview.minStackSize.tooltip": "显示图标所需的最小堆叠大小。",
 	"config.simpleshulkerpreview.minStackCount.tooltip": "显示图标所需的部分堆叠的最小组数。此项会与最小堆叠大小相乘。",
 	"config.simpleshulkerpreview.shulkerInventoryRows.tooltip": "针对具有自定义尺寸的模组潜影盒。这有助于正确计算容量条的填充百分比。",
-	"config.simpleshulkerpreview.shulkerInventoryCols.tooltip": "针对具有自定义尺寸的模组潜影盒。这有助于正确计算容量条的填充百分比。"
+	"config.simpleshulkerpreview.shulkerInventoryCols.tooltip": "针对具有自定义尺寸的模组潜影盒。这有助于正确计算容量条的填充百分比。",
+	"config.simpleshulkerpreview.ingameOnly": "仅在游戏内预览"
 }

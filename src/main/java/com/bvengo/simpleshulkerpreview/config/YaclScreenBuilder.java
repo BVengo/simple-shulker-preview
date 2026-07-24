@@ -18,6 +18,13 @@ public class YaclScreenBuilder {
             // -------------------------
             // GENERAL TAB
             // -------------------------
+            Option<Boolean> supportBundlesOpt = Option.<Boolean>createBuilder()
+                    .name(Component.translatable("config.simpleshulkerpreview.supportBundles"))
+                    .description(OptionDescription.of(Component.translatable("config.simpleshulkerpreview.supportBundles.tooltip")))
+                    .stateManager(StateManager.createInstant(defaults.supportBundles, () -> config.supportBundles, val -> config.supportBundles = val))
+                    .controller(TickBoxControllerBuilder::create)
+                    .build();
+
             ConfigCategory generalCategory = ConfigCategory.createBuilder()
                     .name(Component.translatable("config.simpleshulkerpreview.category.general"))
                             .option(Option.<Boolean>createBuilder()
@@ -38,12 +45,7 @@ public class YaclScreenBuilder {
                                     .stateManager(StateManager.createInstant(defaults.showCapacity, () -> config.showCapacity, val -> config.showCapacity = val))
                                     .controller(TickBoxControllerBuilder::create)
                                     .build())
-                            .option(Option.<Boolean>createBuilder()
-                                    .name(Component.translatable("config.simpleshulkerpreview.supportBundles"))
-                                    .description(OptionDescription.of(Component.translatable("config.simpleshulkerpreview.supportBundles.tooltip")))
-                                    .stateManager(StateManager.createInstant(defaults.supportBundles, () -> config.supportBundles, val -> config.supportBundles = val))
-                                    .controller(TickBoxControllerBuilder::create)
-                                    .build())
+                            .option(supportBundlesOpt)
                             .option(Option.<Boolean>createBuilder()
                                     .name(Component.translatable("config.simpleshulkerpreview.supportOtherContainers"))
                                     .description(OptionDescription.of(Component.translatable("config.simpleshulkerpreview.supportOtherContainers.tooltip")))
@@ -170,10 +172,6 @@ public class YaclScreenBuilder {
                         bundleTransXOpt.setAvailable(val);
                         bundleTransYOpt.setAvailable(val);
                         bundleScaleOpt.setAvailable(val);
-                        // Switch preview to bundle when enabled, back to shulker when disabled
-                        if (previewHolder[0] != null) {
-                            previewHolder[0].setShowBundle(val);
-                        }
                     })
                     .build();
 
@@ -301,24 +299,19 @@ public class YaclScreenBuilder {
                         int boxX = rightPanelX + (rightPanelWidth - boxWidth) / 2;
                         int boxY = screen.height - buttonAreaHeight - boxHeight - 4; // 4px gap above buttons
 
-                        // ── Shrink the OptionDescriptionWidget ──────────────
-                        // Its text will scroll inside the reduced height, keeping
-                        // our preview area clear.
-                        for (var child : screen.children()) {
-                            if (child.getClass().getSimpleName().equals("OptionDescriptionWidget")) {
-                                if (child instanceof net.minecraft.client.gui.components.AbstractWidget widget) {
-                                    int newHeight = boxY - 2 - widget.getY();
-                                    if (newHeight > 0) {
-                                        widget.setHeight(newHeight);
-                                    }
-                                }
-                            }
-                        }
-
                         // ── Inject the preview widget ───────────────────────
                         PersistentPreviewWidget previewBox = new PersistentPreviewWidget(
                                 boxX, boxY, boxWidth, boxHeight, config, renderScale
                         );
+                        previewBox.setYaclScreen(screen);
+                        java.util.Set<Option<?>> bundleOptions = java.util.Set.of(
+                                supportBundlesOpt,
+                                overrideBundleOpt,
+                                bundleTransXOpt,
+                                bundleTransYOpt,
+                                bundleScaleOpt
+                        );
+                        previewBox.setBundleOptions(bundleOptions);
                         previewHolder[0] = previewBox;
                         net.fabricmc.fabric.api.client.screen.v1.Screens.getWidgets(screen).add(previewBox);
                     });

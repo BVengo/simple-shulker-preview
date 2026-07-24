@@ -17,7 +17,6 @@ import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.component.ResolvableProfile;
 import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
 import com.bvengo.simpleshulkerpreview.config.CustomNameOption;
-import org.apache.commons.lang3.math.Fraction;
 
 public class ItemStackManager {
     private static class ItemStackGrouper {
@@ -78,15 +77,16 @@ public class ItemStackManager {
                 .collect(Collectors.groupingBy(
                         ItemStackGrouper::new,
                         LinkedHashMap::new, // Preserving insertion order
-                        Collectors.summingDouble(x -> getItemCountEquivalent(x).doubleValue())));
+                        Collectors.summingDouble(x -> (double) getItemCountEquivalent(x))));
     }
 
-    public static Fraction getItemFraction(ItemStack itemStack) {
-        return Fraction.getFraction(itemStack.getCount(), itemStack.getMaxStackSize());
+    public static float getItemFraction(ItemStack itemStack) {
+        if (itemStack.isEmpty() || itemStack.getMaxStackSize() <= 0) return 0.0f;
+        return (float) itemStack.getCount() / itemStack.getMaxStackSize();
     }
 
-    public static Fraction getItemCountEquivalent(ItemStack itemStack) {
-        return getItemFraction(itemStack).multiplyBy(Fraction.getFraction(64, 1));
+    public static float getItemCountEquivalent(ItemStack itemStack) {
+        return getItemFraction(itemStack) * 64.0f;
     }
     
     public static ItemStack getDisplayStackFromIterable(Iterable<ItemStack> itemIterable) {

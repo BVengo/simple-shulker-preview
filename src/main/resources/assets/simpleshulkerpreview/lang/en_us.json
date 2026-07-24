@@ -32,10 +32,10 @@
 	"config.simpleshulkerpreview.group.iconPositionOptionsGeneral": "Preview Icon Position & Size",
 	"config.simpleshulkerpreview.group.iconPositionOptionsGeneral.tooltip": "Adjusts the X/Y coordinates and scale of the preview icon. Drag the sliders to see the icon move in real-time.",
 	"config.simpleshulkerpreview.group.overrideBundle": "Bundle Icon Position & Size Override",
-	"config.simpleshulkerpreview.overrideBundleIconPosition": "Override Bundle Icon Transform",
+	"config.simpleshulkerpreview.overrideBundleIconPosition": "Override Bundle Icon Position",
 	"config.simpleshulkerpreview.overrideBundleIconPosition.tooltip": "Override the position and scale of the Preview Icon Bundles",
 	"config.simpleshulkerpreview.group.overrideStacked": "Stacked Shulker Icon Position & Size Override",
-	"config.simpleshulkerpreview.overrideStackedIconPosition": "Override Stacked Shulker Icon Transform",
+	"config.simpleshulkerpreview.overrideStackedIconPosition": "Override Stacked Shulker Icon Position",
 	"config.simpleshulkerpreview.overrideStackedIconPosition.tooltip": "Override the position and scale for stacked shulkers (non-vanilla)",
 	"config.simpleshulkerpreview.translateX": "X Offset",
 	"config.simpleshulkerpreview.translateY": "Y Offset",
@@ -43,7 +43,7 @@
 	"config.simpleshulkerpreview.category.advanced": "Advanced",
 	"config.simpleshulkerpreview.category.advanced.tooltip": "Advanced compatibility settings.",
 	"config.simpleshulkerpreview.groupEnchantment": "Separate Enchanted Items",
-	"config.simpleshulkerpreview.groupEnchantment.tooltip": "Treats enchanted and non-enchanted items as completely separate items when grouping container contents. This affects whether they pass the Minimum Threshold, and whether they are considered 'Unique' or 'Most' abundant.",
+	"config.simpleshulkerpreview.groupEnchantment.tooltip": "Treats enchanted and non-enchanted items as completely separate items when grouping container contents. This affects whether they pass the Minimum Threshold, and whether they are considered the same 'type' or most abundant.",
 	"config.simpleshulkerpreview.group.stackSizeOptions": "Thresholds to Show Preview Icon",
 	"config.simpleshulkerpreview.group.stackSizeOptions.tooltip": "An item type must have at least this many total items inside the container to be considered eligible for the preview icon. Calculated as: (Minimum Item Stack Count × Minimum Slot Count).",
 	"config.simpleshulkerpreview.minStackSize": "Minimum Item Stack Count",
@@ -58,7 +58,7 @@
 	"config.simpleshulkerpreview.capacityDirection.bottom_to_top": "Bottom to Top",
 	"config.simpleshulkerpreview.displayIcon.first": "First Item",
 	"config.simpleshulkerpreview.displayIcon.last": "Last Item",
-	"config.simpleshulkerpreview.displayIcon.unique": "Most Unique Item",
+	"config.simpleshulkerpreview.displayIcon.unique": "Single Type Only",
 	"config.simpleshulkerpreview.displayIcon.most": "Most Abundant Item",
 	"config.simpleshulkerpreview.displayIcon.least": "Least Abundant Item",
 	"config.simpleshulkerpreview.customName.prefer": "Name Override",
@@ -78,5 +78,6 @@
 	"config.simpleshulkerpreview.minStackSize.tooltip": "Minimum stack size required for an icon to be displayed.",
 	"config.simpleshulkerpreview.minStackCount.tooltip": "Minimum number of partial stacks required for an icon to be displayed. Multiplier of minimum stack size.",
 	"config.simpleshulkerpreview.shulkerInventoryRows.tooltip": "For modded shulker boxes with custom sizes. This helps correctly calculate the capacity bar's fill percentage.",
-	"config.simpleshulkerpreview.shulkerInventoryCols.tooltip": "For modded shulker boxes with custom sizes. This helps correctly calculate the capacity bar's fill percentage."
+	"config.simpleshulkerpreview.shulkerInventoryCols.tooltip": "For modded shulker boxes with custom sizes. This helps correctly calculate the capacity bar's fill percentage.",
+	"config.simpleshulkerpreview.ingameOnly": "In-game preview only"
 }

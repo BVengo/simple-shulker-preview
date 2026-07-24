@@ -3,21 +3,29 @@ package com.bvengo.simpleshulkerpreview.config;
 import com.bvengo.simpleshulkerpreview.container.ContainerManager;
 import com.bvengo.simpleshulkerpreview.positioners.CapacityBarRenderer;
 import com.bvengo.simpleshulkerpreview.positioners.IconRenderer;
+import dev.isxander.yacl3.api.Option;
+import dev.isxander.yacl3.gui.OptionListWidget;
+import dev.isxander.yacl3.gui.YACLScreen;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.BundleContents;
 import net.minecraft.world.item.component.ItemContainerContents;
-import org.apache.commons.lang3.math.Fraction;
-import org.joml.Matrix3x2fStack;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A preview widget that renders a scaled inventory slot showing exactly how the
@@ -38,6 +46,8 @@ public class PersistentPreviewWidget extends AbstractWidget {
     private final ConfigOptions config;
     private final int renderScale;
     private boolean showBundle = false;
+    private Set<Option<?>> bundleOptions = Collections.emptySet();
+    private YACLScreen yaclScreen;
 
     private static final int ITEM_SIZE    = 16;
     private static final int SLOT_PADDING =  1;
@@ -48,13 +58,23 @@ public class PersistentPreviewWidget extends AbstractWidget {
     private static final int SLOT_BORDER_LIGHT  = 0xFFFFFFFF;
     private static final int SLOT_BORDER_MID    = 0xFF8B8B8B;
     private static final int SLOT_FILL          = 0xFF8B8B8B;
-    private static final int DIVIDER_COLOR      = 0xFF4A4A4A;
+    private static final int TEXT_DIMMED        = 0x80AAAAAA;
 
     public PersistentPreviewWidget(int x, int y, int width, int height,
                                    ConfigOptions config, int renderScale) {
         super(x, y, width, height, Component.empty());
         this.config      = config;
         this.renderScale = renderScale;
+    }
+
+    /** Set the YACLScreen reference for active category and option state lookups. */
+    public void setYaclScreen(YACLScreen yaclScreen) {
+        this.yaclScreen = yaclScreen;
+    }
+
+    /** Set the set of options that trigger bundle preview when hovered or focused. */
+    public void setBundleOptions(Set<Option<?>> bundleOptions) {
+        this.bundleOptions = bundleOptions;
     }
 
     /** Switch the preview between shulker box (false) and bundle (true). */
@@ -67,15 +87,33 @@ public class PersistentPreviewWidget extends AbstractWidget {
                                          int mouseX, int mouseY, float delta) {
         int x0 = getX(), y0 = getY(), w = getWidth(), h = getHeight();
 
-        // ── Divider line (section separator, inset from edges) ──────────────
-        int dividerY = y0 + 2;
-        graphics.fill(RenderPipelines.GUI,
-                x0 + 8, dividerY, x0 + w - 8, dividerY + 1, DIVIDER_COLOR);
+        // ── Check hover/focus on options list to toggle showing Bundle vs Shulker ────
+        if (this.yaclScreen != null) {
+            if (this.yaclScreen.tabNavigationBar != null && this.yaclScreen.tabNavigationBar.getTabManager().getCurrentTab() instanceof YACLScreen.CategoryTab categoryTab) {
+                try {
+                    java.lang.reflect.Field optionListField = YACLScreen.CategoryTab.class.getDeclaredField("optionList");
+                    optionListField.setAccessible(true);
+                    dev.isxander.yacl3.gui.WidgetAndType<?> widgetAndType = (dev.isxander.yacl3.gui.WidgetAndType<?>) optionListField.get(categoryTab);
+                    if (widgetAndType != null && widgetAndType.getType() instanceof OptionListWidget optionList) {
+                        for (OptionListWidget.Entry entry : optionList.children()) {
+                            if (entry instanceof OptionListWidget.OptionEntry optionEntry) {
+                                if (optionEntry.isMouseOver(mouseX, mouseY) || optionEntry.isFocused()) {
+                                    this.showBundle = bundleOptions.contains(optionEntry.option);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    // ignore reflection error if layout differs
+                }
+            }
+        }
 
         // ── Centered slot position ──────────────────────────────────────────
         int slotPx = SLOT_SIZE * renderScale;
         int slotX  = x0 + (w - slotPx) / 2;
-        int slotY  = y0 + 6 + (h - 6 - slotPx) / 2;
+        int slotY  = y0 + (h - slotPx) / 2;
 
         // ── Vanilla 3D beveled slot border ──────────────────────────────────
         // Top-left highlight
@@ -102,22 +140,28 @@ public class PersistentPreviewWidget extends AbstractWidget {
         graphics.fill(RenderPipelines.GUI,
                 slotX, slotY, slotX + slotPx, slotY + slotPx, SLOT_FILL);
 
-        // ── Item rendering (requires a world for Data Components) ───────────
+        // ── Item rendering (requires an active world for Item Component Registry binding) ──
         if (Minecraft.getInstance().level == null) {
-            return; // slot background is still visible as a placeholder
+            Font font = Minecraft.getInstance().font;
+            Component label = Component.translatable("config.simpleshulkerpreview.ingameOnly");
+            int labelWidth = font.width(label);
+            int labelX = x0 + (w - labelWidth) / 2;
+            int labelY = slotY + slotPx + 4;
+            graphics.text(font, label, labelX, labelY, TEXT_DIMMED, false);
+            return; // slot background and label are visible as an out-of-world placeholder
         }
 
         int itemScreenX = slotX + SLOT_PADDING * renderScale;
         int itemScreenY = slotY + SLOT_PADDING * renderScale;
 
         // ── Scale matrix for magnified item rendering ───────────────────────
-        Matrix3x2fStack matrix = graphics.pose();
+        var matrix = graphics.pose();
         matrix.pushMatrix();
         matrix.translate(itemScreenX, itemScreenY);
         matrix.scale(renderScale, renderScale);
 
         // Choose container type based on whether bundle settings are active
-        ItemStack containerStack = showBundle ? createPreviewBundle() : createPreviewShulker();
+        ItemStack containerStack = showBundle ? getPreviewBundle() : getPreviewShulker();
         graphics.fakeItem(containerStack, 0, 0);
 
         // ── Use the mod's own renderers for pixel-perfect overlays ───────────
@@ -151,36 +195,67 @@ public class PersistentPreviewWidget extends AbstractWidget {
      * <p>
      * The contents exercise different icon selection modes:
      * <ul>
-     *   <li><b>FIRST</b>: selects diamond (first in list)</li>
-     *   <li><b>LAST</b>: selects oak_planks (last in list)</li>
-     *   <li><b>MOST</b>: selects grass_block (highest total count: 32)</li>
-     *   <li><b>LEAST</b>: selects emerald (lowest count: 3)</li>
-     *   <li><b>UNIQUE</b>: returns null (multiple distinct items)</li>
+     *   <li><b>FIRST</b>: selects diamond (first item type in list)</li>
+     *   <li><b>LAST</b>: selects oak_planks (last item type in list)</li>
+     *   <li><b>MOST</b>: selects grass_block (highest total count: 640)</li>
+     *   <li><b>LEAST</b>: selects emerald (lowest count: 16)</li>
+     *   <li><b>UNIQUE</b>: returns null (multiple distinct item types)</li>
      * </ul>
+     * <p>
+     * Populated with 1168 items total across 19 slots (out of 1728 max capacity)
+     * to render the capacity bar as ~67.6% full.
      */
+    // ── Cached instances to avoid GC allocation churn per render frame ──
+    private ItemStack cachedShulker;
+    private ItemStack cachedBundle;
+
+    private ItemStack getPreviewShulker() {
+        if (cachedShulker == null) {
+            cachedShulker = createPreviewShulker();
+        }
+        return cachedShulker;
+    }
+
+    private ItemStack getPreviewBundle() {
+        if (cachedBundle == null) {
+            cachedBundle = createPreviewBundle();
+        }
+        return cachedBundle;
+    }
+
     private ItemStack createPreviewShulker() {
-        ItemStack shulker = new ItemStack(Items.SHULKER_BOX);
-        shulker.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(List.of(
-                new ItemStack(Items.DIAMOND,     10),
-                new ItemStack(Items.GRASS_BLOCK, 32),
-                new ItemStack(Items.EMERALD,      3),
-                new ItemStack(Items.OAK_PLANKS,  20)
-        )));
+        Item whiteShulker = BuiltInRegistries.ITEM.getValue(Identifier.parse("white_shulker_box"));
+        Item shulkerItem = (whiteShulker != null && !whiteShulker.equals(Items.AIR)) ? whiteShulker : Items.SHULKER_BOX;
+        ItemStack shulker = new ItemStack(shulkerItem);
+
+        List<ItemStack> items = new ArrayList<>();
+        addStacks(items, Items.DIAMOND,     64, 3);  // 192 Diamonds (3 full stacks) -> FIRST
+        addStacks(items, Items.GRASS_BLOCK, 64, 10); // 640 Grass Blocks (10 full stacks) -> MOST
+        addStacks(items, Items.EMERALD,     16, 1);  // 16 Emeralds (1 partial stack) -> LEAST
+        addStacks(items, Items.OAK_PLANKS,  64, 5);  // 320 Oak Planks (5 full stacks) -> LAST
+
+        shulker.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(items));
         return shulker;
+    }
+
+    private static void addStacks(List<ItemStack> list, Item item, int countPerStack, int stackAmount) {
+        for (int i = 0; i < stackAmount; i++) {
+            list.add(new ItemStack(item, countPerStack));
+        }
     }
 
     /**
      * Creates a bundle with the same mixed contents as the shulker preview,
-     * using BundleContents so the mod's ContainerManager identifies it as
-     * a bundle and applies the bundle-specific icon position config.
+     * scaled to 32 items total (50% of the 64-item bundle capacity) so the
+     * capacity bar displays half full.
      */
     private ItemStack createPreviewBundle() {
         ItemStack bundle = new ItemStack(Items.BUNDLE);
         List<ItemStack> items = List.of(
-                new ItemStack(Items.DIAMOND,     10),
-                new ItemStack(Items.GRASS_BLOCK, 32),
-                new ItemStack(Items.EMERALD,      3),
-                new ItemStack(Items.OAK_PLANKS,  20)
+                new ItemStack(Items.DIAMOND,      6),
+                new ItemStack(Items.GRASS_BLOCK, 14),
+                new ItemStack(Items.EMERALD,      2),
+                new ItemStack(Items.OAK_PLANKS,  10)
         );
         BundleContents.Mutable mutable = new BundleContents.Mutable(BundleContents.EMPTY);
         for (ItemStack item : items) {
