@@ -33,7 +33,7 @@
 	"config.simpleshulkerpreview.group.iconPositionOptionsGeneral.tooltip": "Adjusts the X/Y coordinates and scale of the preview icon. Drag the sliders to see the icon move in real-time.",
 	"config.simpleshulkerpreview.group.overrideBundle": "Bundle Icon Position & Size Override",
 	"config.simpleshulkerpreview.overrideBundleIconPosition": "Override Bundle Icon Position",
-	"config.simpleshulkerpreview.overrideBundleIconPosition.tooltip": "Override the position and scale of the Preview Icon Bundles",
+	"config.simpleshulkerpreview.overrideBundleIconPosition.tooltip": "Override the position and scale of the preview icon on Bundles",
 	"config.simpleshulkerpreview.group.overrideStacked": "Stacked Shulker Icon Position & Size Override",
 	"config.simpleshulkerpreview.overrideStackedIconPosition": "Override Stacked Shulker Icon Position",
 	"config.simpleshulkerpreview.overrideStackedIconPosition.tooltip": "Override the position and scale for stacked shulkers (non-vanilla)",
