@@ -3,6 +3,9 @@ package com.bvengo.simpleshulkerpreview.config;
 import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
 import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.controller.*;
+import dev.isxander.yacl3.gui.YACLScreen;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.tabs.Tab;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
@@ -281,23 +284,43 @@ public class YaclScreenBuilder {
                         int rightPanelWidth = screen.width / 3;
                         int rightPanelX     = screen.width - rightPanelWidth;
 
-                        // ── Preview sizing (responsive to GUI scale) ────────
-                        // The slot is 18 item-pixels.  We scale it so the preview
-                        // takes at most 1/3 of the available vertical space.
-                        int tabBarHeight     = 30;  // YACL top tab bar
-                        int buttonAreaHeight = 80;  // Search + Reset/Undo + Done + margins
-                        int availableHeight  = screen.height - tabBarHeight - buttonAreaHeight;
-                        int maxPreviewPx     = Math.max(36, availableHeight / 3);
+                        // ── Anchor above search field ───────────────────────
+                        // YACL has the search field 22px above undo button.
+                        // Read directly, have a fallback. This prevents overlap of the Search Box
+                        Tab currentTab = screen.tabNavigationBar != null && screen.tabNavigationBar.getTabManager() != null
+                                ? screen.tabNavigationBar.getTabManager().getCurrentTab()
+                                : null;
 
-                        int renderScale = Math.max(2, Math.min(4,
-                                Math.min(maxPreviewPx / 18, (rightPanelWidth - 20) / 18)));
-                        int slotPx  = 18 * renderScale;
+                        int padding = (screen.width / 3) / 20;
+                        int searchFieldTop;
+                        if (currentTab instanceof YACLScreen.CategoryTab categoryTab && categoryTab.undoButton != null) {
+                            searchFieldTop = categoryTab.undoButton.getY() - 22;
+                        } else {
+                            searchFieldTop = screen.height - padding - 64; // Done(20) + Undo(22) + Search(22)
+                        }
+
+                        // ── Preview sizing (responsive to GUI scale) ────────
+                        // The slot is 18 item-pixels (including borders).
+                        // Target 280ish physical pixels so preview size stays relatively consistent
+                        // across all GUI scales.
+                        int tabAreaTop = screen.tabArea != null ? screen.tabArea.top() : 23;
+                        int availableHeight = Math.max(36, searchFieldTop - tabAreaTop - 30); // 30px buffer below tab bar
+                        int availableWidth  = Math.max(36, rightPanelWidth - 20);              // 20px side margin
+
+                        int guiScale = (int) Minecraft.getInstance().getWindow().getGuiScale();
+                        if (guiScale <= 0) guiScale = 1;
+
+                        int idealScale = Math.max(2, Math.min(14, (int) Math.round(280.0 / (guiScale * 18))));
+                        int maxFitScale = Math.max(2, Math.min((availableHeight - 10) / 18, (availableWidth) / 18));
+                        int renderScale = Math.min(idealScale, maxFitScale);
+
+                        int slotPx    = 18 * renderScale;
                         int boxWidth  = slotPx + 12;   // small margin around the slot
                         int boxHeight = slotPx + 16;   // divider + top/bottom padding
 
                         // ── Vertical positioning (above button area) ────────
                         int boxX = rightPanelX + (rightPanelWidth - boxWidth) / 2;
-                        int boxY = screen.height - buttonAreaHeight - boxHeight - 4; // 4px gap above buttons
+                        int boxY = searchFieldTop - boxHeight - 6; // 6px gap above search field
 
                         // ── Inject the preview widget ───────────────────────
                         PersistentPreviewWidget previewBox = new PersistentPreviewWidget(
@@ -313,7 +336,12 @@ public class YaclScreenBuilder {
                         );
                         previewBox.setBundleOptions(bundleOptions);
                         previewHolder[0] = previewBox;
-                        net.fabricmc.fabric.api.client.screen.v1.Screens.getWidgets(screen).add(previewBox);
+
+                        // Put at index 0 so preview renders behind description text on first load and across tab switches
+                        var widgets = net.fabricmc.fabric.api.client.screen.v1.Screens.getWidgets(screen);
+                        if (!widgets.contains(previewBox)) {
+                            widgets.add(0, previewBox);
+                        }
                     });
         }).generateScreen(parent);
     }

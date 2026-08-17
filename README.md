@@ -3,7 +3,7 @@
 ![GitHub release](https://img.shields.io/github/release/BVengo/simple-shulker-preview.svg)
 ![GitHub issues](https://img.shields.io/github/issues/BVengo/simple-shulker-preview.svg)
 
-Simple Shulker Preview is a small fabric mod that displays an icon indicating the contents of a shulker. This icon appears on top of the shulker icon in inventory slots.
+Simple Shulker Preview is a small Fabric mod that displays an icon indicating the contents of a shulker. This icon appears on top of the shulker icon in inventory slots. It also works seamlessly with custom/modded shulkers and can display content preview icons on bundles, too.
 
 
 ![Example image](src/main/resources/assets/simpleshulkerpreview/example.png)
@@ -14,9 +14,9 @@ For other download pages, please see [CurseForge](https://www.curseforge.com/min
 This mod requires [YetAnotherConfigLib (YACL) v3](https://modrinth.com/mod/yacl) to manage configurations, and [ModMenu](https://www.curseforge.com/minecraft/mc-mods/modmenu) to access the config screen in-game.
 
 ## Configs
-The configuration screen now features a **real-time live preview** on the right side. Adjusting position sliders, toggling displays, or selecting sorting algorithms will immediately show the results on a dummy item in the config menu itself!
+I won't go through all the configs, since they've increased over time. A brief overview is as follows:
 
-A brief overview of the main settings:
+![Config screen](src/main/resources/assets/simpleshulkerpreview/shulker-preview-general-screen.png)
 
 | **Option**                                | **Description**                                                                           |
 |-------------------------------------------|-------------------------------------------------------------------------------------------|

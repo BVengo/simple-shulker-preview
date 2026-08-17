@@ -30,13 +30,18 @@ public class CapacityBarRenderer {
     private int xCapacityEnd;
     private int yCapacityEnd;
     
-    private final CapacityBarOptions configs = SimpleShulkerPreviewMod.CONFIGS.capacityBarOptions;
+    private final CapacityBarOptions configs;
 
     public CapacityBarRenderer(ContainerManager containerParser, ItemStack stack, int x, int y) {
+        this(containerParser, stack, x, y, SimpleShulkerPreviewMod.CONFIGS.capacityBarOptions);
+    }
+
+    public CapacityBarRenderer(ContainerManager containerParser, ItemStack stack, int x, int y, CapacityBarOptions configs) {
         this.stack = stack;
         this.stackX = x;
         this.stackY = y;
         this.capacity = containerParser.getCapacity();
+        this.configs = configs != null ? configs : SimpleShulkerPreviewMod.CONFIGS.capacityBarOptions;
     }
 
     protected boolean canDisplay() {
@@ -109,6 +114,13 @@ public class CapacityBarRenderer {
 
     public void renderOptional(GuiGraphicsExtractor context) {
         if(canDisplay()) {
+            calculatePositions();
+            render(context);
+        }
+    }
+
+    public void renderDirect(GuiGraphicsExtractor context) {
+        if((!configs.hideWhenEmpty || capacity > 0.0f) && (!configs.hideWhenFull || capacity < 1.0f)) {
             calculatePositions();
             render(context);
         }

@@ -53,12 +53,10 @@ public class PersistentPreviewWidget extends AbstractWidget {
     private static final int SLOT_PADDING =  1;
     private static final int SLOT_SIZE    = ITEM_SIZE + SLOT_PADDING * 2; // 18
 
-    // Vanilla inventory slot colors (3D bevel style)
-    private static final int SLOT_BORDER_DARK   = 0xFF373737;
-    private static final int SLOT_BORDER_LIGHT  = 0xFFFFFFFF;
-    private static final int SLOT_BORDER_MID    = 0xFF8B8B8B;
-    private static final int SLOT_FILL          = 0xFF8B8B8B;
+    private static final Identifier SLOT_SPRITE = Identifier.parse("container/slot");
     private static final int TEXT_DIMMED        = 0x80AAAAAA;
+
+    private static final CapacityBarOptions DEFAULT_CAPACITY_BAR_OPTIONS = new CapacityBarOptions();
 
     public PersistentPreviewWidget(int x, int y, int width, int height,
                                    ConfigOptions config, int renderScale) {
@@ -115,30 +113,8 @@ public class PersistentPreviewWidget extends AbstractWidget {
         int slotX  = x0 + (w - slotPx) / 2;
         int slotY  = y0 + (h - slotPx) / 2;
 
-        // ── Vanilla 3D beveled slot border ──────────────────────────────────
-        // Top-left highlight
-        graphics.fill(RenderPipelines.GUI, slotX - 2, slotY - 2,
-                slotX + slotPx + 1, slotY - 1, SLOT_BORDER_LIGHT);
-        graphics.fill(RenderPipelines.GUI, slotX - 2, slotY - 1,
-                slotX - 1, slotY + slotPx + 1, SLOT_BORDER_LIGHT);
-        // Bottom-right shadow
-        graphics.fill(RenderPipelines.GUI, slotX - 1, slotY + slotPx,
-                slotX + slotPx + 2, slotY + slotPx + 1, SLOT_BORDER_DARK);
-        graphics.fill(RenderPipelines.GUI, slotX + slotPx, slotY - 1,
-                slotX + slotPx + 1, slotY + slotPx + 1, SLOT_BORDER_DARK);
-        // Outer shadow corners
-        graphics.fill(RenderPipelines.GUI, slotX - 1, slotY + slotPx + 1,
-                slotX + slotPx + 2, slotY + slotPx + 2, SLOT_BORDER_DARK);
-        graphics.fill(RenderPipelines.GUI, slotX + slotPx + 1, slotY - 1,
-                slotX + slotPx + 2, slotY + slotPx + 2, SLOT_BORDER_DARK);
-        // Inner border
-        graphics.fill(RenderPipelines.GUI, slotX - 1, slotY - 1,
-                slotX + slotPx, slotY, SLOT_BORDER_MID);
-        graphics.fill(RenderPipelines.GUI, slotX - 1, slotY,
-                slotX, slotY + slotPx, SLOT_BORDER_MID);
-        // Slot fill
-        graphics.fill(RenderPipelines.GUI,
-                slotX, slotY, slotX + slotPx, slotY + slotPx, SLOT_FILL);
+        // ── Draw themed slot background sprite ──────────────────────────────
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, SLOT_SPRITE, slotX, slotY, slotPx, slotPx);
 
         // ── Item rendering (requires an active world for Item Component Registry binding) ──
         if (Minecraft.getInstance().level == null) {
@@ -178,11 +154,16 @@ public class PersistentPreviewWidget extends AbstractWidget {
                 }
             }
 
-            // Capacity bar (delegates to CapacityBarRenderer — handles all
-            // four directions, shadow, and position from the live config)
-            if (config.showCapacity) {
+            // Capacity bar needs two renderers:
+            // For bundles, the mod can only show vanilla capacity bar.
+            // For shulkers/other containers, use the customized capacity bar settings.
+            if (showBundle) {
                 CapacityBarRenderer barRenderer = new CapacityBarRenderer(
-                        containerManager, containerStack, 0, 0);
+                        containerManager, containerStack, 0, 0, DEFAULT_CAPACITY_BAR_OPTIONS);
+                barRenderer.renderDirect(graphics);
+            } else if (config.showCapacity) {
+                CapacityBarRenderer barRenderer = new CapacityBarRenderer(
+                        containerManager, containerStack, 0, 0, config.capacityBarOptions);
                 barRenderer.renderOptional(graphics);
             }
         }
