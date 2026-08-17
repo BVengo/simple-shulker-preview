@@ -95,7 +95,7 @@ public class PersistentPreviewWidget extends AbstractWidget {
                     if (widgetAndType != null && widgetAndType.getType() instanceof OptionListWidget optionList) {
                         for (OptionListWidget.Entry entry : optionList.children()) {
                             if (entry instanceof OptionListWidget.OptionEntry optionEntry) {
-                                if (optionEntry.isMouseOver(mouseX, mouseY) || optionEntry.isFocused()) {
+                                if (optionEntry.isMouseOver(mouseX, mouseY) || (optionEntry.isFocused() && !optionList.isMouseOver(mouseX, mouseY))) {
                                     this.showBundle = bundleOptions.contains(optionEntry.option);
                                     break;
                                 }
