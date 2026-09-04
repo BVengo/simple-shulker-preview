@@ -1,19 +1,19 @@
 package com.bvengo.simpleshulkerpreview.config;
 
-import me.shedaniel.autoconfig.annotation.ConfigEntry;
+import dev.isxander.yacl3.config.v2.api.SerialEntry;
 
 public class IconPositionOptions {
-    @ConfigEntry.Gui.Tooltip()
-    @ConfigEntry.BoundedDiscrete(min = 0, max = 16)
-    public int translateX;
+    @SerialEntry
+    public int translateX = 12;
 
-    @ConfigEntry.Gui.Tooltip()
-    @ConfigEntry.BoundedDiscrete(min = 0, max = 16)
-    public int translateY;
+    @SerialEntry
+    public int translateY = 4;
 
-    @ConfigEntry.Gui.Tooltip()
-    @ConfigEntry.BoundedDiscrete(min = 1, max = 16)
-    public int scale;
+    @SerialEntry
+    public int scale = 10;
+
+    public IconPositionOptions() {
+    }
 
     public IconPositionOptions(int x, int y, int scale) {
         this.translateX = x;

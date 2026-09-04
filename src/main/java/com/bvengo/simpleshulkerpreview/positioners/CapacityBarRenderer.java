@@ -8,14 +8,17 @@ import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.CommonColors;
 import net.minecraft.world.item.ItemStack;
-import org.apache.commons.lang3.math.Fraction;
 
-public class CapacityBarRenderer extends OverlayRenderer {
+public class CapacityBarRenderer {
     // Taken from BundleItem.java
     private static final int FULL_ITEM_BAR_COLOR = ARGB.colorFromFloat(1.0F, 1.0F, 0.33F, 0.33F);
     private static final int ITEM_BAR_COLOR = ARGB.colorFromFloat(1.0F, 0.44F, 0.53F, 1.0F);
 
-    private Fraction capacity;
+    ItemStack stack;
+    int stackX;
+    int stackY;
+
+    private float capacity;
 
     private int xBackgroundStart;
     private int yBackgroundStart;
@@ -27,22 +30,32 @@ public class CapacityBarRenderer extends OverlayRenderer {
     private int xCapacityEnd;
     private int yCapacityEnd;
     
-    private final CapacityBarOptions configs = SimpleShulkerPreviewMod.CONFIGS.capacityBarOptions;
+    private final CapacityBarOptions configs;
 
     public CapacityBarRenderer(ContainerManager containerParser, ItemStack stack, int x, int y) {
-        super(stack, x, y);
+        this(containerParser, stack, x, y, SimpleShulkerPreviewMod.CONFIGS.capacityBarOptions);
+    }
+
+    public CapacityBarRenderer(ContainerManager containerParser, ItemStack stack, int x, int y, CapacityBarOptions configs) {
+        this.stack = stack;
+        this.stackX = x;
+        this.stackY = y;
         this.capacity = containerParser.getCapacity();
+        this.configs = configs != null ? configs : SimpleShulkerPreviewMod.CONFIGS.capacityBarOptions;
     }
 
     protected boolean canDisplay() {
+        boolean hasIcon = stack != null && stack.getItem() != null && SimpleShulkerPreviewMod.CONFIGS.showPreviewIcon;
         return (
-            (!configs.hideWhenEmpty || capacity.compareTo(Fraction.ZERO) > 0) &&
-            (!configs.hideWhenFull || capacity.compareTo(Fraction.ONE) < 0)
+            SimpleShulkerPreviewMod.CONFIGS.showCapacity &&
+            (!SimpleShulkerPreviewMod.CONFIGS.hideWhenNoIcon || hasIcon) &&
+            (!configs.hideWhenEmpty || capacity > 0.0f) &&
+            (!configs.hideWhenFull || capacity < 1.0f)
         );
     }
 
     protected void calculatePositions() {
-        int step = (int)(configs.length * capacity.floatValue());
+        int step = (int)(configs.length * capacity);
         int shadowHeight = configs.displayShadow ? 1 : 0;
 
         xBackgroundStart = stackX + configs.translateX;
@@ -95,12 +108,19 @@ public class CapacityBarRenderer extends OverlayRenderer {
             context.fill(RenderPipelines.GUI, xBackgroundStart, yBackgroundStart, xBackgroundEnd, yBackgroundEnd, CommonColors.BLACK);
         }
 
-        int colour = capacity.compareTo(Fraction.ONE) == 0 ? FULL_ITEM_BAR_COLOR : ITEM_BAR_COLOR;
+        int colour = capacity >= 1.0f ? FULL_ITEM_BAR_COLOR : ITEM_BAR_COLOR;
         context.fill(RenderPipelines.GUI, xCapacityStart, yCapacityStart, xCapacityEnd, yCapacityEnd, ARGB.opaque(colour));
     }
 
     public void renderOptional(GuiGraphicsExtractor context) {
         if(canDisplay()) {
+            calculatePositions();
+            render(context);
+        }
+    }
+
+    public void renderDirect(GuiGraphicsExtractor context) {
+        if((!configs.hideWhenEmpty || capacity > 0.0f) && (!configs.hideWhenFull || capacity < 1.0f)) {
             calculatePositions();
             render(context);
         }

@@ -1,18 +1,16 @@
 package com.bvengo.simpleshulkerpreview.config;
 
-import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
-import net.minecraft.locale.Language;
-
-/** Shulker box slots that can be displayed */
+/**
+ * Which slot of the container should be displayed
+ * FIRST - the first item available in the container
+ * LAST - the last item available in the container
+ * UNIQUE - only display if there is one item type in the container
+ * MOST - displays which item there is the most of in the container
+ */
 public enum IconDisplayOption {
     FIRST,
     LAST,
     UNIQUE,
     MOST,
     LEAST;
-
-    @Override
-    public String toString() {
-        return Language.getInstance().getOrDefault("config." + SimpleShulkerPreviewMod.MOD_ID + ".displayIcon." + this.name().toLowerCase());
-    }
 }

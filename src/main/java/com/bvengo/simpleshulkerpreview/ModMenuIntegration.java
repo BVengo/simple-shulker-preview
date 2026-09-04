@@ -1,9 +1,8 @@
 package com.bvengo.simpleshulkerpreview;
 
-import com.bvengo.simpleshulkerpreview.config.ConfigOptions;
+import com.bvengo.simpleshulkerpreview.config.YaclScreenBuilder;
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
-import me.shedaniel.autoconfig.AutoConfigClient;
 
 /**
  * Set up Mod Menu.
@@ -11,6 +10,6 @@ import me.shedaniel.autoconfig.AutoConfigClient;
 public class ModMenuIntegration implements ModMenuApi {
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        return parent -> AutoConfigClient.getConfigScreen(ConfigOptions.class, parent).get();
+        return YaclScreenBuilder::createScreen;
     }
 }

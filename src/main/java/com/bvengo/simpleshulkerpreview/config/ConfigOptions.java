@@ -1,57 +1,21 @@
 package com.bvengo.simpleshulkerpreview.config;
 
 import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
-import me.shedaniel.autoconfig.ConfigData;
-import me.shedaniel.autoconfig.annotation.Config;
-import me.shedaniel.autoconfig.annotation.ConfigEntry;
+import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
+import dev.isxander.yacl3.config.v2.api.SerialEntry;
+import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
+import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.resources.Identifier;
 
-@Config(name = SimpleShulkerPreviewMod.MOD_ID)
-public class ConfigOptions implements ConfigData {
-    /**
-     * Which slot of the container should be displayed
-     * FIRST - the first item available in the container
-     * LAST - the last item available in the container
-     * UNIQUE - only display if there is one item type in the container
-     * MOST - displays which item there is the most of in the container
-     */
-    @ConfigEntry.Gui.Tooltip()
-    @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
-    public IconDisplayOption displayIcon = IconDisplayOption.FIRST;
+public class ConfigOptions {
+    public static final ConfigClassHandler<ConfigOptions> HANDLER = ConfigClassHandler.createBuilder(ConfigOptions.class)
+            .id(Identifier.tryParse(SimpleShulkerPreviewMod.MOD_ID + ":config"))
+            .serializer(config -> GsonConfigSerializerBuilder.create(config)
+                    .setPath(FabricLoader.getInstance().getConfigDir().resolve("simpleshulkerpreview.json"))
+                    .build())
+            .build();
 
-    /**
-     * Whether to use the custom name to determine the icon
-     * PREFER - prefer the custom name if valid, otherwise use the slot option
-     * ALWAYS - always use the custom name, otherwise don't display
-     * NEVER - never use the custom name
-     */
-    @ConfigEntry.Gui.Tooltip()
-    @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
-    public CustomNameOption customName = CustomNameOption.PREFER;
-
-    /** x, y, z offsets and scale */
-    @ConfigEntry.Gui.CollapsibleObject()
-    @ConfigEntry.Gui.Tooltip()
-    public IconPositionOptions iconPositionOptionsGeneral = new IconPositionOptions(12, 4, 10);
-
-    /** Stack size bounds */
-    @ConfigEntry.Gui.CollapsibleObject()
-    @ConfigEntry.Gui.Tooltip()
-    public StackSizeOptions stackSizeOptions = new StackSizeOptions();
-
-    /** Treat enchanted items separately from un-enchanted items */
-    @ConfigEntry.Gui.Tooltip()
-    public boolean groupEnchantment = false;
-
-    /** Capacity Bar. */
-    @ConfigEntry.Gui.Tooltip()
-    public boolean showCapacity = true;
-
-    @ConfigEntry.Gui.CollapsibleObject()
-    @ConfigEntry.Gui.Tooltip()
-    public CapacityBarOptions capacityBarOptions = new CapacityBarOptions();
-
-    /** Disables the mod. */
-    @ConfigEntry.Gui.Tooltip()
+    @SerialEntry
     public boolean disableMod = false;
 
     /**
@@ -63,18 +27,47 @@ public class ConfigOptions implements ConfigData {
      * - Player Head Drops
      * - All Mob Heads
      */
-    @ConfigEntry.Category("compatibility")
-    /** Include bundles. */
-    @ConfigEntry.Gui.Tooltip()
+    @SerialEntry
     public boolean supportBundles = false;
+
+    /**
+     * Support any other item with the 'container' component.
+     */
+    @SerialEntry
+    public boolean supportOtherContainers = false;
+
+    @SerialEntry
+    public IconDisplayOption displayIcon = IconDisplayOption.FIRST;
+
+    @SerialEntry
+    public CustomNameOption customName = CustomNameOption.PREFER;
+
+    @SerialEntry
+    public boolean showPreviewIcon = true;
+
+    @SerialEntry
+    public boolean showCapacity = true;
+
+    @SerialEntry
+    public boolean hideWhenNoIcon = false;
+
+    @SerialEntry
+    public CapacityBarOptions capacityBarOptions = new CapacityBarOptions();
+
+    @SerialEntry
+    public boolean overrideBundleIconPosition = false;
+
+    @SerialEntry
+    public boolean overrideStackedIconPosition = false;
+
+    @SerialEntry
+    public IconPositionOptions iconPositionOptionsGeneral = new IconPositionOptions(12, 4, 10);
 
     /**
      * x, y, z offsets and scale - default location overlaps with bundles count
      * indicator
      */
-    @ConfigEntry.Category("compatibility")
-    @ConfigEntry.Gui.CollapsibleObject()
-    @ConfigEntry.Gui.Tooltip()
+    @SerialEntry
     public IconPositionOptions iconPositionOptionsBundle = new IconPositionOptions(12, 4, 10);
 
     /**
@@ -84,24 +77,19 @@ public class ConfigOptions implements ConfigData {
      * x, y, z offsets and scale - different position to avoid overlap with stack
      * size indicator
      */
-    @ConfigEntry.Category("compatibility")
-    @ConfigEntry.Gui.CollapsibleObject()
-    @ConfigEntry.Gui.Tooltip()
+    @SerialEntry
     public IconPositionOptions iconPositionOptionsStacked = new IconPositionOptions(12, 4, 10);
 
-    /**
-     * Support any other item with the 'container' component.
-     */
-    @ConfigEntry.Category("compatibility")
-    @ConfigEntry.Gui.Tooltip()
-    public boolean supportOtherContainers = false;
+    @SerialEntry
+    public StackSizeOptions stackSizeOptions = new StackSizeOptions();
+
+    @SerialEntry
+    public boolean groupEnchantment = false;
 
     /**
      * Support mods that change the default size of shulkers.
      * Requested in https://github.com/BVengo/simple-shulker-preview/issues/33
      */
-    @ConfigEntry.Category("compatibility")
-    @ConfigEntry.Gui.CollapsibleObject()
-    @ConfigEntry.Gui.Tooltip()
+    @SerialEntry
     public ShulkerInventoryOptions shulkerInventoryOptions = new ShulkerInventoryOptions();
 }
