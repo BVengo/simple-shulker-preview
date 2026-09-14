@@ -1,6 +1,7 @@
 package com.bvengo.simpleshulkerpreview.container;
 
 import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
+import com.bvengo.simpleshulkerpreview.compat.BundleCompat;
 import com.bvengo.simpleshulkerpreview.config.CustomNameOption;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponents;
@@ -44,7 +45,7 @@ public class ContainerManager {
         } else if (containerType == ContainerType.BUNDLE) {
             BundleContents bundleComponent = containerStack.get(DataComponents.BUNDLE_CONTENTS);
             if (bundleComponent == null) return null;
-            itemIterable = () -> bundleComponent.itemCopyStream().iterator();
+            itemIterable = () -> BundleCompat.getBundleItemCopies(bundleComponent).iterator();
         } else {
             return null;
         }
