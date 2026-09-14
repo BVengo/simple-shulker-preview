@@ -1,6 +1,7 @@
 package com.bvengo.simpleshulkerpreview.config;
 
 import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
+import com.google.gson.FieldNamingPolicy;
 import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
 import dev.isxander.yacl3.config.v2.api.SerialEntry;
 import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
@@ -12,6 +13,9 @@ public class ConfigOptions {
             .id(Identifier.tryParse(SimpleShulkerPreviewMod.MOD_ID + ":config"))
             .serializer(config -> GsonConfigSerializerBuilder.create(config)
                     .setPath(FabricLoader.getInstance().getConfigDir().resolve("simpleshulkerpreview.json"))
+                    // Overrides YACL's default snake_case for nested objects so all keys match their
+                    // Java field names (camelCase), and this preserves pre-YACL user configs, too.
+                    .appendGsonBuilder(builder -> builder.setFieldNamingPolicy(FieldNamingPolicy.IDENTITY))
                     .build())
             .build();
 
