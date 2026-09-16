@@ -7,6 +7,8 @@
   "description": "Display a configurable icon indicating the contents of a shulker box, as well as a capacity bar.",
   "authors": ["BVengo"],
   "contributors": [
+    "mfishma",
+    "EvModder",
     "Meshiest",
     "MordorsElite",
     "mnowak32",
