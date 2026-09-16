@@ -44,8 +44,9 @@ dependencies {
 processResources {
 	inputs.property "version", project.version
 
+	def modVersion = project.version
 	filesMatching("fabric.mod.json") {
-		expand "version": project.version
+		expand "version": modVersion
 	}
 }
 
@@ -65,8 +66,9 @@ java {
 }
 
 jar {
+	def archivesBaseName = project.base.archivesName.get()
 	from("LICENSE") {
-		rename { "${it}_${project.base.archivesName.get()}"}
+		rename { "${it}_${archivesBaseName}"}
 	}
 }
 

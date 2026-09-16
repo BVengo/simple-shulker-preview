@@ -11,7 +11,8 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.renderer.RenderPipelines;
+import com.bvengo.simpleshulkerpreview.compat.RenderCompat;
+import com.bvengo.simpleshulkerpreview.compat.BundleCompat;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -114,7 +115,7 @@ public class PersistentPreviewWidget extends AbstractWidget {
         int slotY  = y0 + (h - slotPx) / 2;
 
         // ── Draw themed slot background sprite ──────────────────────────────
-        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, SLOT_SPRITE, slotX, slotY, slotPx, slotPx);
+        RenderCompat.blitSprite(graphics, SLOT_SPRITE, slotX, slotY, slotPx, slotPx);
 
         // ── Item rendering (requires an active world for Item Component Registry binding) ──
         if (Minecraft.getInstance().level == null) {
@@ -238,11 +239,7 @@ public class PersistentPreviewWidget extends AbstractWidget {
                 new ItemStack(Items.EMERALD,      2),
                 new ItemStack(Items.OAK_PLANKS,  10)
         );
-        BundleContents.Mutable mutable = new BundleContents.Mutable(BundleContents.EMPTY);
-        for (ItemStack item : items) {
-            mutable.tryInsert(item);
-        }
-        bundle.set(DataComponents.BUNDLE_CONTENTS, mutable.toImmutable());
+        bundle.set(DataComponents.BUNDLE_CONTENTS, BundleCompat.createBundleContents(items));
         return bundle;
     }
 

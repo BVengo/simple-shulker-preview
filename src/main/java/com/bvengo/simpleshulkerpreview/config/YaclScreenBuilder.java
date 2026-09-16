@@ -171,10 +171,10 @@ public class YaclScreenBuilder {
                     .description(OptionDescription.of(Component.translatable("config.simpleshulkerpreview.overrideBundleIconPosition.tooltip")))
                     .stateManager(StateManager.createInstant(defaults.overrideBundleIconPosition, () -> config.overrideBundleIconPosition, val -> config.overrideBundleIconPosition = val))
                     .controller(TickBoxControllerBuilder::create)
-                    .listener((opt, val) -> {
-                        bundleTransXOpt.setAvailable(val);
-                        bundleTransYOpt.setAvailable(val);
-                        bundleScaleOpt.setAvailable(val);
+                    .addListener((opt, event) -> {
+                        bundleTransXOpt.setAvailable(opt.pendingValue());
+                        bundleTransYOpt.setAvailable(opt.pendingValue());
+                        bundleScaleOpt.setAvailable(opt.pendingValue());
                     })
                     .build();
 
@@ -207,10 +207,10 @@ public class YaclScreenBuilder {
                     .description(OptionDescription.of(Component.translatable("config.simpleshulkerpreview.overrideStackedIconPosition.tooltip")))
                     .stateManager(StateManager.createInstant(defaults.overrideStackedIconPosition, () -> config.overrideStackedIconPosition, val -> config.overrideStackedIconPosition = val))
                     .controller(TickBoxControllerBuilder::create)
-                    .listener((opt, val) -> {
-                        stackedTransXOpt.setAvailable(val);
-                        stackedTransYOpt.setAvailable(val);
-                        stackedScaleOpt.setAvailable(val);
+                    .addListener((opt, event) -> {
+                        stackedTransXOpt.setAvailable(opt.pendingValue());
+                        stackedTransYOpt.setAvailable(opt.pendingValue());
+                        stackedScaleOpt.setAvailable(opt.pendingValue());
                     })
                     .build();
 
