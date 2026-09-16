@@ -13,8 +13,9 @@ public class ConfigOptions {
             .id(Identifier.tryParse(SimpleShulkerPreviewMod.MOD_ID + ":config"))
             .serializer(config -> GsonConfigSerializerBuilder.create(config)
                     .setPath(FabricLoader.getInstance().getConfigDir().resolve("simpleshulkerpreview.json"))
-                    // Overrides YACL's default snake_case for nested objects so all keys match their
-                    // Java field names (camelCase), and this preserves pre-YACL user configs, too.
+                    // YACL resolves top-level keys itself by field name, but hands nested objects
+                    // straight to Gson, whose default naming policy is LOWER_CASE_WITH_UNDERSCORES.
+                    // Without this, every nested setting silently falls back to its default.
                     .appendGsonBuilder(builder -> builder.setFieldNamingPolicy(FieldNamingPolicy.IDENTITY))
                     .build())
             .build();
