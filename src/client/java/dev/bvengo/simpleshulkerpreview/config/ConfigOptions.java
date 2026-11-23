@@ -1,6 +1,6 @@
-package com.bvengo.simpleshulkerpreview.config;
+package dev.bvengo.simpleshulkerpreview.config;
 
-import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
+import dev.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
 import com.google.gson.FieldNamingPolicy;
 import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
 import dev.isxander.yacl3.config.v2.api.SerialEntry;

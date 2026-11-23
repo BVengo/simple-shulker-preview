@@ -1,4 +1,4 @@
-package com.bvengo.simpleshulkerpreview.container;
+package dev.bvengo.simpleshulkerpreview.container;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -15,8 +15,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.component.ResolvableProfile;
-import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
-import com.bvengo.simpleshulkerpreview.config.CustomNameOption;
+import dev.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
+import dev.bvengo.simpleshulkerpreview.config.CustomNameOption;
 
 public class ItemStackManager {
     private static class ItemStackGrouper {

@@ -1,6 +1,6 @@
-package com.bvengo.simpleshulkerpreview.config;
+package dev.bvengo.simpleshulkerpreview.config;
 
-import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
+import dev.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
 import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.controller.*;
 import dev.isxander.yacl3.gui.YACLScreen;

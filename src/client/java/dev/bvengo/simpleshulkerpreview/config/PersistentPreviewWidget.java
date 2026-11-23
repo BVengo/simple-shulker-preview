@@ -1,8 +1,8 @@
-package com.bvengo.simpleshulkerpreview.config;
+package dev.bvengo.simpleshulkerpreview.config;
 
-import com.bvengo.simpleshulkerpreview.container.ContainerManager;
-import com.bvengo.simpleshulkerpreview.positioners.CapacityBarRenderer;
-import com.bvengo.simpleshulkerpreview.positioners.IconRenderer;
+import dev.bvengo.simpleshulkerpreview.container.ContainerManager;
+import dev.bvengo.simpleshulkerpreview.positioners.CapacityBarRenderer;
+import dev.bvengo.simpleshulkerpreview.positioners.IconRenderer;
 import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.gui.OptionListWidget;
 import dev.isxander.yacl3.gui.YACLScreen;
@@ -11,8 +11,8 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import com.bvengo.simpleshulkerpreview.compat.RenderCompat;
-import com.bvengo.simpleshulkerpreview.compat.BundleCompat;
+import dev.bvengo.simpleshulkerpreview.compat.RenderCompat;
+import dev.bvengo.simpleshulkerpreview.compat.BundleCompat;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;

@@ -48,3 +48,6 @@ explicit ModKit 0.1.0 source checkout:
 
 Alternatively, use `-Pmodkit.repository=file:///path/to/maven-repository` with a
 repository containing ModKit 0.1.0. Collected JARs are in `build/libs`.
+
+Java packages and the Maven group use `dev.bvengo`. The Maven artifact ID remains
+`simpleshulkerpreview`. Integrations must use the updated package names and group.

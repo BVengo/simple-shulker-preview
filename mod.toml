@@ -2,7 +2,7 @@ schema = 1
 
 [mod]
 id = "simpleshulkerpreview"
-group = "com.bvengo"
+group = "dev.bvengo"
 version = "2.6.0"
 
 [targets]
@@ -40,8 +40,8 @@ sources = "https://github.com/BVengo/simple-shulker-preview"
 issues = "https://github.com/BVengo/simple-shulker-preview/issues"
 
 [metadata.entrypoints]
-client = ["com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod"]
-modmenu = ["com.bvengo.simpleshulkerpreview.ModMenuIntegration"]
+client = ["dev.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod"]
+modmenu = ["dev.bvengo.simpleshulkerpreview.ModMenuIntegration"]
 
 [metadata.fabric.depends]
 fabric-api = "*"
@@ -57,5 +57,5 @@ update_checker = true
 "modmenu.discord" = "https://discord.gg/gyTa5v7kKk"
 
 [metadata.mixins]
-package = "com.bvengo.simpleshulkerpreview.mixin"
+package = "dev.bvengo.simpleshulkerpreview.mixin"
 client = ["DrawContextMixin"]

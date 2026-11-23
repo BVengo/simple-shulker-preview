@@ -1,11 +1,11 @@
-package com.bvengo.simpleshulkerpreview.mixin;
+package dev.bvengo.simpleshulkerpreview.mixin;
 
-import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
-import com.bvengo.simpleshulkerpreview.access.DrawContextAccess;
-import com.bvengo.simpleshulkerpreview.container.ContainerManager;
-import com.bvengo.simpleshulkerpreview.container.ContainerType;
-import com.bvengo.simpleshulkerpreview.positioners.CapacityBarRenderer;
-import com.bvengo.simpleshulkerpreview.positioners.IconRenderer;
+import dev.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
+import dev.bvengo.simpleshulkerpreview.access.DrawContextAccess;
+import dev.bvengo.simpleshulkerpreview.container.ContainerManager;
+import dev.bvengo.simpleshulkerpreview.container.ContainerType;
+import dev.bvengo.simpleshulkerpreview.positioners.CapacityBarRenderer;
+import dev.bvengo.simpleshulkerpreview.positioners.IconRenderer;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.gui.Font;

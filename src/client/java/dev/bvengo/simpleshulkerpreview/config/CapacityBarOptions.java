@@ -1,4 +1,4 @@
-package com.bvengo.simpleshulkerpreview.config;
+package dev.bvengo.simpleshulkerpreview.config;
 
 import dev.isxander.yacl3.config.v2.api.SerialEntry;
 

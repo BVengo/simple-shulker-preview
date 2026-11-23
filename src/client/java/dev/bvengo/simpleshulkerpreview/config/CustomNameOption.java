@@ -1,4 +1,4 @@
-package com.bvengo.simpleshulkerpreview.config;
+package dev.bvengo.simpleshulkerpreview.config;
 
 /**
  * Whether to use the custom name to determine the icon

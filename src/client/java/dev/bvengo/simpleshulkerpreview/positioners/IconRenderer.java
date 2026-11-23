@@ -1,9 +1,9 @@
-package com.bvengo.simpleshulkerpreview.positioners;
+package dev.bvengo.simpleshulkerpreview.positioners;
 
-import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
-import com.bvengo.simpleshulkerpreview.access.DrawContextAccess;
-import com.bvengo.simpleshulkerpreview.config.IconPositionOptions;
-import com.bvengo.simpleshulkerpreview.container.ContainerManager;
+import dev.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
+import dev.bvengo.simpleshulkerpreview.access.DrawContextAccess;
+import dev.bvengo.simpleshulkerpreview.config.IconPositionOptions;
+import dev.bvengo.simpleshulkerpreview.container.ContainerManager;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.item.ItemStack;
 

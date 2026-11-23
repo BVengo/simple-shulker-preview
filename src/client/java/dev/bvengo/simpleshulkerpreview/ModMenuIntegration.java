@@ -1,6 +1,6 @@
-package com.bvengo.simpleshulkerpreview;
+package dev.bvengo.simpleshulkerpreview;
 
-import com.bvengo.simpleshulkerpreview.config.YaclScreenBuilder;
+import dev.bvengo.simpleshulkerpreview.config.YaclScreenBuilder;
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
 

@@ -1,8 +1,8 @@
-package com.bvengo.simpleshulkerpreview.container;
+package dev.bvengo.simpleshulkerpreview.container;
 
-import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
-import com.bvengo.simpleshulkerpreview.compat.BundleCompat;
-import com.bvengo.simpleshulkerpreview.config.CustomNameOption;
+import dev.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
+import dev.bvengo.simpleshulkerpreview.compat.BundleCompat;
+import dev.bvengo.simpleshulkerpreview.config.CustomNameOption;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.util.Mth;

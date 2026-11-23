@@ -1,6 +1,6 @@
-package com.bvengo.simpleshulkerpreview;
+package dev.bvengo.simpleshulkerpreview;
 
-import com.bvengo.simpleshulkerpreview.config.ConfigOptions;
+import dev.bvengo.simpleshulkerpreview.config.ConfigOptions;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

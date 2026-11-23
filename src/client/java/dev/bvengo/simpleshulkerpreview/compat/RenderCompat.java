@@ -1,6 +1,6 @@
-package com.bvengo.simpleshulkerpreview.compat;
+package dev.bvengo.simpleshulkerpreview.compat;
 
-import com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
+import dev.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.resources.Identifier;
 

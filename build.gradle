@@ -2,7 +2,7 @@ plugins {
     id 'dev.bvengo.modkit.target'
 }
 
-// Preserve the existing archive names and publication coordinates.
+// Preserve the existing archive names and Maven artifact ID.
 modkit.archiveName = 'simpleshulkerpreview'
 
 publishing.publications.named('mavenJava') {

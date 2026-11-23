@@ -1,4 +1,4 @@
-package com.bvengo.simpleshulkerpreview.config;
+package dev.bvengo.simpleshulkerpreview.config;
 
 /** Which direction does the capacity bar fill up in? */
 public enum CapacityDirectionOption {

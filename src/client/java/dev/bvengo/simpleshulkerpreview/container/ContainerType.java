@@ -1,4 +1,4 @@
-package com.bvengo.simpleshulkerpreview.container;
+package dev.bvengo.simpleshulkerpreview.container;
 
 public enum ContainerType {
     SHULKER_BOX,

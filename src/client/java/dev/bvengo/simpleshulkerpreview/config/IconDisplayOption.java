@@ -1,4 +1,4 @@
-package com.bvengo.simpleshulkerpreview.config;
+package dev.bvengo.simpleshulkerpreview.config;
 
 /**
  * Which slot of the container should be displayed
