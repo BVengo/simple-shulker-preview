@@ -1,0 +1,11 @@
+name: build
+on: [push, pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    uses: BVengo/bvengo-modkit/.github/workflows/consumer-build.yml@aef1ab60c7a280f3121d414702cb223c5cdd2e0c
+    with:
+      modkit-ref: aef1ab60c7a280f3121d414702cb223c5cdd2e0c
