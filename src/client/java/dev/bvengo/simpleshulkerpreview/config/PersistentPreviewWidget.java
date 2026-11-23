@@ -11,7 +11,8 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import dev.bvengo.simpleshulkerpreview.compat.RenderCompat;
+import dev.bvengo.modcore.client.render.GuiSprites;
+import dev.bvengo.modcore.client.render.ItemIconRenderer;
 import dev.bvengo.simpleshulkerpreview.compat.BundleCompat;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -33,7 +34,7 @@ import java.util.Set;
  * mod's shulker-box overlay looks with the current config values.
  * <p>
  * For the <b>icon overlay</b>, the widget delegates to the mod's own
- * {@link IconRenderer} (which triggers the wrapDrawItem mixin), so the preview
+ * {@link IconRenderer}, so the preview
  * is pixel-perfect relative to real gameplay.
  * <p>
  * For the <b>capacity bar</b>, the widget delegates to the mod's own
@@ -115,7 +116,7 @@ public class PersistentPreviewWidget extends AbstractWidget {
         int slotY  = y0 + (h - slotPx) / 2;
 
         // ── Draw themed slot background sprite ──────────────────────────────
-        RenderCompat.blitSprite(graphics, SLOT_SPRITE, slotX, slotY, slotPx, slotPx);
+        GuiSprites.draw(graphics, SLOT_SPRITE, slotX, slotY, slotPx, slotPx);
 
         // ── Item rendering (requires an active world for Item Component Registry binding) ──
         if (Minecraft.getInstance().level == null) {
@@ -139,13 +140,13 @@ public class PersistentPreviewWidget extends AbstractWidget {
 
         // Choose container type based on whether bundle settings are active
         ItemStack containerStack = showBundle ? getPreviewBundle() : getPreviewShulker();
-        graphics.fakeItem(containerStack, 0, 0);
+        ItemIconRenderer.draw(graphics, containerStack, 0, 0);
 
         // ── Use the mod's own renderers for pixel-perfect overlays ───────────
         if (!config.disableMod) {
             ContainerManager containerManager = new ContainerManager(containerStack);
 
-            // Icon overlay (delegates to IconRenderer → wrapDrawItem mixin)
+            // Icon overlay (delegates to IconRenderer and ModCore)
             if (config.showPreviewIcon) {
                 ItemStack displayStack = containerManager.getDisplayStack();
                 if (displayStack != null) {

@@ -43,7 +43,7 @@ Use Java 25 and the Gradle wrapper. Build the declared 26.3 Fabric target with a
 explicit ModKit 0.1.0 source checkout:
 
 ```sh
-./gradlew -Pmodkit.includeBuild=/path/to/bvengo-modkit buildAll
+./gradlew -Pmodkit.includeBuild=/path/to/bvengo-modkit -Pmodcore.artifacts=/path/to/bvengo-modcore/build/libs buildAll
 ```
 
 Alternatively, use `-Pmodkit.repository=file:///path/to/maven-repository` with a
@@ -51,3 +51,12 @@ repository containing ModKit 0.1.0. Collected JARs are in `build/libs`.
 
 Java packages and the Maven group use `dev.bvengo`. The Maven artifact ID remains
 `simpleshulkerpreview`. Integrations must use the updated package names and group.
+
+## Shared rendering and UI
+
+This mod requires a separate BVengo ModCore JAR for its game version and loader.
+Build ModCore first, then build this mod with:
+
+```sh
+./gradlew -Pmodkit.includeBuild=../bvengo-modkit -Pmodcore.artifacts=../bvengo-modcore/build/libs buildAll
+```

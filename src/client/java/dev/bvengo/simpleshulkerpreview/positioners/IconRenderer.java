@@ -1,7 +1,7 @@
 package dev.bvengo.simpleshulkerpreview.positioners;
 
 import dev.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
-import dev.bvengo.simpleshulkerpreview.access.DrawContextAccess;
+import dev.bvengo.modcore.client.render.ItemIconRenderer;
 import dev.bvengo.simpleshulkerpreview.config.IconPositionOptions;
 import dev.bvengo.simpleshulkerpreview.container.ContainerManager;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -57,10 +57,7 @@ public class IconRenderer {
     }
 
     protected void render(GuiGraphicsExtractor context) {
-        ((DrawContextAccess) context).simple_shulker_preview$setIconRenderer(this);
-        ((DrawContextAccess) context).simple_shulker_preview$setAdjustSize(true);
-        context.fakeItem(stack, stackX, stackY);
-        ((DrawContextAccess) context).simple_shulker_preview$setAdjustSize(false);
+        ItemIconRenderer.draw(context, stack, stackX, stackY, scale, xOffset, yOffset);
     }
 
     public void renderOptional(GuiGraphicsExtractor context) {

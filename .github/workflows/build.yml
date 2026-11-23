@@ -6,6 +6,7 @@ permissions:
 
 jobs:
   build:
-    uses: BVengo/bvengo-modkit/.github/workflows/consumer-build.yml@aef1ab60c7a280f3121d414702cb223c5cdd2e0c
+    uses: BVengo/bvengo-modkit/.github/workflows/consumer-build.yml@02c01a7ee4557832aeceecfd7e2a0977d3dd119e
     with:
-      modkit-ref: aef1ab60c7a280f3121d414702cb223c5cdd2e0c
+      modkit-ref: 02c01a7ee4557832aeceecfd7e2a0977d3dd119e
+      modcore-ref: 042ec5721ad66ff0ad5d725e4ec25c220693712d
