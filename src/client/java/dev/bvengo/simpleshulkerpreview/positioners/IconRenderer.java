@@ -1,0 +1,73 @@
+package dev.bvengo.simpleshulkerpreview.positioners;
+
+import dev.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
+import dev.bvengo.modcore.client.render.ItemIconRenderer;
+import dev.bvengo.simpleshulkerpreview.config.IconPositionOptions;
+import dev.bvengo.simpleshulkerpreview.container.ContainerManager;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.world.item.ItemStack;
+
+public class IconRenderer {
+
+    ItemStack stack;
+    int stackX;
+    int stackY;
+
+    IconPositionOptions iconPositionOptions;
+
+    public float scale;
+    public float xOffset;
+    public float yOffset;
+
+    public IconRenderer(ContainerManager containerParser, ItemStack displayStack, int x, int y) {
+        this.stack = displayStack;
+        this.stackX = x;
+        this.stackY = y;
+        setPositionOptions(containerParser);
+    }
+
+    private void setPositionOptions(ContainerManager containerParser) {
+        switch(containerParser.getContainerType()) {
+            case SHULKER_BOX:
+                iconPositionOptions = (
+                    containerParser.getStackSize() > 1 && SimpleShulkerPreviewMod.CONFIGS.overrideStackedIconPosition ?
+                        SimpleShulkerPreviewMod.CONFIGS.iconPositionOptionsStacked :
+                        SimpleShulkerPreviewMod.CONFIGS.iconPositionOptionsGeneral
+                );
+                break;
+            case BUNDLE:
+                iconPositionOptions = SimpleShulkerPreviewMod.CONFIGS.overrideBundleIconPosition ? 
+                        SimpleShulkerPreviewMod.CONFIGS.iconPositionOptionsBundle :
+                        SimpleShulkerPreviewMod.CONFIGS.iconPositionOptionsGeneral;
+                break;
+            case OTHER:
+                iconPositionOptions = SimpleShulkerPreviewMod.CONFIGS.iconPositionOptionsGeneral;
+                break;
+            case NONE:
+                break;
+        }
+    }
+
+    protected void calculatePositions() {
+        // Normal icon location
+        xOffset = (float)iconPositionOptions.translateX - 8.0f;
+        yOffset = (float)iconPositionOptions.translateY - 8.0f;
+
+        scale = iconPositionOptions.scale;
+    }
+
+    protected void render(GuiGraphicsExtractor context) {
+        ItemIconRenderer.draw(context, stack, stackX, stackY, scale, xOffset, yOffset);
+    }
+
+    public void renderOptional(GuiGraphicsExtractor context) {
+        if(canDisplay()) {
+            calculatePositions();
+            render(context);
+        }
+    }
+
+    protected boolean canDisplay() {
+        return stack != null && stack.getItem() != null && SimpleShulkerPreviewMod.CONFIGS.showPreviewIcon;
+    }
+}

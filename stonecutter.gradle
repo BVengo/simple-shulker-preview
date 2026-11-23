@@ -1,0 +1,5 @@
+plugins {
+    id 'dev.bvengo.modkit.controller'
+}
+
+stonecutter.active '26.3-fabric'

@@ -1,0 +1,127 @@
+package dev.bvengo.simpleshulkerpreview.positioners;
+
+import dev.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod;
+import dev.bvengo.simpleshulkerpreview.config.CapacityBarOptions;
+import dev.bvengo.simpleshulkerpreview.container.ContainerManager;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.util.ARGB;
+import net.minecraft.util.CommonColors;
+import net.minecraft.world.item.ItemStack;
+
+public class CapacityBarRenderer {
+    // Taken from BundleItem.java
+    private static final int FULL_ITEM_BAR_COLOR = ARGB.colorFromFloat(1.0F, 1.0F, 0.33F, 0.33F);
+    private static final int ITEM_BAR_COLOR = ARGB.colorFromFloat(1.0F, 0.44F, 0.53F, 1.0F);
+
+    ItemStack stack;
+    int stackX;
+    int stackY;
+
+    private float capacity;
+
+    private int xBackgroundStart;
+    private int yBackgroundStart;
+    private int xBackgroundEnd;
+    private int yBackgroundEnd;
+
+    private int xCapacityStart;
+    private int yCapacityStart;
+    private int xCapacityEnd;
+    private int yCapacityEnd;
+    
+    private final CapacityBarOptions configs;
+
+    public CapacityBarRenderer(ContainerManager containerParser, ItemStack stack, int x, int y) {
+        this(containerParser, stack, x, y, SimpleShulkerPreviewMod.CONFIGS.capacityBarOptions);
+    }
+
+    public CapacityBarRenderer(ContainerManager containerParser, ItemStack stack, int x, int y, CapacityBarOptions configs) {
+        this.stack = stack;
+        this.stackX = x;
+        this.stackY = y;
+        this.capacity = containerParser.getCapacity();
+        this.configs = configs != null ? configs : SimpleShulkerPreviewMod.CONFIGS.capacityBarOptions;
+    }
+
+    protected boolean canDisplay() {
+        boolean hasIcon = stack != null && stack.getItem() != null && SimpleShulkerPreviewMod.CONFIGS.showPreviewIcon;
+        return (
+            SimpleShulkerPreviewMod.CONFIGS.showCapacity &&
+            (!SimpleShulkerPreviewMod.CONFIGS.hideWhenNoIcon || hasIcon) &&
+            (!configs.hideWhenEmpty || capacity > 0.0f) &&
+            (!configs.hideWhenFull || capacity < 1.0f)
+        );
+    }
+
+    protected void calculatePositions() {
+        int step = (int)(configs.length * capacity);
+        int shadowHeight = configs.displayShadow ? 1 : 0;
+
+        xBackgroundStart = stackX + configs.translateX;
+        yBackgroundStart = stackY + configs.translateY;
+
+        switch(configs.direction) {
+            case LEFT_TO_RIGHT -> {
+                xBackgroundEnd = xBackgroundStart + configs.length;
+                yBackgroundEnd = yBackgroundStart + configs.width + shadowHeight;
+                xCapacityStart = xBackgroundStart;
+                yCapacityStart = yBackgroundStart;
+                xCapacityEnd = xBackgroundStart + step;
+                yCapacityEnd = yCapacityStart + configs.width;
+            }
+            case RIGHT_TO_LEFT -> {
+                xBackgroundEnd = xBackgroundStart + configs.length;
+                yBackgroundEnd = yBackgroundStart + configs.width  + shadowHeight;
+                xCapacityStart = xBackgroundEnd - step;
+                yCapacityStart = yBackgroundStart;
+                xCapacityEnd = xBackgroundEnd;
+                yCapacityEnd = yCapacityStart + configs.width;
+            }
+            case TOP_TO_BOTTOM -> {
+                xBackgroundEnd = xBackgroundStart + configs.width;
+                yBackgroundEnd = yBackgroundStart + configs.length;
+                xCapacityStart = xBackgroundStart;
+                yCapacityStart = yBackgroundStart;
+                xCapacityEnd = xBackgroundEnd;
+                yCapacityEnd = yCapacityStart + step;
+            }
+            case BOTTOM_TO_TOP -> {
+                xBackgroundEnd = xBackgroundStart + configs.width;
+                yBackgroundEnd = yBackgroundStart + configs.length;
+                xCapacityStart = xBackgroundStart;
+                yCapacityStart = yBackgroundEnd - step;
+                xCapacityEnd = xBackgroundEnd;
+                yCapacityEnd = yBackgroundEnd;
+            }
+            default -> {
+                String err = "Unexpected value for capacity direction: " + configs.direction;
+
+                SimpleShulkerPreviewMod.LOGGER.error(err);
+                throw new IllegalStateException(err);
+            }
+        }
+    }
+
+    protected void render(GuiGraphicsExtractor context) {
+        if(configs.displayShadow) {
+            context.fill(xBackgroundStart, yBackgroundStart, xBackgroundEnd, yBackgroundEnd, CommonColors.BLACK);
+        }
+
+        int colour = capacity >= 1.0f ? FULL_ITEM_BAR_COLOR : ITEM_BAR_COLOR;
+        context.fill(xCapacityStart, yCapacityStart, xCapacityEnd, yCapacityEnd, ARGB.opaque(colour));
+    }
+
+    public void renderOptional(GuiGraphicsExtractor context) {
+        if(canDisplay()) {
+            calculatePositions();
+            render(context);
+        }
+    }
+
+    public void renderDirect(GuiGraphicsExtractor context) {
+        if((!configs.hideWhenEmpty || capacity > 0.0f) && (!configs.hideWhenFull || capacity < 1.0f)) {
+            calculatePositions();
+            render(context);
+        }
+    }
+}
