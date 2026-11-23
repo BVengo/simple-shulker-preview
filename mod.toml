@@ -1,0 +1,61 @@
+schema = 1
+
+[mod]
+id = "simpleshulkerpreview"
+group = "com.bvengo"
+version = "2.6.0"
+
+[targets]
+minecraft = ["26.3"]
+loaders = ["fabric"]
+vcs = "26.3-fabric"
+
+[dependencies]
+fabric_api = true
+modmenu = true
+yacl = true
+
+[compatibility."26.3"]
+fabric = ">=26.3 <26.4"
+
+[packaging]
+licence_file = "LICENSE.md"
+licence_entry = "LICENSE.md_simpleshulkerpreview"
+
+[publishing]
+maven = true
+
+[metadata]
+name = "Simple Shulker Preview"
+description = "Display a configurable icon indicating the contents of a shulker box, as well as a capacity bar."
+licence = "LGPL-3.0"
+environment = "client"
+authors = ["BVengo"]
+contributors = ["mfishma", "EvModder", "Meshiest", "MordorsElite", "mnowak32", "crpz1", "SophiaWhiteMA", "Florlet", "dirtTW", "theendercore", "Wyne10", "Boden-C", "Fitchmn"]
+icon = "assets/simpleshulkerpreview/icon.png"
+
+[metadata.contact]
+homepage = "https://www.curseforge.com/minecraft/mc-mods/simple-shulker-preview/"
+sources = "https://github.com/BVengo/simple-shulker-preview"
+issues = "https://github.com/BVengo/simple-shulker-preview/issues"
+
+[metadata.entrypoints]
+client = ["com.bvengo.simpleshulkerpreview.SimpleShulkerPreviewMod"]
+modmenu = ["com.bvengo.simpleshulkerpreview.ModMenuIntegration"]
+
+[metadata.fabric.depends]
+fabric-api = "*"
+yet_another_config_lib_v3 = ">=3.9.7"
+
+[metadata.fabric.recommends]
+modmenu = "*"
+
+[metadata.fabric.custom.modmenu]
+update_checker = true
+
+[metadata.fabric.custom.modmenu.links]
+"modmenu.discord" = "https://discord.gg/gyTa5v7kKk"
+
+[metadata.mixins]
+package = "com.bvengo.simpleshulkerpreview.mixin"
+client = ["DrawContextMixin"]
